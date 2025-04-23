@@ -1,5 +1,13 @@
+import styles from "./styles.module.css"
+import Title from "../../../components/Title/Title"
+
 const GerenciarAlunos = () => {
-  return <h1>Gerenciar Alunos</h1>
+  return (
+    <div className={styles.container}>
+      <Title title="Gerenciar alunos" />
+      <div style={styles.main_content}></div>
+    </div>
+  )
 }
 
 export default GerenciarAlunos

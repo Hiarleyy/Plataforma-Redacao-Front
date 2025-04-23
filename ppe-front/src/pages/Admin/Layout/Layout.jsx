@@ -1,19 +1,21 @@
-import { Outlet, Link } from "react-router-dom"
+import styles from "./styles.module.css"
+import { Outlet } from "react-router-dom"
+import Header from "../../../components/Header/Header"
+
+const links = [
+  { name: "Dashboard", icon: "fa-solid fa-house", path: "" },
+  { name: "Nova proposta", icon: "fa-solid fa-pen", path: "nova-proposta" },
+  { name: "Gerenciar alunos", icon: "fa-solid fa-envelope", path: "gerenciar-alunos" },
+  { name: "Ranking", icon: "fa-solid fa-ranking-star", path: "ranking" },
+  { name: "Cursos", icon: "fa-solid fa-tv", path: "cursos" },
+  { name: "Correção", icon: "fa-solid fa-pen-to-square", path: "corrigir-redacoes" }
+]
 
 const AdminLayout = () => {
   return (
-    <div>
-      <header>
-        <nav style={{ display: "flex", gap: "10px" }}>
-          <Link to="">Dashboard</Link>
-          <Link to="nova-proposta">Criar Proposta</Link>
-          <Link to="gerenciar-alunos">Gerenciar Alunos</Link>
-          <Link to="ranking">Ranking</Link> 
-          <Link to="cursos">Cursos</Link>
-          <Link to="corrigir-redacoes">Corrigir Redações</Link>
-        </nav>
-      </header>
-      <main>
+    <div className={styles.container}>
+      <Header options={links} />
+      <main className={styles.main_content}>
         <Outlet />
       </main>
     </div>
@@ -21,3 +23,4 @@ const AdminLayout = () => {
 }
 
 export default AdminLayout
+

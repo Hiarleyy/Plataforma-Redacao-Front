@@ -1,9 +1,15 @@
+<<<<<<< HEAD
 import styles from "./inicio.module.css"
 import Card from '../../../components/Card/Card';
+=======
+import styles from "./styles.module.css"
+import Title from "../../../components/Title/Title"
+>>>>>>> ea8292ec657f50963ff1cda6c033d5e5925d96b7
 
 const Inicio = () => {
   return (
     <div className={styles.container}>
+<<<<<<< HEAD
       <div className="flex items-center justify-center h-screen">
         <div className="flex flex-row items-center justify-center">
           <span>aaaaa</span>
@@ -26,6 +32,10 @@ const Inicio = () => {
         
         {/* Card com imagem */}
       </div>
+=======
+      <Title title="Início" />
+      <div style={styles.main_content}></div>
+>>>>>>> ea8292ec657f50963ff1cda6c033d5e5925d96b7
     </div>
   )
 }
