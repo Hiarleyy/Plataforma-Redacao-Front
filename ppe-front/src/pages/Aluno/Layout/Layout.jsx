@@ -1,18 +1,20 @@
-import { Outlet, Link } from "react-router-dom"
+import styles from "./styles.module.css"
+import { Outlet } from "react-router-dom"
+import Header from "../../../components/Header/Header"
+
+const links = [
+  { name: "Início", icon: "fa-solid fa-house", path: "" },
+  { name: "Perfil", icon: "fa-solid fa-user", path: "perfil" },
+  { name: "Nova redação", icon: "fa-solid fa-pen", path: "nova-redacao" },
+  { name: "Ranking", icon: "fa-solid fa-ranking-star", path: "ranking" },
+  { name: "Cursos", icon: "fa-solid fa-tv", path: "cursos" },
+]
 
 const AlunoLayout = () => {
   return (
-    <div>
-      <header>
-        <nav style={{ display: "flex", gap: "10px" }}>
-          <Link to="">Início</Link>
-          <Link to="perfil">Perfil</Link>
-          <Link to="nova-redacao">Nova Redação</Link>
-          <Link to="ranking">Ranking</Link>
-          <Link to="cursos">Cursos</Link>
-        </nav>
-      </header>
-      <main>
+    <div className={styles.container}>
+      <Header options={links} />
+      <main className={styles.main_content}>
         <Outlet />
       </main>
     </div>

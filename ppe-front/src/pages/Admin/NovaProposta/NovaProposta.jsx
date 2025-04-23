@@ -1,5 +1,13 @@
+import styles from "./styles.module.css"
+import Title from "../../../components/Title/Title"
+
 const NovaProposta = () => {
-  return <h1>Nova Proposta</h1>
+  return (
+    <div className={styles.container}>
+      <Title title="Nova proposta" />
+      <div style={styles.main_content}></div>
+    </div>
+  )
 }
 
 export default NovaProposta

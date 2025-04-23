@@ -1,0 +1,13 @@
+.title {
+  display: flex;
+  align-items: center;
+  background-color: #242424;
+  border-bottom: 1px solid #c4c4c44d;
+  height: 70px;
+}
+
+.title p {
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  margin-left: 50px;
+}
