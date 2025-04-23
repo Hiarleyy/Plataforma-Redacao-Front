@@ -9,13 +9,28 @@
 
 /* Variantes de estilo */
 .default {
-  background-color: #070707;
+  background-color: #121212;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .outlined {
   background-color: transparent;
   border: 1px solid #e0e0e0;
+}
+
+/* New container for title and icon */
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.iconContainer {
+  display: flex;
+  padding: 8px;
+  margin-right: 10px;
 }
 
 .elevated {
