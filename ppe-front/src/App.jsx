@@ -1,26 +1,26 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 // Página comum
-import Login from "./pages/Common/Login/Login";
+import Login from "./pages/Common/Login/Login"
 
 // Layouts
-import AlunoLayout from "./pages/Aluno/Layout/Layout";
-import AdminLayout from "./pages/Admin/Layout/Layout";
+import AlunoLayout from "./pages/Aluno/Layout/Layout"
+import AdminLayout from "./pages/Admin/Layout/Layout"
 
 // Aluno Pages
-import AlunoInicio from "./pages/Aluno/Inicio/Inicio";
-import Perfil from "./pages/Aluno/Perfil/Perfil";
-import NovaRedacao from "./pages/Aluno/NovaRedacao/NovaRedacao";
-import RankingAlunos from "./pages/Common/Ranking/Ranking";
-import CursosAluno from "./pages/Common/Cursos/Cursos";
+import AlunoInicio from "./pages/Aluno/Inicio/Inicio"
+import Perfil from "./pages/Aluno/Perfil/Perfil"
+import NovaRedacao from "./pages/Aluno/NovaRedacao/NovaRedacao"
+import RankingAlunos from "./pages/Common/Ranking/Ranking"
+import CursosAluno from "./pages/Common/Cursos/Cursos"
 
 // Admin Pages
-import DashboardAdmin from "./pages/Admin/Dashboard/Dashboard";
-import NovaProposta from "./pages/Admin/NovaProposta/NovaProposta";
-import GerenciarAlunos from "./pages/Admin/GerenciarAlunos/GerenciarAlunos";
-import RankingAdmin from "./pages/Common/Ranking/Ranking";
-import CursosAdmin from "./pages/Common/Cursos/Cursos";
-import CorrigirRedacoes from "./pages/Admin/CorrigirRedacoes/CorrigirRedacoes";
+import DashboardAdmin from "./pages/Admin/Dashboard/Dashboard"
+import NovaProposta from "./pages/Admin/NovaProposta/NovaProposta"
+import GerenciarAlunos from "./pages/Admin/GerenciarAlunos/GerenciarAlunos"
+import RankingAdmin from "./pages/Common/Ranking/Ranking"
+import CursosAdmin from "./pages/Common/Cursos/Cursos"
+import CorrigirRedacoes from "./pages/Admin/CorrigirRedacoes/CorrigirRedacoes"
 
 const router = createBrowserRouter([
   {
@@ -55,8 +55,8 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return <RouterProvider router={router} />
 }
 
-export default App;
+export default App
 
