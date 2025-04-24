@@ -9,7 +9,7 @@
 
 /* Variantes de estilo */
 .default {
-  background-color: #121212;
+  background-color:#242424;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -43,6 +43,7 @@
 
 .content {
   padding: 16px;
+  font-size: 18px;
 }
 
 .title {

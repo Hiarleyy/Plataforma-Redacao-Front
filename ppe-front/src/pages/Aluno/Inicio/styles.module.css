@@ -14,7 +14,7 @@
   .container {
       width: 100%;
       min-height: 100vh;
-      background-color: #000000;
+      background-color: #1A1A1A;
       display: flex;
       flex-direction: column;
     }
@@ -23,7 +23,7 @@
       font-family: 'Inter', sans-serif;
       font-size: 18px;
       display: flex;
-      align-items: start;
+      text-align: start;
       height: 40px;
       background-color: #FFF5CC;
       color: #DA9E00;
