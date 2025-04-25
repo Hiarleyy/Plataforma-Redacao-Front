@@ -21,6 +21,7 @@ import GerenciarAlunos from "./pages/Admin/GerenciarAlunos/GerenciarAlunos"
 import RankingAdmin from "./pages/Common/Ranking/Ranking"
 import CursosAdmin from "./pages/Common/Cursos/Cursos"
 import CorrigirRedacoes from "./pages/Admin/CorrigirRedacoes/CorrigirRedacoes"
+import Pagamentos from "./pages/Admin/Pagamentos/pagamentos"
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,7 @@ const router = createBrowserRouter([
       { path: "ranking", element: <RankingAdmin /> },
       { path: "cursos", element: <CursosAdmin /> },
       { path: "corrigir-redacoes", element: <CorrigirRedacoes /> },
+      { path:"Pagamentos", element: <Pagamentos />}
     ],
   },
 ]);
