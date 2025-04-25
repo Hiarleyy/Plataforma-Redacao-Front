@@ -1,0 +1,112 @@
+.container {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items:flex-start;
+  z-index: 999;
+}
+
+.modalContent {
+  position: relative;
+  background-color: black;
+  color: rgb(255, 255, 255);
+  padding: 200px;
+  border-radius: 10px;
+  width: 900px;
+  max-width: 90%;
+  box-shadow: 0 0 20px rgba(255, 255, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.closeButton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.closeButton svg {
+  width: 24px;
+  height: 24px;
+  stroke: rgb(255, 255, 255);
+}
+
+.closeButton:hover svg {
+  stroke: #ffee58;
+}
+
+.title {
+  text-align: left;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Grupos de inputs */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Inputs e selects */
+.formGroup input,
+.formGroup select {
+  padding: 10px;
+  background-color: #000000;
+  border: 1px solid gray;
+  color: rgb(110, 108, 108);
+  border-radius: 5px;
+}
+
+.formGroup label {
+  text-align: left;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+/* Botão registrar */
+.submitButton {
+  margin-top: 20px;
+  background-color: #ffee58;
+  color: #996515;
+  font-weight: bold;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submitButton:hover {
+  background-color: #fff176;
+}
+
+/* Área da logo - agora fixa no canto inferior direito */
+.logoArea {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
+.logoArea img {
+  width: 300px;
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+
+.logoArea img:hover {
+  opacity: 1;
+}

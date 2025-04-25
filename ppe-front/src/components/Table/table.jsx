@@ -1,8 +1,11 @@
 import { useState } from "react";
 import styles from "./style.module.css" // supondo que você crie um CSS module
 
+import RegistrarPagamentoModal from "../modal/modalPagamento/registrarPagamentoModal";
+
 const Tabela = ({dados}) => {
   const [search, setSearch] = useState("");
+  const [mostrarModal, setMostrarModal] = useState(false);
   const getStatusClass = (status) => {
       const normalized = status?.toLowerCase();
   
@@ -76,8 +79,9 @@ const Tabela = ({dados}) => {
       </div>
   
       <div className={styles.actions}>
-        <button className={`${styles.button} ${styles.button_register}`}>
+        <button onClick= {() => setMostrarModal(true)} className={`${styles.button} ${styles.button_register}`}>
           REGISTRAR PAGAMENTO
+          {mostrarModal && (<RegistrarPagamentoModal onClose={() => setMostrarModal(false)} />)}
         </button>
         <button className={`${styles.button} ${styles.button_export}`}>
           Exportar Relatório
