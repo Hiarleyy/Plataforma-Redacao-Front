@@ -1,0 +1,28 @@
+.input_card {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0px 15px;
+  border-radius: 6px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.input_card:hover {
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.input_card input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  margin-left: 10px;
+  background-color: transparent;
+  padding: 15px 0px;
+  color: #E0E0E0; 
+}
+
+.input_card i {
+  color: #B0B0B0; 
+}

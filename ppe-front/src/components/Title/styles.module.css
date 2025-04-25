@@ -1,9 +1,15 @@
 .title {
-  display: flex;
-  align-items: center;
   background-color: #242424;
   border-bottom: 1px solid #c4c4c44d;
   height: 70px;
+}
+
+.title_container {
+  display: flex;
+  align-items: center;
+  max-width: 1500px;
+  height: 100%;
+  margin: 0 auto;
 }
 
 .title p {
