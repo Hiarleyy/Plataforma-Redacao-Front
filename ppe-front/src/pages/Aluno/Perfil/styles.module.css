@@ -1,55 +1,53 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  color: #f9f9f9;
+}
+
 .container {
-    min-height: 100vh;
     background-color: #1A1A1A;
-    display: flex;
-    flex-direction: column;
+    width: 100%;
+    margin: 0;
+    padding: 0;
   }
+
 .main_content {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 100%;
+  padding-top: 20px;
+  padding-left: 50px;
+  padding-right: 50px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px; /* Adicionado para espaçamento entre linhas */
+  max-width: 1500px;
+  margin: 0 auto;
 }
-.ranking {
-    font-size: 15px;
-    font-family: inter;
-    align-items: center;
-    justify-content: center;
-    color: #DA9E00; 
-    background-color: #FFF5CC;
-    height: 40px; 
-    display: flex;
-    width: auto;
-    padding: 15px;
-    border-radius: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-.img_container
-{
+
+.img_container {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 120px;
-    height: 120px;
+    width: 120px; /* Reduzido de 120px */
+    height: 120px; /* Reduzido de 120px */
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #42464D;
-    margin: 20px;
+    margin: 15px; /* Reduzido de 20px */
 }
-.header_container{
-    margin-bottom: 10px;
+
+.header_container {
+    margin-bottom: 10px; /* Reduzido de 10px */
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-
 }
 
-.aba_redacoes {
-  background-color: #191919;
-  border-radius: 8px;
-  padding: 16px;
+.header_container p {
+    font-size: 15px; /* Reduzido de 28px */
+    color: #636363; /* Reduzido de 10px */
 }
 
 .aba_redacoes h3 {
@@ -57,6 +55,7 @@
   margin-bottom: 16px;
   font-size: 18px;
   color: #FFFFFF;
+
 }
 
 .menu_redacoes {
@@ -98,8 +97,9 @@
 .tab_content {
   background-color: #242424;
   border-radius: 8px;
-  padding: 16px;
-  min-height: 400px;
+  padding: 12px; /* Reduzido de 16px */
+  min-height: 60vh;
+  max-height: 70vh; /* Reduzido de 400px */
 }
 
 .tab_content p {
@@ -119,8 +119,8 @@
 .tab_navigation > button {
     display: flex;
     background-color: rgb(31, 31, 30);
-    width: 50px;
-    height: 50px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     justify-content: center; 
     align-items: center;
@@ -140,21 +140,19 @@
     text-decoration: none;
 }
 
-@media screen and (min-width: 768px) {
-    .main_content {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
+.metrics_status > span {
+    color:#DA9E00;
+    text-decoration: none;
 }
 
 .perfil {
     display: flex;
-    align-items:center;
+    align-items: center;
     flex-direction: column;
     background-color: #242424;
-    min-height: 35em;
-    width: 100%;
+    width: 45%; /* Igualado com aba_redacoes */
+    min-width: 400px;
+    min-height: 82vh; /* Limitação de altura */
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
@@ -169,28 +167,35 @@
 }
 .aba_redacoes {
     background-color: #242424;
-    min-height: 35em;
-    width: auto;
+    width: 60%;
+    min-width: 400px;
+    min-height: 82vh; /* Limitação de altura */
     border-radius: 8px;
+    padding: 12px; /* Reduzido de 16px */
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 
 .metrics_status{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
-    background-color: #1A1A1A;
-    border-radius: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 20px;
+  background-color: #1A1A1A;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-@media screen and (min-width: 768px) {
-    .perfil {
-        width: 40%; 
+/* Adicione media queries para tornar o layout responsivo em telas menores */
+@media (max-width: 1200px) {
+    .main_content {
+        flex-direction: column;
+        align-items: center;
     }
     
+    .perfil,
     .aba_redacoes {
-        width: 66%; 
+        width: 100%;
+        max-width: 600px; /* Mesmo tamanho máximo para ambas abas */
     }
 }

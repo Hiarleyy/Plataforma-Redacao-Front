@@ -16,33 +16,26 @@ const Perfil = () => {
         {/*Imagem, Nome e descriçao do Aluno*/}        
         <div className={styles.header_container}>
         <img className={styles.img_container} src="https://github.com/hiarleyy.png" alt=""/>
-        <h3>Fulano da silva</h3>
-        <h5>Entrou em 24/04/2025</h5>
+        <h3>Fulano da silva teste</h3>
+        <p>Entrou em 24/04/2025</p>
         </div>
-        {/*Ranking do Aluno*/}
-        <span className={styles.ranking}>
-        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10.1652 1.11092C9.98113 0.680736 9.59224 0.406982 9.16516 0.406982C8.73807 0.406982 8.35265 0.680736 8.16515 1.11092L5.93252 6.28486L0.946404 7.11395C0.529738 7.18434 0.182515 7.51284 0.0540432 7.96258C-0.074429 8.41232 0.0297376 8.90899 0.328349 9.2414L3.9464 13.2734L3.09224 18.9714C3.02279 19.4407 3.1964 19.9178 3.54015 20.1955C3.8839 20.4731 4.33877 20.5083 4.71377 20.2854L9.16863 17.6065L13.6235 20.2854C13.9985 20.5083 14.4533 20.477 14.7971 20.1955C15.1408 19.9139 15.3145 19.4407 15.245 18.9714L14.3874 13.2734L18.0054 9.2414C18.304 8.90899 18.4117 8.41232 18.2797 7.96258C18.1478 7.51284 17.804 7.18434 17.3874 7.11395L12.3978 6.28486L10.1652 1.11092Z" fill="#DA9E00"/>
-        </svg>
-        Explorador de Textos
-        </span>
       </div>
         {/* Métricas do Aluno*/}
       <div className={styles.metrics}>
         <span className={styles.metrics_status}>
-        Total de redacoes
+        Total de redacoes:
         <a> 0 </a>   
         </span>
         <span className={styles.metrics_status}>
-        Avaliadas
+        Avaliadas:
         <a> 0 </a>   
         </span>
         <span className={styles.metrics_status}>
-        Redações Nota 1000
+        Redações Nota 1000:
         <a> 0 </a>   
         </span>
         <span className={styles.metrics_status}>
-        Média de Notas
+        Média de Notas:
         <a> 0 </a>   
         </span>
       </div>
