@@ -5,6 +5,7 @@ import Input from "../../../components/Input/Input"
 import Button from "../../../components/Button/Button"
 import axios from "axios"
 import fetchData from "../../../utils/fetchData"
+import useUseful from "../../../utils/useUseful"
 import { useState, useEffect } from "react"
 import Pagination from "../../../components/Pagination/Pagination"
 import Message from "../../../components/Message/Message"
@@ -13,6 +14,7 @@ const GerenciarTurmas = () => {
   const [formMessage, setFormMessage] = useState(null)
   const [turma, setTurma] = useState("")
   const [turmas, setTurmas] = useState([])
+  const { brasilFormatData } = useUseful()
 
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
@@ -63,7 +65,7 @@ const GerenciarTurmas = () => {
               <InfoCard
                 key={index}
                 title={turma.nome}
-                subtitle={turma.dataCriacao}
+                subtitle={brasilFormatData(turma.dataCriacao)}
               />
             ))}
           </div>
