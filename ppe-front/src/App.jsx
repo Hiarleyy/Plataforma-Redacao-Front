@@ -17,6 +17,7 @@ import CursosAluno from "./pages/Common/Cursos/Cursos"
 // Admin Pages
 import DashboardAdmin from "./pages/Admin/Dashboard/Dashboard"
 import NovaProposta from "./pages/Admin/NovaProposta/NovaProposta"
+import GerenciarTurmas from "./pages/Admin/GerenciarTurmas/GerenciarTurmas"
 import GerenciarAlunos from "./pages/Admin/GerenciarAlunos/GerenciarAlunos"
 import RankingAdmin from "./pages/Common/Ranking/Ranking"
 import CursosAdmin from "./pages/Common/Cursos/Cursos"
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <DashboardAdmin /> },
       { path: "nova-proposta", element: <NovaProposta /> },
+      { path: "gerenciar-turmas", element: <GerenciarTurmas /> },
       { path: "gerenciar-alunos", element: <GerenciarAlunos /> },
       { path: "ranking", element: <RankingAdmin /> },
       { path: "cursos", element: <CursosAdmin /> },

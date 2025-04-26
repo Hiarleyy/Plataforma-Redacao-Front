@@ -5,6 +5,7 @@ import Header from "../../../components/Header/Header"
 const links = [
   { name: "Dashboard", icon: "fa-solid fa-house", path: "" },
   { name: "Nova proposta", icon: "fa-solid fa-pen", path: "nova-proposta" },
+  { name: "Gerenciar turmas", icon: "fa-solid fa-users", path: "gerenciar-turmas" },
   { name: "Gerenciar alunos", icon: "fa-solid fa-envelope", path: "gerenciar-alunos" },
   { name: "Ranking", icon: "fa-solid fa-ranking-star", path: "ranking" },
   { name: "Cursos", icon: "fa-solid fa-tv", path: "cursos" },
