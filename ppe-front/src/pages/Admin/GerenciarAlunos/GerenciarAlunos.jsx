@@ -3,14 +3,32 @@ import Title from "../../../components/Title/Title"
 import Input from "../../../components/Input/Input"
 import Button from "../../../components/Button/Button"
 import InputSelect from "../../../components/InputSelect/InputSelect"
-import { useState } from "react"
-import AlunoCard from "../../../components/AlunoCard/AlunoCard"
+import { useState, useEffect } from "react"
+import fetchData from "../../../utils/fetchData"
+import InfoCard from "../../../components/InfoCard/InfoCard"
 
 const GerenciarAlunos = () => {
   const [nome, setNome] = useState("")
   const [email, setEmail] = useState("")
   const [tipoUsuario, setTipoUsuario] = useState("")
   const [turma, setTurma] = useState("")
+  const [turmas, setTurmas] = useState([])
+
+  useEffect(() => {
+    const getData = async () => {
+      const { getTurmas } = fetchData() 
+      const response = await getTurmas()
+
+      const options = response.map(item => ({
+        value: item.id,       
+        label: item.nome
+      }))
+
+      setTurmas(options)
+    }
+
+    getData()
+  })
 
   return (
     <div className={styles.container}>
@@ -24,10 +42,26 @@ const GerenciarAlunos = () => {
           </Input>
 
           <div className={styles.alunos_container}>
-            <AlunoCard />
-            <AlunoCard />
-            <AlunoCard />
-            <AlunoCard />
+            <InfoCard 
+              img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
+              title="Fulana da Silva" 
+              subtitle="fulanasilva@gmail.com" 
+            />
+            <InfoCard 
+              img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
+              title="Fulana da Silva" 
+              subtitle="fulanasilva@gmail.com" 
+            />
+            <InfoCard 
+              img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
+              title="Fulana da Silva" 
+              subtitle="fulanasilva@gmail.com" 
+            />
+            <InfoCard 
+              img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
+              title="Fulana da Silva" 
+              subtitle="fulanasilva@gmail.com" 
+            />
           </div>
 
         </div>
@@ -72,15 +106,10 @@ const GerenciarAlunos = () => {
               text="Selecione a turma"
               value={turma}
               onChange={(e) => setTurma(e.target.value)}
-              options={[
-                { value: "turma-01", label: "Turma 01" },
-                { value: "turma-02", label: "Turma 02" },
-                { value: "turma-03", label: "Turma 03" },
-                { value: "turma-04", label: "Turma 04" }
-              ]}
+              options={turmas}
             ></InputSelect>
 
-            <Button text_size="20px" text_color="#E0E0E0" padding_sz="10px" bg_color="#16A34A">CADASTRAR</Button>
+            <Button text_size="20px" text_color="#E0E0E0" padding_sz="10px" bg_color="#DA9E00">CADASTRAR</Button>
           </form>
         </div>
       </div>

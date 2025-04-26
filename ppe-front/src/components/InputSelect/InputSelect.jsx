@@ -1,6 +1,6 @@
 import styles from "./styles.module.css"
 
-const Select = ({ 
+const InputSelect = ({ 
   text,
   value, 
   onChange = undefined, 
@@ -26,4 +26,4 @@ const Select = ({
   )
 }
 
-export default Select
+export default InputSelect

@@ -30,13 +30,13 @@
   gap: 10px;
 }
 
-.container .infos .nome {
+.container .infos .title {
   font-size: 18px;
   font-weight: bold;
   letter-spacing: 0.5px;
 }
 
-.container .infos .email {
+.container .infos .subtitle {
   font-size: 12px;
   font-weight: lighter;
   letter-spacing: 0.5px;
