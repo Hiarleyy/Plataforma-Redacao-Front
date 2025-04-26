@@ -61,9 +61,9 @@ const GerenciarTurmas = () => {
           <p className={styles.title}>Suas turmas</p>
 
           <div className={styles.turmas_container}>
-            {currentTurmas.map((turma, index) => (
+            {currentTurmas.map((turma) => (
               <InfoCard
-                key={index}
+                key={turma.id}
                 title={turma.nome}
                 subtitle={brasilFormatData(turma.dataCriacao)}
               />
