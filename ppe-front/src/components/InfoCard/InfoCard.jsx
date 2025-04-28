@@ -1,9 +1,10 @@
 import styles from "./styles.module.css"
 import Button from "../Button/Button"
+import { Link } from 'react-router-dom'
 
-const InfoCard = ({ img, title, subtitle }) => {
+const InfoCard = ({ img, title, subtitle, link }) => {
   return (
-    <div className={styles.container}>
+    <Link className={styles.container} to={link}>
       {img && <img src={img} alt="foto do aluno" />}
 
       <div className={styles.infos}>
@@ -14,7 +15,7 @@ const InfoCard = ({ img, title, subtitle }) => {
       <div className={styles.btn_container}>
         <Button bg_color="#B2433F" padding_sz="20px" >EXCLUIR</Button>
       </div>
-    </div>
+    </Link>
   )
 }
 

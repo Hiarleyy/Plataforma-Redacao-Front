@@ -1,0 +1,44 @@
+.tabela_container {
+  max-height: 400px; 
+  overflow-y: auto;  
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}
+
+.tabelaContainer::-webkit-scrollbar {
+  width: 0px;  
+  height: 0px; 
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cabecalho {
+  border: 1px solid #c4c4c4;
+  padding: 8px;
+  text-align: center;  
+  vertical-align: middle;
+  background-color: #1A1A1A;
+}
+
+.celula {
+  border: 1px solid #c4c4c4;
+  text-align: center;  
+  vertical-align: middle;
+  padding: 8px;
+  background-color: #1F1F1F;
+}
+
+.botao {
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.botao:hover {
+  background-color: #45a049;
+}

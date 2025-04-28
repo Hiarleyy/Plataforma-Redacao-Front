@@ -6,7 +6,12 @@ const fetchData = () => {
     return response.data.data
   }
 
-  return { getTurmas }
+  const getTurmaById = async (id) => {
+    const response = await axios.get(`http://localhost:3000/turmas/${id}`)
+    return response.data.data
+  }
+
+  return { getTurmas, getTurmaById }
 }
 
 export default fetchData

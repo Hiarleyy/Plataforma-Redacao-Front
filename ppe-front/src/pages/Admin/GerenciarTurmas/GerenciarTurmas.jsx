@@ -66,6 +66,7 @@ const GerenciarTurmas = () => {
                 key={turma.id}
                 title={turma.nome}
                 subtitle={brasilFormatData(turma.dataCriacao)}
+                link={turma.id}
               />
             ))}
           </div>
@@ -92,7 +93,7 @@ const GerenciarTurmas = () => {
               value={turma}
               onChange={(e) => setTurma(e.target.value)}
             >
-              <i className="fa-solid fa-user"></i>
+              <i className="fa-solid fa-users"></i>
             </Input>
 
             <Message 

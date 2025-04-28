@@ -34,8 +34,8 @@ const Login = () => {
             type="password"
             placeholder="Sua senha"
             color="#242424"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           >
             <i className="fa-solid fa-lock"></i>
           </Input>

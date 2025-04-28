@@ -5,7 +5,7 @@ const NovaProposta = () => {
   return (
     <div className={styles.container}>
       <Title title="Nova proposta" />
-      <div style={styles.main_content}></div>
+      <div className={styles.main_content}></div>
     </div>
   )
 }
