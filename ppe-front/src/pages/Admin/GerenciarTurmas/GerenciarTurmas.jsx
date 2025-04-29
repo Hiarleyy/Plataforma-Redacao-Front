@@ -61,11 +61,12 @@ const GerenciarTurmas = () => {
           <p className={styles.title}>Suas turmas</p>
 
           <div className={styles.turmas_container}>
-            {currentTurmas.map((turma, index) => (
+            {currentTurmas.map((turma) => (
               <InfoCard
-                key={index}
+                key={turma.id}
                 title={turma.nome}
                 subtitle={brasilFormatData(turma.dataCriacao)}
+                link={turma.id}
               />
             ))}
           </div>
@@ -92,7 +93,7 @@ const GerenciarTurmas = () => {
               value={turma}
               onChange={(e) => setTurma(e.target.value)}
             >
-              <i className="fa-solid fa-user"></i>
+              <i className="fa-solid fa-users"></i>
             </Input>
 
             <Message 
