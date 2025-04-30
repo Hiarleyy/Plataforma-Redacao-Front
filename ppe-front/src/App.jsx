@@ -22,6 +22,7 @@ import DetalhesTurma from "./pages/Admin/DetalhesTurma/DetalhesTurma"
 import GerenciarAlunos from "./pages/Admin/GerenciarAlunos/GerenciarAlunos"
 import DetalhesAluno from "./pages/Admin/DetalhesAluno/DetalhesAluno"
 import GerenciarCursos from "./pages/Admin/GerenciarCursos/GerenciarCursos"
+import VideoPage from "./pages/Admin/VideoPage/VideoPage"
 import RankingAdmin from "./pages/Common/Ranking/Ranking"
 import CursosAdmin from "./pages/Common/Cursos/Cursos"
 import CorrigirRedacoes from "./pages/Admin/CorrigirRedacoes/CorrigirRedacoes"
@@ -41,6 +42,7 @@ const router = createBrowserRouter([
       { path: "nova-redacao", element: <NovaRedacao /> },
       { path: "ranking", element: <RankingAlunos /> },
       { path: "cursos", element: <CursosAluno /> },
+      { path: "cursos/:video_id", element: <VideoPage /> },
     ],
   },
 
@@ -57,6 +59,7 @@ const router = createBrowserRouter([
       { path: "gerenciar-cursos", element: <GerenciarCursos /> },
       { path: "ranking", element: <RankingAdmin /> },
       { path: "cursos", element: <CursosAdmin /> },
+      { path: "cursos/:video_id", element: <VideoPage /> },
       { path: "corrigir-redacoes", element: <CorrigirRedacoes /> },
     ],
   },

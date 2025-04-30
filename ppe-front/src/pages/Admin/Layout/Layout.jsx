@@ -16,10 +16,17 @@ const links = [
 const AdminLayout = () => {
   return (
     <div className={styles.container}>
-      <Header options={links} />
-      <main className={styles.main_content}>
-        <Outlet />
-      </main>
+
+      <aside className={styles.sidebar}>
+        <Header options={links} />
+      </aside>
+
+      <div className={styles.main_container}>
+        <main className={styles.main_content}>
+          <Outlet />
+        </main>
+      </div>
+
     </div>
   )
 }

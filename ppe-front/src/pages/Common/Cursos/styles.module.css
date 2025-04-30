@@ -13,4 +13,5 @@
   min-height: calc(100vh - 70px);
   margin: 40px auto;
   background-color: #242424;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }

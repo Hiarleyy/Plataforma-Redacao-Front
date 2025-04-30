@@ -17,6 +17,17 @@ const Cursos = () => {
     getData()
   }, [])
 
+  if (modulos.length === 0) {
+    return (
+      <div className={styles.container}>
+        <Title title="Cursos" />
+        <div className={styles.main_content}>
+          <p>Ainda não existe nenhum curso cadastrado.</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={styles.container}>
       <Title title="Cursos" />

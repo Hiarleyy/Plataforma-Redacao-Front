@@ -23,7 +23,7 @@ const Carousel = ({ array, text }) => {
           <h3 className={styles.title}>{text}</h3>
           <div ref={carousel} className={styles.carousel}>
             {array && array.map((item) => {
-              return <VideoCard key={item.id} thumbnail={item.thumbnail} titulo={item.titulo} />
+              return <VideoCard key={item.id} thumbnail={item.thumbnail} titulo={item.titulo} link={item.id} />
             })}
           </div>
 
