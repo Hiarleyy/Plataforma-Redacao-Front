@@ -26,6 +26,7 @@ import VideoPage from "./pages/Admin/VideoPage/VideoPage"
 import RankingAdmin from "./pages/Common/Ranking/Ranking"
 import CursosAdmin from "./pages/Common/Cursos/Cursos"
 import CorrigirRedacoes from "./pages/Admin/CorrigirRedacoes/CorrigirRedacoes"
+import Pagamentos from "./pages/Admin/Pagamentos/pagamentos"
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,7 @@ const router = createBrowserRouter([
       { path: "cursos", element: <CursosAdmin /> },
       { path: "cursos/:video_id", element: <VideoPage /> },
       { path: "corrigir-redacoes", element: <CorrigirRedacoes /> },
+      { path: "pagamentos", element: <Pagamentos />},
     ],
   },
 ]);
