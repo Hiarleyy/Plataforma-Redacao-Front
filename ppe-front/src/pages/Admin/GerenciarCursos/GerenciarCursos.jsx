@@ -7,33 +7,37 @@ import axios from "axios"
 import fetchData from "../../../utils/fetchData"
 import useUseful from "../../../utils/useUseful"
 import { useState, useEffect } from "react"
-import { useNavigate } from 'react-router-dom';
 import Pagination from "../../../components/Pagination/Pagination"
 import Message from "../../../components/Message/Message"
 
-const GerenciarTurmas = () => {
+const GerenciarCursos = () => {
   const [formMessage, setFormMessage] = useState(null)
-  const [turma, setTurma] = useState("")
-  const [turmas, setTurmas] = useState([])
+  const [modulos, setModulos] = useState([])
+  const [nome, setNome] = useState("")
+  const [descricao, setDescricao] = useState("")
+  const [playlistUrl, setPlaylistUrl] = useState("")
   const { brasilFormatData } = useUseful()
-  const navigate = useNavigate()
 
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
   
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentTurmas = turmas.slice(indexOfFirstItem, indexOfLastItem)
+  const currentModulos = modulos.slice(indexOfFirstItem, indexOfLastItem)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/turmas", { "nome": turma })
+      const response = await axios.post("http://localhost:3000/modulos", { 
+        "nome": nome,
+        "descricao": descricao,
+        "playlistUrl": playlistUrl
+      })
 
       setFormMessage({ 
         type: "success", 
-        text: `Turma ${response.data.data.nome} criada com sucesso.` 
+        text: `Curso ${response.data.data.nome} criado com sucesso.` 
       })
     } catch (error) {
       setFormMessage({
@@ -43,22 +47,11 @@ const GerenciarTurmas = () => {
     }
   }
 
-  const deleteTurma = async (id) => {
-    const confirmation = confirm("Você tem certeza que deseja excluir essa turma? aaaa")
-    if (!confirmation) {
-      navigate("/admin/gerenciar-turmas")
-      return
-    } 
-
-    await axios.delete(`http://localhost:3000/turmas/${id}`)
-    navigate("/admin/gerenciar-turmas")
-  }
-
   useEffect(() => {
     const getData = async () => {
-      const { getTurmas } = fetchData() 
-      const response = await getTurmas()
-      setTurmas(response)
+      const { getModulos } = fetchData() 
+      const response = await getModulos()
+      setModulos(response)
     }
   
     getData()
@@ -66,21 +59,20 @@ const GerenciarTurmas = () => {
 
   return (
     <div className={styles.container}>
-      <Title title="Gerenciar turmas" />
+      <Title title="Gerenciar cursos" />
 
       <div className={styles.main_content}>
         <div className={styles.bg_left}>
           
-          <p className={styles.title}>Suas turmas</p>
+          <p className={styles.title}>Seus cursos</p>
 
-          <div className={styles.turmas_container}>
-            {currentTurmas.map((turma) => (
+          <div className={styles.cursos_container}>
+            {currentModulos.map((modulo) => (
               <InfoCard
-                key={turma.id}
-                title={turma.nome}
-                subtitle={brasilFormatData(turma.dataCriacao)}
-                link={turma.id}
-                onClick={() => deleteTurma(turma.id)}
+                key={modulo.id}
+                title={modulo.nome}
+                subtitle={brasilFormatData(modulo.dataCriacao)}
+                link={modulo.id}
               />
             ))}
           </div>
@@ -88,7 +80,7 @@ const GerenciarTurmas = () => {
           <div className={styles.pagination}>
             <Pagination
               currentPage={currentPage}
-              totalItems={turmas.length}
+              totalItems={modulos.length}
               itemsPerPage={itemsPerPage}
               setCurrentPage={setCurrentPage}
             />
@@ -97,17 +89,37 @@ const GerenciarTurmas = () => {
         </div>
 
         <div className={styles.bg_right}>
-          <p className={styles.form_title}>Cadastre uma nova turma</p>
+          <p className={styles.form_title}>Cadastre um novo curso</p>
 
           <form onSubmit={handleSubmit}>
             <Input
               type="text"
-              placeholder="Nome da turma"
+              placeholder="Nome do curso"
               color="#1A1A1A"
-              value={turma}
-              onChange={(e) => setTurma(e.target.value)}
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
             >
-              <i className="fa-solid fa-users"></i>
+              <i className="fa-solid fa-tv"></i>
+            </Input>
+
+            <Input
+              type="text"
+              placeholder="Descrição do curso"
+              color="#1A1A1A"
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+            >
+              <i className="fa-solid fa-comment"></i>
+            </Input>
+
+            <Input
+              type="text"
+              placeholder="Link da playlist"
+              color="#1A1A1A"
+              value={playlistUrl}
+              onChange={(e) => setPlaylistUrl(e.target.value)}
+            >
+              <i class="fa-solid fa-link"></i>
             </Input>
 
             <Message 
@@ -123,4 +135,4 @@ const GerenciarTurmas = () => {
   )
 }
 
-export default GerenciarTurmas
+export default GerenciarCursos

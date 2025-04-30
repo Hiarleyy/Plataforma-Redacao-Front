@@ -1,11 +1,31 @@
 import styles from "./styles.module.css"
 import Title from "../../../components/Title/Title"
+import { useEffect, useState } from "react"
+import fetchData from "../../../utils/fetchData"
+import Carousel from "../../../components/Carousel/Carousel"
 
 const Cursos = () => {
+  const [modulos, setModulos] = useState([])
+
+  useEffect(() => {
+    const getData = async () => {
+      const { getModulos } = fetchData() 
+      const response = await getModulos()
+      setModulos(response)
+    }
+  
+    getData()
+  }, [])
+
   return (
     <div className={styles.container}>
       <Title title="Cursos" />
-      <div style={styles.main_content}></div>
+      
+      <div className={styles.main_content}>
+        {modulos.map((modulo) => (
+          <Carousel key={modulo.id} array={modulo.videos} text={modulo.nome} />
+        ))}
+      </div>
     </div>
   )
 }

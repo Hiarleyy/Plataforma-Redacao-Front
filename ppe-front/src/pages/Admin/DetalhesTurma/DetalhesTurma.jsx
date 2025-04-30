@@ -4,7 +4,7 @@ import Input from "../../../components/Input/Input"
 import Button from "../../../components/Button/Button"
 import Message from "../../../components/Message/Message"
 import useUseful from "../../../utils/useUseful"
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import axios from "axios"
 import fetchData from "../../../utils/fetchData";
@@ -16,6 +16,7 @@ const DetalhesTurma = () => {
   const [turmaData, setTurmaData] = useState({})
   const [turma, setTurma] = useState("")
   const { brasilFormatData } = useUseful()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,6 +34,14 @@ const DetalhesTurma = () => {
         text: error.response.data.error
       });
     }
+  }
+
+  const deleteTurma = async () => {
+    const confirmation = confirm("Você tem certeza que deseja excluir essa turma?")
+    if (!confirmation) return
+
+    await axios.delete(`http://localhost:3000/turmas/${turma_id}`)
+    navigate("/admin/gerenciar-turmas")
   }
 
   useEffect(() => {
@@ -63,7 +72,13 @@ const DetalhesTurma = () => {
           {turmaData.usuarios && <AlunosTabela alunos={turmaData.usuarios} />}
 
           <div className={styles.delete_btn}>
-            <Button text_size="20px" text_color="#E0E0E0" padding_sz="20px" bg_color="#B2433F">EXCLUIR TURMA</Button>
+            <Button 
+              text_size="20px" 
+              text_color="#E0E0E0" 
+              padding_sz="20px" 
+              bg_color="#B2433F" 
+              onClick={deleteTurma}
+            >EXCLUIR TURMA</Button>
           </div>
         </div>
 
