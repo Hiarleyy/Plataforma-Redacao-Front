@@ -1,4 +1,5 @@
 import styles from "./styles.module.css"
+import Loading from "../../components/Loading/Loading"
 
 const Button = ({ 
   children, 
@@ -9,7 +10,8 @@ const Button = ({
   radius = "6px",
   width_size = "100%",
   height_size = undefined,
-  onClick = undefined
+  onClick = undefined,
+  isLoading
 }) => {
   return (
     <button className={styles.btn} onClick={onClick} style={{ 
@@ -20,7 +22,7 @@ const Button = ({
       borderRadius: radius,
       width: width_size,
       height: height_size
-    }}>{children}</button>
+    }}>{isLoading ? <Loading size={"20px"} /> : children}</button>
   )
 }
 

@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import axios from "axios"
 import fetchData from "../../../utils/fetchData";
 import AlunosTabela from "../../../components/AlunosTabela/AlunosTabela"
+import DetailsCard from "../../../components/DetailsCard/DetailsCard"
 
 const DetalhesTurma = () => {
   const { turma_id } = useParams()
@@ -60,12 +61,23 @@ const DetalhesTurma = () => {
 
       <div className={styles.main_content}>
         <div className={styles.bg_left}>
-          <p className={styles.nome}>{turmaData.nome && turmaData.nome}</p>
-          
-          <div className={styles.divider}></div>
+          <DetailsCard  
+            title="Nome"
+            content={turmaData.nome && turmaData.nome}
+            bg_color="#1A1A1A"
+          />
 
-          <p className={styles.quantidade_alunos}>Total de alunos: {turmaData.usuarios && turmaData.usuarios.length}</p>
-          <p className={styles.data}>Data de criação: {turmaData.dataCriacao && brasilFormatData(turmaData.dataCriacao)}</p>
+          <DetailsCard  
+            title="Total de alunos"
+            content={turmaData.usuarios && turmaData.usuarios.length}
+            bg_color="#1F1F1F"
+          />
+
+          <DetailsCard  
+            title="Data de criação"
+            content={turmaData.dataCriacao && brasilFormatData(turmaData.dataCriacao)}
+            bg_color="#1F1F1F"
+          />
 
           <div className={styles.divider}></div>
 
@@ -78,7 +90,7 @@ const DetalhesTurma = () => {
               padding_sz="20px" 
               bg_color="#B2433F" 
               onClick={deleteTurma}
-            >EXCLUIR TURMA</Button>
+            ><i class="fa-solid fa-trash"></i> EXCLUIR TURMA</Button>
           </div>
         </div>
 

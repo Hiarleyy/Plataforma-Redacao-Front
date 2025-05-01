@@ -28,24 +28,13 @@
   color: #E0E0E0;
 }
 
-.main_content .bg_left .nome {
-  font-size: 30px;
-  letter-spacing: 0.5px;
-}
-
-.main_content .bg_left .data, .quantidade_alunos {
-  font-size: 14px;
-  letter-spacing: 0.5px;
-}
-
 .main_content .bg_left .divider {
   width: 100%;
-  height: 2px;
-  background-color: #e0e0e03f;
-  border-radius: 50%;
-  opacity: 70%;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #e0e0e0, transparent);
+  opacity: 0.4;
+  border-radius: 4px;
+  margin: 12px 0;
 }
 
 .main_content .bg_left .delete_btn {

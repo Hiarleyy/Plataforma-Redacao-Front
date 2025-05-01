@@ -3,6 +3,7 @@ import Title from "../../../components/Title/Title"
 import { useEffect, useState } from "react"
 import fetchData from "../../../utils/fetchData"
 import Carousel from "../../../components/Carousel/Carousel"
+import Loading from "../../../components/Loading/Loading"
 
 const Cursos = () => {
   const [modulos, setModulos] = useState([])
@@ -16,6 +17,15 @@ const Cursos = () => {
   
     getData()
   }, [])
+
+  if (!modulos) return (
+    <div className={styles.container}>
+      <Title title="Cursos" />
+      <div className={styles.main_content}>
+        <Loading />
+      </div>
+    </div>
+  ) 
 
   if (modulos.length === 0) {
     return (

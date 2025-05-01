@@ -10,12 +10,14 @@ import { useState, useEffect } from "react"
 import { useNavigate } from 'react-router-dom';
 import Pagination from "../../../components/Pagination/Pagination"
 import Message from "../../../components/Message/Message"
+import Loading from "../../../components/Loading/Loading"
 
 const GerenciarTurmas = () => {
   const [formMessage, setFormMessage] = useState(null)
   const [turma, setTurma] = useState("")
   const [turmas, setTurmas] = useState([])
   const { brasilFormatData } = useUseful()
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
   const [currentPage, setCurrentPage] = useState(1)
@@ -26,7 +28,8 @@ const GerenciarTurmas = () => {
   const currentTurmas = turmas.slice(indexOfFirstItem, indexOfLastItem)
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    setIsLoading(true)
 
     try {
       const response = await axios.post("http://localhost:3000/turmas", { "nome": turma })
@@ -40,6 +43,8 @@ const GerenciarTurmas = () => {
         type: "error",
         text: error.response.data.error
       });
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -70,30 +75,32 @@ const GerenciarTurmas = () => {
 
       <div className={styles.main_content}>
         <div className={styles.bg_left}>
-          
-          <p className={styles.title}>Suas turmas</p>
+          {turmas.length === 0 ? <div className={styles.loading}><Loading /></div> :
+            <>
+              <p className={styles.title}>Suas turmas</p>
 
-          <div className={styles.turmas_container}>
-            {currentTurmas.map((turma) => (
-              <InfoCard
-                key={turma.id}
-                title={turma.nome}
-                subtitle={brasilFormatData(turma.dataCriacao)}
-                link={turma.id}
-                onClick={() => deleteTurma(turma.id)}
-              />
-            ))}
-          </div>
+              <div className={styles.turmas_container}>
+                {currentTurmas.map((turma) => (
+                  <InfoCard
+                    key={turma.id}
+                    title={turma.nome}
+                    subtitle={brasilFormatData(turma.dataCriacao)}
+                    link={turma.id}
+                    onClick={() => deleteTurma(turma.id)}
+                  />
+                ))}
+              </div>
 
-          <div className={styles.pagination}>
-            <Pagination
-              currentPage={currentPage}
-              totalItems={turmas.length}
-              itemsPerPage={itemsPerPage}
-              setCurrentPage={setCurrentPage}
-            />
-          </div>
-
+              <div className={styles.pagination}>
+                <Pagination
+                  currentPage={currentPage}
+                  totalItems={turmas.length}
+                  itemsPerPage={itemsPerPage}
+                  setCurrentPage={setCurrentPage}
+                />
+              </div>
+            </>
+          }
         </div>
 
         <div className={styles.bg_right}>
@@ -115,7 +122,13 @@ const GerenciarTurmas = () => {
               type={formMessage ? formMessage.type : ""} 
             />
 
-            <Button text_size="20px" text_color="#E0E0E0" padding_sz="10px" bg_color="#DA9E00">CADASTRAR</Button>
+            <Button 
+              text_size="20px" 
+              text_color="#E0E0E0" 
+              padding_sz="10px" 
+              bg_color="#DA9E00"
+              isLoading={isLoading}
+            >CADASTRAR</Button>
           </form>
         </div>
       </div>

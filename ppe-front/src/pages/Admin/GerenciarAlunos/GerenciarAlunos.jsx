@@ -9,6 +9,7 @@ import { useState, useEffect } from "react"
 import axios from "axios"
 import fetchData from "../../../utils/fetchData"
 import InfoCard from "../../../components/InfoCard/InfoCard"
+import Loading from "../../../components/Loading/Loading"
 
 const GerenciarAlunos = () => {
   const [formMessage, setFormMessage] = useState(null)
@@ -19,6 +20,7 @@ const GerenciarAlunos = () => {
   const [turmas, setTurmas] = useState([])
   const [alunos, setAlunos] = useState([])
   const [search, setSearch] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
@@ -28,7 +30,8 @@ const GerenciarAlunos = () => {
   const currentAlunos = alunos.slice(indexOfFirstItem, indexOfLastItem)
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    setIsLoading(true)
 
     try {
       const response = await axios.post("http://localhost:3000/usuarios", { 
@@ -47,6 +50,8 @@ const GerenciarAlunos = () => {
         type: "error",
         text: error.response.data.error
       });
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -90,38 +95,40 @@ const GerenciarAlunos = () => {
 
       <div className={styles.main_content}>
         <div className={styles.bg_left}>
+          {alunos.length === 0 ? <div className={styles.loading}><Loading /></div> : 
+            <>
+              <Input 
+                type="text" 
+                placeholder="Pesquise por um aluno" 
+                color="#1A1A1A" 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              >
+                <i className="fa-solid fa-magnifying-glass"></i>
+              </Input>
 
-          <Input 
-            type="text" 
-            placeholder="Pesquise por um aluno" 
-            color="#1A1A1A" 
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          >
-            <i className="fa-solid fa-magnifying-glass"></i>
-          </Input>
+              <div className={styles.alunos_container}>
+                {currentAlunos.map((aluno) => (
+                  <InfoCard 
+                    key={aluno.id}
+                    img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
+                    title={aluno.nome} 
+                    subtitle={aluno.email} 
+                    link={aluno.id}
+                  />
+                ))}
+              </div>
 
-          <div className={styles.alunos_container}>
-            {currentAlunos.map((aluno) => (
-              <InfoCard 
-                key={aluno.id}
-                img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
-                title={aluno.nome} 
-                subtitle={aluno.email} 
-                link={aluno.id}
-              />
-            ))}
-          </div>
-
-          <div className={styles.pagination}>
-            <Pagination
-              currentPage={currentPage}
-              totalItems={alunos.length}
-              itemsPerPage={itemsPerPage}
-              setCurrentPage={setCurrentPage}
-            />
-          </div>
-
+              <div className={styles.pagination}>
+                <Pagination
+                  currentPage={currentPage}
+                  totalItems={alunos.length}
+                  itemsPerPage={itemsPerPage}
+                  setCurrentPage={setCurrentPage}
+                />
+              </div>
+            </>
+          }
         </div>
 
         <div className={styles.bg_right}>
@@ -172,7 +179,13 @@ const GerenciarAlunos = () => {
               type={formMessage ? formMessage.type : ""} 
             />
 
-            <Button text_size="20px" text_color="#E0E0E0" padding_sz="10px" bg_color="#DA9E00">CADASTRAR</Button>
+            <Button 
+              text_size="20px" 
+              text_color="#E0E0E0" 
+              padding_sz="10px" 
+              bg_color="#DA9E00"
+              isLoading={isLoading}
+            >CADASTRAR</Button>
           </form>
         </div>
       </div>

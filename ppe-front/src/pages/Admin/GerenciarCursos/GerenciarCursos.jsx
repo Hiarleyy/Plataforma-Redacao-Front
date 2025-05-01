@@ -9,6 +9,7 @@ import useUseful from "../../../utils/useUseful"
 import { useState, useEffect } from "react"
 import Pagination from "../../../components/Pagination/Pagination"
 import Message from "../../../components/Message/Message"
+import Loading from "../../../components/Loading/Loading"
 
 const GerenciarCursos = () => {
   const [formMessage, setFormMessage] = useState(null)
@@ -17,6 +18,7 @@ const GerenciarCursos = () => {
   const [descricao, setDescricao] = useState("")
   const [playlistUrl, setPlaylistUrl] = useState("")
   const { brasilFormatData } = useUseful()
+  const [isLoading, setIsLoading] = useState(false)
 
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
@@ -26,7 +28,8 @@ const GerenciarCursos = () => {
   const currentModulos = modulos.slice(indexOfFirstItem, indexOfLastItem)
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    setIsLoading(true)
 
     try {
       const response = await axios.post("http://localhost:3000/modulos", { 
@@ -44,6 +47,8 @@ const GerenciarCursos = () => {
         type: "error",
         text: error.response.data.error
       });
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -63,29 +68,31 @@ const GerenciarCursos = () => {
 
       <div className={styles.main_content}>
         <div className={styles.bg_left}>
-          
-          <p className={styles.title}>Seus cursos</p>
+          {modulos.length === 0 ? <div className={styles.loading}><Loading /></div> :
+            <>
+              <p className={styles.title}>Seus cursos</p>
 
-          <div className={styles.cursos_container}>
-            {currentModulos.map((modulo) => (
-              <InfoCard
-                key={modulo.id}
-                title={modulo.nome}
-                subtitle={brasilFormatData(modulo.dataCriacao)}
-                link={modulo.id}
-              />
-            ))}
-          </div>
+              <div className={styles.cursos_container}>
+                {currentModulos.map((modulo) => (
+                  <InfoCard
+                    key={modulo.id}
+                    title={modulo.nome}
+                    subtitle={brasilFormatData(modulo.dataCriacao)}
+                    link={modulo.id}
+                  />
+                ))}
+              </div>
 
-          <div className={styles.pagination}>
-            <Pagination
-              currentPage={currentPage}
-              totalItems={modulos.length}
-              itemsPerPage={itemsPerPage}
-              setCurrentPage={setCurrentPage}
-            />
-          </div>
-
+              <div className={styles.pagination}>
+                <Pagination
+                  currentPage={currentPage}
+                  totalItems={modulos.length}
+                  itemsPerPage={itemsPerPage}
+                  setCurrentPage={setCurrentPage}
+                />
+              </div>
+            </>
+          }
         </div>
 
         <div className={styles.bg_right}>
@@ -127,7 +134,13 @@ const GerenciarCursos = () => {
               type={formMessage ? formMessage.type : ""} 
             />
 
-            <Button text_size="20px" text_color="#E0E0E0" padding_sz="10px" bg_color="#DA9E00">CADASTRAR</Button>
+            <Button 
+              text_size="20px" 
+              text_color="#E0E0E0" 
+              padding_sz="10px" 
+              bg_color="#DA9E00"
+              isLoading={isLoading}
+            >CADASTRAR</Button>
           </form>
         </div>
       </div>
