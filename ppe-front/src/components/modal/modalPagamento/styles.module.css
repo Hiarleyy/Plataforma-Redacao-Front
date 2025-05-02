@@ -1,112 +1,126 @@
-.container {
-  display: flex;
+/* ModalOverlay: escurece o fundo e centraliza o modal */
+.modalOverlay {
   position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  justify-content: center;
-  align-items:flex-start;
-  z-index: 999;
-}
-
-.modalContent {
-  position: relative;
-  background-color: black;
-  color: rgb(255, 255, 255);
-  padding: 200px;
-  border-radius: 10px;
-  width: 900px;
-  max-width: 90%;
-  box-shadow: 0 0 20px rgba(255, 255, 0, 0.2);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
+/* Container principal do Modal */
+.container {
+  background-color: rgb(31, 31, 31);
+  padding: 30px;
+  height: 800px;
+  width: 1500px; /* largura do modal*/
+  border-radius: 12px;
+  display: flex;
+  flex-direction: row; 
+  align-items: flex-start;
+  position: relative;
+  gap: 30px; /* Adicionado para espacamento */
+}
+
+/* Botão de fechar */
 .closeButton {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  background: transparent;
+  top: 32px;
+  left: 20px;
+  background: none;
   border: none;
   cursor: pointer;
-  padding: 5px;
 }
 
 .closeButton svg {
-  width: 24px;
-  height: 24px;
-  stroke: rgb(255, 255, 255);
+  fill: white;
 }
 
-.closeButton:hover svg {
-  stroke: #ffee58;
+/* Área da esquerda - Formulário */
+.formSection {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
 }
 
 .title {
-  text-align: left;
-  font-size: 24px;
+  color: white;
+  font-size: 26px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: 1px;
 }
 
+/* Formulário */
 .formContainer {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
 }
 
-/* Grupos de inputs */
 .formGroup {
   display: flex;
   flex-direction: column;
 }
 
-/* Inputs e selects */
-.formGroup input,
-.formGroup select {
-  padding: 10px;
-  background-color: #000000;
-  border: 1px solid gray;
-  color: rgb(110, 108, 108);
-  border-radius: 5px;
-}
-
 .formGroup label {
   text-align: left;
-  font-size: 16px;
-  margin-bottom: 15px;
+  color: white;
+  margin-bottom: 20px;
+  font-size: 20px;
 }
 
-/* Botão registrar */
-.submitButton {
-  margin-top: 20px;
-  background-color: #ffee58;
-  color: #996515;
-  font-weight: bold;
+input,
+select {
   padding: 12px;
+  font-size: 15px;
+  border: 1px solid #302f2f;
+  border-radius: 6px;
+  background: #111;
+  color: rgb(136, 131, 131);
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+/* Botão de Submissão */
+.submitButton {
+  margin-top: 40px;
+  padding: 15px;
+  background-color: #fff7c5;
+  color: #d4a017;
+  font-weight: bold;
+  font-size: 20px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background 0.3s;
+  
 }
 
 .submitButton:hover {
-  background-color: #fff176;
+  background-color: #f5e7b3;
 }
 
-/* Área da logo - agora fixa no canto inferior direito */
+/* Área da direita - Logo */
 .logoArea {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
+  flex: 0.8;
+  display: flex;
+  margin-top: 250px;
+  margin-left: 50px;
+  margin-right: 50px;
+  align-items: center;
+  justify-content: center;
 }
 
 .logoArea img {
-  width: 300px;
-  opacity: 0.8;
-  transition: opacity 0.3s;
-}
-
-.logoArea img:hover {
-  opacity: 1;
+  max-width: 200px;
+  height: auto;
 }

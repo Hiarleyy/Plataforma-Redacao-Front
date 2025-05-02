@@ -3,11 +3,13 @@ import Title from "../../../components/Title/Title"
 import Input from "../../../components/Input/Input"
 import Button from "../../../components/Button/Button"
 import Message from "../../../components/Message/Message"
+import Pagination from "../../../components/Pagination/Pagination"
 import InputSelect from "../../../components/InputSelect/InputSelect"
 import { useState, useEffect } from "react"
 import axios from "axios"
 import fetchData from "../../../utils/fetchData"
 import InfoCard from "../../../components/InfoCard/InfoCard"
+import Loading from "../../../components/Loading/Loading"
 
 const GerenciarAlunos = () => {
   const [formMessage, setFormMessage] = useState(null)
@@ -16,16 +18,27 @@ const GerenciarAlunos = () => {
   const [tipoUsuario, setTipoUsuario] = useState("")
   const [turma, setTurma] = useState("")
   const [turmas, setTurmas] = useState([])
+  const [alunos, setAlunos] = useState([])
+  const [search, setSearch] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
+  
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentAlunos = alunos.slice(indexOfFirstItem, indexOfLastItem)
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    setIsLoading(true)
 
     try {
       const response = await axios.post("http://localhost:3000/usuarios", { 
-        "nome": nome,
-        "email": email,
-        "tipoUsuario": tipoUsuario,
-        "turmaId": turma 
+        nome,
+        email,
+        tipoUsuario,
+        turmaId: turma 
       })
 
       setFormMessage({ 
@@ -37,24 +50,44 @@ const GerenciarAlunos = () => {
         type: "error",
         text: error.response.data.error
       });
+    } finally {
+      setIsLoading(false)
     }
   }
 
+  const getAlunos = async (busca) => {
+    const { getAlunos } = fetchData() 
+    const response = await getAlunos(busca)
+    setAlunos(response)
+  }
+
+  useEffect(() => { 
+    setCurrentPage(1)
+    
+    if (search === "") {
+      getAlunos()
+    } else {
+      getAlunos(search) 
+    }
+  }, [search])
+
   useEffect(() => {
     const getData = async () => {
-      const { getTurmas } = fetchData() 
-      const response = await getTurmas()
+      const { getTurmas, getAlunos } = fetchData() 
+      const turmasResponse = await getTurmas()
+      const alunosResponse = await getAlunos()
 
-      const options = response.map(item => ({
+      const options = turmasResponse.map(item => ({
         value: item.id,       
         label: item.nome
       }))
 
       setTurmas(options)
+      setAlunos(alunosResponse)
     }
 
     getData()
-  })
+  }, [])
 
   return (
     <div className={styles.container}>
@@ -62,34 +95,40 @@ const GerenciarAlunos = () => {
 
       <div className={styles.main_content}>
         <div className={styles.bg_left}>
+          {alunos.length === 0 ? <div className={styles.loading}><Loading /></div> : 
+            <>
+              <Input 
+                type="text" 
+                placeholder="Pesquise por um aluno" 
+                color="#1A1A1A" 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              >
+                <i className="fa-solid fa-magnifying-glass"></i>
+              </Input>
 
-          <Input type="text" placeholder="Pesquise por um aluno" color="#1A1A1A">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </Input>
+              <div className={styles.alunos_container}>
+                {currentAlunos.map((aluno) => (
+                  <InfoCard 
+                    key={aluno.id}
+                    img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
+                    title={aluno.nome} 
+                    subtitle={aluno.email} 
+                    link={aluno.id}
+                  />
+                ))}
+              </div>
 
-          <div className={styles.alunos_container}>
-            <InfoCard 
-              img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
-              title="Fulana da Silva" 
-              subtitle="fulanasilva@gmail.com" 
-            />
-            <InfoCard 
-              img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
-              title="Fulana da Silva" 
-              subtitle="fulanasilva@gmail.com" 
-            />
-            <InfoCard 
-              img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
-              title="Fulana da Silva" 
-              subtitle="fulanasilva@gmail.com" 
-            />
-            <InfoCard 
-              img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
-              title="Fulana da Silva" 
-              subtitle="fulanasilva@gmail.com" 
-            />
-          </div>
-
+              <div className={styles.pagination}>
+                <Pagination
+                  currentPage={currentPage}
+                  totalItems={alunos.length}
+                  itemsPerPage={itemsPerPage}
+                  setCurrentPage={setCurrentPage}
+                />
+              </div>
+            </>
+          }
         </div>
 
         <div className={styles.bg_right}>
@@ -125,7 +164,7 @@ const GerenciarAlunos = () => {
                 { value: "STANDARD", label: "STANDARD" },
                 { value: "ADMIN", label: "ADMIN" }
               ]}
-            ></InputSelect>
+            />
 
             <InputSelect 
               color="#1A1A1A"
@@ -133,14 +172,20 @@ const GerenciarAlunos = () => {
               value={turma}
               onChange={(e) => setTurma(e.target.value)}
               options={turmas}
-            ></InputSelect>
+            />
 
             <Message 
               text={formMessage ? formMessage.text : ""} 
               type={formMessage ? formMessage.type : ""} 
             />
 
-            <Button text_size="20px" text_color="#E0E0E0" padding_sz="10px" bg_color="#DA9E00">CADASTRAR</Button>
+            <Button 
+              text_size="20px" 
+              text_color="#E0E0E0" 
+              padding_sz="10px" 
+              bg_color="#DA9E00"
+              isLoading={isLoading}
+            >CADASTRAR</Button>
           </form>
         </div>
       </div>
