@@ -45,6 +45,10 @@ const fetchData = () => {
     const response = await axios.get(`http://localhost:3000/redacoes/${id}`)
     return response.data.data
   }
+  const getRanking = async () => {
+    const response = await axios.get("http://localhost:3000/ranking")
+    return response.data.data
+  }
 
   return { 
     getTurmas, 
@@ -53,7 +57,8 @@ const fetchData = () => {
     getAlunoById,
     getModulos,
     getModuloById,
-    getVideoById
+    getVideoById,
+    getRanking,
   }
 }
 

@@ -1,0 +1,23 @@
+.container {
+    width: 100%;
+    min-height: 100vh;
+  }
+  
+  .main_content {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    gap: 30px;
+    padding: 50px;
+    max-width: 1500px;
+    min-height: calc(100vh - 70px);
+    margin: 40px auto;
+    background-color: #242424;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .main_content h2 {
+    color: #a0a0a0;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+  }
