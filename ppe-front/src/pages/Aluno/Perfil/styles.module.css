@@ -186,16 +186,42 @@
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* Adicione media queries para tornar o layout responsivo em telas menores */
-@media (max-width: 1200px) {
-    .main_content {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .perfil,
-    .aba_redacoes {
-        width: 100%;
-        max-width: 600px; /* Mesmo tamanho máximo para ambas abas */
-    }
+.chart_container {
+  width: 100%;
+  background-color: #242424;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.chart_container h4 {
+  padding: 10px;
+  color: #ffffff;
+  font-size: 18px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Estilos para melhorar a aparência do gráfico */
+.chart_container :global(.recharts-tooltip-wrapper) {
+  background-color: #2a2a2a !important;
+  border: 1px solid #444 !important;
+  border-radius: 6px;
+}
+
+.chart_container :global(.recharts-tooltip-item) {
+  color: #ccc !important;
+}
+
+.chart_container :global(.recharts-default-tooltip) {
+  background-color: #2a2a2a !important;
+  border-color: #444 !important;
+  color: #ccc !important;
+  padding: 10px !important;
+  border-radius: 6px !important;
+}
+
+.chart_container :global(.recharts-text) {
+  fill: #ccc !important;
 }
