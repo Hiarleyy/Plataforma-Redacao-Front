@@ -15,7 +15,7 @@
 
 .tabela {
   width: 100%;
-  border-collapse: collapse; /* removemos o espaçamento entre linhas */
+  border-collapse: collapse; 
   font-size: 14px;
   color: #E0E0E0;
 }

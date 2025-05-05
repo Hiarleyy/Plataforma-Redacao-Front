@@ -184,7 +184,7 @@ const DetalhesAluno = () => {
             text_color="#E0E0E0" 
             padding_sz="10px" 
             bg_color="#B2433F" 
-          ><i class="fa-solid fa-trash"></i> EXCLUIR TURMA</Button>
+          ><i class="fa-solid fa-trash"></i> EXCLUIR ALUNO</Button>
         </div>
 
         <div className={styles.bg_right}>
