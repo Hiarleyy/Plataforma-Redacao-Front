@@ -17,7 +17,7 @@
   background-color: rgb(31, 31, 31);
   padding: 30px;
   height: 800px;
-  width: 1500px; /* largura do modal*/
+  width: 1200px; /* largura do modal*/
   border-radius: 12px;
   display: flex;
   flex-direction: row; 
@@ -67,6 +67,7 @@
 .formGroup {
   display: flex;
   flex-direction: column;
+  width: 300px;;
 }
 
 .formGroup label {

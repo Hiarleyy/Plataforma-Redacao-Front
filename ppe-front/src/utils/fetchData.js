@@ -49,8 +49,16 @@ const fetchData = () => {
     const response = await axios.get("http://localhost:3000/ranking")
     return response.data.data
   }
-
+  const getPropostas = async() =>{
+    const response = await axios.get ("http://localhost:3000/propostas")
+    return response.data.data
+  }
   const getRedacoes = async () => {
+    const response = await axios.get("http://localhost:3000/redacoes")
+    return response.data.data
+  }
+
+  const getRedacoesUser = async () => {
     const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=1921a46c-2a02-45da-bb04-b93a60622746`)
     return response.data.data
   }
@@ -72,6 +80,7 @@ const fetchData = () => {
     getRanking,
     getRedacoes,
     getRedacoesCorrigidas,
+    getRedacoesUser
   }
 }
 

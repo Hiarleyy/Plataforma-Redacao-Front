@@ -28,8 +28,8 @@ const Perfil = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const { getRedacoes, getRedacoesCorrigidas } = fetchData() 
-      const response = await getRedacoes()
+      const { getRedacoesUser, getRedacoesCorrigidas } = fetchData() 
+      const response = await getRedacoesUser()
       setRedacoes(response)
       const responseCorrigidas = await getRedacoesCorrigidas()
       setRedacoesCorrigidas(responseCorrigidas)

@@ -34,7 +34,7 @@ const Pagination = ({
         width_size="50px"
         height_size="50px"
         onClick={previousPage}
-      ><i class="fa-solid fa-arrow-left"></i></Button>
+      ><i className="fa-solid fa-arrow-left"></i></Button>
 
       <span className={styles.currentPage}>{currentPage}</span>
 
@@ -46,7 +46,7 @@ const Pagination = ({
         width_size="50px"
         height_size="50px"
         onClick={nextPage}
-      ><i class="fa-solid fa-arrow-right"></i></Button>
+      ><i className="fa-solid fa-arrow-right"></i></Button>
     </div>
   )
 }
