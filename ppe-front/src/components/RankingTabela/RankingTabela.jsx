@@ -9,14 +9,16 @@ const RankingTabela = ({ ranking }) => {
           <tr>
             <th className={styles.cabecalho}>Posição</th>
             <th className={styles.cabecalho}>Nome</th>
+            <th className={styles.cabecalho}>Turma</th>
             <th className={styles.cabecalho}>Média</th>
           </tr>
         </thead>
         <tbody>
-          {ranking.map((item,index) => (
+          {ranking.slice(3).map((item, index) => (
             <tr key={item.id}>
-              <td className={styles.celula}>{ `${index + 1 } º`}</td>
+              <td className={styles.celula}>{`${index + 4}º`}</td>
               <td className={styles.celula}>{item.nome}</td>
+              <td className={styles.celula}>{item.turma}</td>
               <td className={styles.celula}>{item.media}</td>    
             </tr>
           ))}

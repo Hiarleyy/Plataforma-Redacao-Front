@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 // Página comum
 import Login from "./pages/Common/Login/Login"
+import Configuracoes from "./pages/Common/Configuracoes/Configuracoes"
 
 // Layouts
 import AlunoLayout from "./pages/Aluno/Layout/Layout"
@@ -44,6 +45,7 @@ const router = createBrowserRouter([
       { path: "ranking", element: <RankingAlunos /> },
       { path: "cursos", element: <CursosAluno /> },
       { path: "cursos/:video_id", element: <VideoPage /> },
+      {path: "configuracoes", element:<Configuracoes />},
     ],
   },
 
@@ -63,6 +65,7 @@ const router = createBrowserRouter([
       { path: "cursos/:video_id", element: <VideoPage /> },
       { path: "corrigir-redacoes", element: <CorrigirRedacoes /> },
       { path: "pagamentos", element: <Pagamentos />},
+      { path: "configuracoes", element: <Configuracoes />}
     ],
   },
 ]);

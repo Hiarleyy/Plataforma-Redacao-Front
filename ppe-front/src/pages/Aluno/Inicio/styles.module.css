@@ -26,6 +26,7 @@
   .button{
     color:#1A1A1A;;
     height: 50px;
+    cursor: pointer;
   }
   
   .icon{

@@ -5,12 +5,9 @@
   background-color: #1a1a1a;
 }
 
-.title_wrapper {
-  margin-bottom: 20px;
-}
 
-.center_wrapper {
-  flex: 1;
+.center_wrapper { 
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;

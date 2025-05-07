@@ -1,25 +1,44 @@
 "use client";
 
 import { useState } from 'react';
+import { useEffect } from 'react';
+import useUseful from '../../../utils/useUseful';
 import styles from "./styles.module.css";
 import Title from "../../../components/Title/Title";
+import fetchData from '../../../utils/fetchData';
 import Pagination from '../../../components/Pagination/Pagination';
+import InfoCard from '../../../components/InfoCard/InfoCard';
+import GraficoRedacoes from '../../../components/GraficoRedacoes/GraficoRedacoes';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer } from 'recharts';
 
 const Perfil = () => {
   const [activeTab, setActiveTab] = useState('minhas');
+  const [redacoes, setRedacoes] = useState([]);
+  const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
 
-  // Dados fictícios das últimas redações (id, nota)
-  const data = [
-    { id: 'R1', nota: 780 },
-    { id: 'R2', nota: 810 },
-    { id: 'R3', nota: 890 },
-    { id: 'R4', nota: 700 },
-    { id: 'R5', nota: 850 },
-  ];
+  const { brasilFormatData } = useUseful()
 
-  // Cálculo da média
-  const mediaNotas = data.reduce((acc, item) => acc + item.nota, 0) / data.length;
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
+  
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentRedacoes = redacoes.slice(indexOfFirstItem, indexOfLastItem)
+  const currentRedacoesCorrigidas = redacoesCorrigidas.slice(indexOfFirstItem, indexOfLastItem)
+
+  useEffect(() => {
+    const getData = async () => {
+      const { getRedacoes, getRedacoesCorrigidas } = fetchData() 
+      const response = await getRedacoes()
+      setRedacoes(response)
+      const responseCorrigidas = await getRedacoesCorrigidas()
+      setRedacoesCorrigidas(responseCorrigidas)
+      console.log(response)
+      console.log(responseCorrigidas)
+    }
+  
+    getData()
+  }, [])
 
   return (
     <div className={styles.container}>
@@ -36,26 +55,31 @@ const Perfil = () => {
 
           {/* Métricas */}
           <div className={styles.metrics}>
-            <span className={styles.metrics_status}>Total de redações: <a> 5 </a></span>
-            <span className={styles.metrics_status}>Avaliadas: <a> 5 </a></span>
-            <span className={styles.metrics_status}>Redações Nota 1000: <a> 0 </a></span>
-            <span className={styles.metrics_status}>Média de Notas: <a>{mediaNotas.toFixed(0)}</a></span>
+            <span className={styles.metrics_status}>Total de redações: <a>{redacoes.length}</a></span>
+            <span className={styles.metrics_status}>Avaliadas: <a>{redacoesCorrigidas.length}</a></span>
+            <span className={styles.metrics_status}>Redações Nota 1000: <a>
+              {redacoesCorrigidas.filter(redacao => redacao.correcao?.nota === 1000).length}
+            </a></span>
+            <span className={styles.metrics_status}>Média de Notas: <a>
+              {redacoesCorrigidas.length > 0 
+              ? (redacoesCorrigidas.reduce((acc, redacao) => acc + (redacao.correcao?.nota || 0), 0) / redacoesCorrigidas.length).toFixed(1)
+              : '0'}
+            </a></span>
           </div>
-
-          {/* Gráfico de linha */}
+          
+          {/* Gráfico de notas */}
           <div className={styles.chart_container}>
-            <h4>Notas das Últimas Redações</h4>
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                <XAxis dataKey="id" stroke="#ccc" />
-                <YAxis domain={[600, 1000]} stroke="#ccc" />
-                <Tooltip />
-                <Legend />
-                <ReferenceLine y={mediaNotas} label="Média" stroke="#DA9E00" strokeDasharray="5 5" />
-                <Line type="monotone" dataKey="nota" stroke="#DA9E00" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
+            <GraficoRedacoes
+              data={redacoesCorrigidas.map(redacao => ({
+                data: redacao.data,
+                nota: redacao.correcao?.nota || 0,
+                titulo: redacao.titulo
+              }))}
+              xKey="data"
+              yKey="nota"
+              title="Evolução das Notas"
+              height_size="300px"
+            />
           </div>
         </div>
 
@@ -82,21 +106,53 @@ const Perfil = () => {
                 Redações Avaliadas
               </button>
             </div>
-
             <div className={styles.tab_content}>
               {activeTab === 'minhas' ? (
                 <div className={styles.minhas_redacoes}>
-                  <p>TABELA DE MINHAS REDAÇÕES</p>
+                  <div className={styles.cards_container}>
+                    {currentRedacoes.map((redacoes) => (
+                      <InfoCard 
+                          key={redacoes.id}
+                          title={redacoes.titulo} 
+                          subtitle={brasilFormatData(redacoes.data)}
+                          button={false}
+                      />
+                    ))}
+                  </div>
+                  <div className={styles.pagination_container}>
+                    <Pagination
+                      currentPage={currentPage}
+                      totalItems={redacoes.length}
+                      itemsPerPage={itemsPerPage}
+                      setCurrentPage={setCurrentPage}
+                    />
+                  </div>
                 </div>
               ) : (
                 <div className={styles.redacoes_avaliadas}>
-                  <p>TABELA DE REDAÇÕES AVALIADAS</p>
+                  <div className={styles.cards_container}>
+                    {currentRedacoesCorrigidas.map((redacoesCorrigidas) => (
+                      <InfoCard 
+                          key={redacoesCorrigidas.id}
+                          title={redacoesCorrigidas.titulo} 
+                          subtitle={brasilFormatData(redacoesCorrigidas.data)}
+                          button={false}
+                      />
+                    ))}
+                  </div>
+                  <div className={styles.pagination_container}>
+                    <Pagination
+                      currentPage={currentPage}
+                      totalItems={redacoesCorrigidas.length}
+                      itemsPerPage={itemsPerPage}
+                      setCurrentPage={setCurrentPage}
+                    />
+                  </div>
                 </div>
               )}
             </div>
           </div>
-
-          <Pagination />
+         
         </div>
       </div>
     </div>
