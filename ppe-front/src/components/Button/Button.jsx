@@ -1,7 +1,7 @@
 import styles from "./styles.module.css"
 import Loading from "../../components/Loading/Loading"
 
-const Button = ({ 
+const Button = ({
   children, 
   text_color = "#ffffff", 
   text_size = "16px", 
@@ -14,14 +14,14 @@ const Button = ({
   isLoading
 }) => {
   return (
-    <button className={styles.btn} onClick={onClick} style={{ 
+    <button className={styles.btn} type= "submit"onClick={onClick} style={{ 
       backgroundColor: bg_color, 
       color: text_color,
       fontSize: text_size,
       padding: padding_sz,
       borderRadius: radius,
       width: width_size,
-      height: height_size
+      height: height_size,
     }}>{isLoading ? <Loading size={"20px"} /> : children}</button>
   )
 }
