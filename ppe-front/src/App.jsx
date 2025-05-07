@@ -13,6 +13,7 @@ import Perfil from "./pages/Aluno/Perfil/Perfil"
 import NovaRedacao from "./pages/Aluno/NovaRedacao/NovaRedacao"
 import RankingAlunos from "./pages/Common/Ranking/Ranking"
 import CursosAluno from "./pages/Common/Cursos/Cursos"
+import DesenpenhoAluno from "./pages/Aluno/DesenpenhoAluno/DesenpenhoAluno"
 
 // Admin Pages
 import DashboardAdmin from "./pages/Admin/Dashboard/Dashboard"
@@ -27,6 +28,7 @@ import RankingAdmin from "./pages/Common/Ranking/Ranking"
 import CursosAdmin from "./pages/Common/Cursos/Cursos"
 import CorrigirRedacoes from "./pages/Admin/CorrigirRedacoes/CorrigirRedacoes"
 import Pagamentos from "./pages/Admin/Pagamentos/pagamentos"
+import DesenpenhoAdmin from "./pages/Admin/DesenpenhoAdmin/DesenpenhoAdmin"
 
 const router = createBrowserRouter([
   {
@@ -44,6 +46,7 @@ const router = createBrowserRouter([
       { path: "ranking", element: <RankingAlunos /> },
       { path: "cursos", element: <CursosAluno /> },
       { path: "cursos/:video_id", element: <VideoPage /> },
+      { path: "ControleDesempenho", element:<DesenpenhoAluno />}
     ],
   },
 
@@ -63,6 +66,8 @@ const router = createBrowserRouter([
       { path: "cursos/:video_id", element: <VideoPage /> },
       { path: "corrigir-redacoes", element: <CorrigirRedacoes /> },
       { path: "pagamentos", element: <Pagamentos />},
+      { path: "ControleDesempenhoAdmin", element:<DesenpenhoAdmin />}
+
     ],
   },
 ]);
