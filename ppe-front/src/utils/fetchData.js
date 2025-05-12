@@ -41,10 +41,6 @@ const fetchData = () => {
     return response.data.data
   }
 
-  const getNotasById = async (id) => {
-    const response = await axios.get(`http://localhost:3000/redacoes/${id}`)
-    return response.data.data
-  }
   const getRanking = async () => {
     const response = await axios.get("http://localhost:3000/ranking")
     return response.data.data

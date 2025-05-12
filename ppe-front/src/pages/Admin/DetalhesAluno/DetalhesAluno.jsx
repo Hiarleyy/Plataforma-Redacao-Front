@@ -99,7 +99,7 @@ const DetalhesAluno = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/usuarios", { 
+      const response = await axios.put(`http://localhost:3000/usuarios/${aluno_id}`, { 
         nome,
         email,
         tipoUsuario,
@@ -108,7 +108,7 @@ const DetalhesAluno = () => {
 
       setFormMessage({ 
         type: "success", 
-        text: `Usuário(a) ${response.data.data.nome} criado(a) com sucesso.` 
+        text: `Usuário(a) ${response.data.data.nome} atualizado(a) com sucesso.` 
       })
     } catch (error) {
       setFormMessage({
@@ -135,6 +135,15 @@ const DetalhesAluno = () => {
 
     getData()
   }, [])
+
+  useEffect(() => {
+    if (alunoData) {
+      setNome(alunoData.nome || "")
+      setEmail(alunoData.email || "")
+      setTipoUsuario(alunoData.tipoUsuario || "")
+      setTurma(alunoData.turmaId || "")
+    }
+  }, [alunoData])
 
   return (
     <div className={styles.container}>

@@ -2,12 +2,44 @@ import styles from "./styles.module.css"
 import logo from "../../../images/logo01.png"
 import Input from "../../../components/Input/Input"
 import Button from "../../../components/Button/Button"
-import googleIcone from "../../../images/google_icon.svg"
+import Message from "../../../components/Message/Message"
+import { useNavigate } from "react-router-dom"
 import { useState } from "react"
+import axios from "axios"
 
 const Login = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [formMessage, setFormMessage] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsLoading(true)
+
+    try {
+      const response = await axios.post("http://localhost:3000/usuarios/login", { email, password })
+
+      localStorage.setItem("user_access_data", JSON.stringify({
+        id: response.data.data.id,
+        token: response.data.data.token,
+        role: response.data.data.role
+      }))
+
+      const userRole = response.data.data.role
+      const path = userRole === "ADMIN" ? "/admin" : "/aluno"
+
+      navigate(path)
+    } catch (error) {
+      setFormMessage({ 
+        type: "error", 
+        text: error.response.data.error
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -19,7 +51,7 @@ const Login = () => {
       <div className={styles.bg_right}>
         <p>Acesse sua conta e aproveite nossos serviços</p>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <Input
             type="email"
             placeholder="Seu email"
@@ -40,13 +72,20 @@ const Login = () => {
             <i className="fa-solid fa-lock"></i>
           </Input>
 
-          <Button text_size="20px" text_color="#E0E0E0" padding_sz="12px 20px" bg_color="#DA9E00">Entrar</Button>
+          <Message 
+            text={formMessage ? formMessage.text : ""} 
+            type={formMessage ? formMessage.type : ""} 
+          />
+
+          <Button 
+            text_size="20px" 
+            text_color="#E0E0E0" 
+            padding_sz="12px 20px" 
+            bg_color="#DA9E00"
+            isLoading={isLoading}
+          >Entrar</Button>
 
         </form>
-
-        <button className={styles.sign_with_google}>
-          <img src={googleIcone} alt="google icone" /> <p>Continuar com o Google</p>
-        </button>
 
         <p>Não possui uma conta? <a href="/" className={styles.signup_link}>Clique aqui e Cadastre-se!</a></p>
       </div>
