@@ -23,7 +23,35 @@ import fetchData from "../../../utils/fetchData"
       <Title title="Ranking de Alunos" />
 
       <div className={styles.main_content}>
-        <h2>Ranking dos melhores alunos do curso</h2>
+        <div className={styles.podium}>
+          <div> 
+          </div>
+          <div className={styles.position_container}>
+          <i className="fa-solid fa-crown" style={{ color: '#C0C0C0', fontSize: "30px" }}></i>
+          <h2>2º Lugar</h2>
+          <img className= {styles.img_container} src="https://cdn-icons-png.flaticon.com/512/219/219969.png" />
+          {ranking.length > 0 && <h3>{ranking[1].nome}</h3>}
+          {ranking.length > 0 && <p>{ranking[1].media}</p>}
+          </div>
+          <div className={styles.position_container_first}>
+          <i className="fa-solid fa-crown" style={{ color: '#FFD700', fontSize: "30px" }}></i>
+          <h2>1º Lugar</h2>
+          <img className= {styles.img_container} src="https://cdn-icons-png.flaticon.com/512/219/219969.png" />
+          {ranking.length > 0 && <h3>{ranking[0].nome}</h3>}
+          {ranking.length > 0 && <p>{ranking[0].media}</p>}
+          </div>
+          <div className={styles.position_container}>
+          <i className="fa-solid fa-crown" style={{ color: '#CD7F32', fontSize: "30px"}}></i>
+          <h2>3º Lugar</h2>
+          <img className= {styles.img_container} src="https://cdn-icons-png.flaticon.com/512/219/219969.png" />
+          {ranking.length > 0 && <h3>{ranking[2].nome} </h3>}
+          {ranking.length > 0 && <p>{ranking[2].media} </p>}
+          
+          </div>
+
+
+        </div>
+
        <RankingTabela ranking={ranking && ranking}/>
       </div>
     </div>

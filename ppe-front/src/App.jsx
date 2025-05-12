@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
 
 // Página comum
 import Login from "./pages/Common/Login/Login"
+import Configuracoes from "./pages/Common/Configuracoes/Configuracoes"
 
 // Layouts
 import AlunoLayout from "./pages/Aluno/Layout/Layout"
@@ -13,6 +14,7 @@ import Perfil from "./pages/Aluno/Perfil/Perfil"
 import NovaRedacao from "./pages/Aluno/NovaRedacao/NovaRedacao"
 import RankingAlunos from "./pages/Common/Ranking/Ranking"
 import CursosAluno from "./pages/Common/Cursos/Cursos"
+import DesenpenhoAluno from "./pages/Aluno/DesenpenhoAluno/DesenpenhoAluno"
 
 // Admin Pages
 import DashboardAdmin from "./pages/Admin/Dashboard/Dashboard"
@@ -28,6 +30,7 @@ import CursosAdmin from "./pages/Common/Cursos/Cursos"
 import CorrigirRedacoes from "./pages/Admin/CorrigirRedacoes/CorrigirRedacoes"
 import Pagamentos from "./pages/Admin/Pagamentos/pagamentos"
 import Configuracoes from "./pages/Aluno/Configuracoes/Configuracoes"
+import DesenpenhoAdmin from "./pages/Admin/DesenpenhoAdmin/DesenpenhoAdmin"
 
 const isAuthenticated = () => {
   return localStorage.getItem("user_access_data") !== null
@@ -82,7 +85,8 @@ const router = createBrowserRouter([
       { path: "ranking", element: <RankingAlunos /> },
       { path: "cursos", element: <CursosAluno /> },
       { path: "cursos/:video_id", element: <VideoPage /> },
-      { path: "configuracoes", element: <Configuracoes /> }
+      { path: "configuracoes", element: <Configuracoes /> },
+      { path: "ControleDesempenho", element:<DesenpenhoAluno />},
     ],
   },
 

@@ -15,7 +15,7 @@
   }
 
 .main_content {
-  padding-top: 20px;
+  padding-top: 45px;
   padding-left: 50px;
   padding-right: 50px;
   display: flex;
@@ -97,9 +97,8 @@
 .tab_content {
   background-color: #242424;
   border-radius: 8px;
-  padding: 12px; /* Reduzido de 16px */
-  min-height: 60vh;
-  max-height: 70vh; /* Reduzido de 400px */
+  padding: 12px;
+  height: 100%;
 }
 
 .tab_content p {
@@ -150,13 +149,16 @@
     align-items: center;
     flex-direction: column;
     background-color: #242424;
-    width: 45%; /* Igualado com aba_redacoes */
+    width: 45%;
     min-width: 400px;
-    min-height: 82vh; /* Limitação de altura */
+    min-height: 82vh; 
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    padding-bottom: 20px;
+    overflow-y: auto; /* Add scrolling if content is too tall */
 }
-.metrics{
+
+.metrics {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
@@ -165,6 +167,7 @@
     background-color: #242424;
     border-radius: 20px;
 }
+
 .aba_redacoes {
     background-color: #242424;
     width: 60%;
@@ -175,7 +178,20 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
+.minhas_redacoes {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 
+.pagination{
+  position: absolute;
+  bottom: 20px;
+  left: 0
+
+}
 .metrics_status{
   display: flex;
   flex-direction: row;
@@ -187,23 +203,22 @@
 }
 
 .chart_container {
-  width: 100%;
-  background-color: #242424;
-  border-radius: 10px;
-  padding: 20px;
-  margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    margin: 15px;
+    padding: 15px;
+    background-color: #1A1A1A;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .chart_container h4 {
-  padding: 10px;
   color: #ffffff;
   font-size: 18px;
-  margin-bottom: 15px;
-  font-weight: 600;
   text-align: left;
 }
 
-/* Estilos para melhorar a aparência do gráfico */
 .chart_container :global(.recharts-tooltip-wrapper) {
   background-color: #2a2a2a !important;
   border: 1px solid #444 !important;
@@ -224,4 +239,32 @@
 
 .chart_container :global(.recharts-text) {
   fill: #ccc !important;
+}
+
+.minhas_redacoes, .redacoes_avaliadas {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 400px;
+  position: relative;
+}
+
+.cards_container  {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  margin-bottom: 60px; /* Espaço para a paginação */
+}
+
+.pagination_container {
+  position: absolute;
+  margin-top: 590px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  background-color: #242424; /* Adicionado para combinar com o fundo */
+
 }
