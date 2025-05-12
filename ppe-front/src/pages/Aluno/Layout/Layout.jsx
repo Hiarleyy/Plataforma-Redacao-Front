@@ -8,12 +8,7 @@ const links = [
   { name: "Nova redação", icon: "fa-solid fa-pen", path: "nova-redacao" },
   { name: "Ranking", icon: "fa-solid fa-ranking-star", path: "ranking" },
   { name: "Cursos", icon: "fa-solid fa-tv", path: "cursos" },
-<<<<<<< HEAD
-  { name: "Configurações", icon: "fa-solid fa-gear", path: "configuracoes" }
-=======
-  { name: "Configuracoes", icon: "fa-solid fa-gear", path: "configuracoes" },
-  { name: "Controle de Desempenho", icon: "fa-solid fa-bullseye", path: "ControleDesempenho" }
->>>>>>> 5d0a055c0219bb31e15011e76c6f91fc19d8fbfe
+  { name: "Configurações", icon: "fa-solid fa-gear", path: "configuracoes" },
 ]
 
 const AlunoLayout = () => {

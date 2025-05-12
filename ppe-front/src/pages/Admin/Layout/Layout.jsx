@@ -12,12 +12,8 @@ const links = [
   { name: "Gerenciar cursos", icon: "fa-solid fa-tv", path: "gerenciar-cursos" },
   { name: "Ranking", icon: "fa-solid fa-ranking-star", path: "ranking" },
   { name: "Cursos", icon: "fa-solid fa-tv", path: "cursos" },
-<<<<<<< HEAD
-  { name: "Configurações", icon: "fa-solid fa-gear", path: "configuracoes" }
-=======
-  { name: "Configuracoes", icon: "fa-solid fa-gear", path: "configuracoes" },
+  { name: "Configurações", icon: "fa-solid fa-gear", path: "configuracoes" },
   { name: "Controle de Desempenho", icon: "fa-solid fa-bullseye", path: "ControleDesempenhoAdmin" },
->>>>>>> 5d0a055c0219bb31e15011e76c6f91fc19d8fbfe
 ]
 
 const AdminLayout = () => {

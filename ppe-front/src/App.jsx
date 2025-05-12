@@ -29,7 +29,6 @@ import RankingAdmin from "./pages/Common/Ranking/Ranking"
 import CursosAdmin from "./pages/Common/Cursos/Cursos"
 import CorrigirRedacoes from "./pages/Admin/CorrigirRedacoes/CorrigirRedacoes"
 import Pagamentos from "./pages/Admin/Pagamentos/pagamentos"
-import Configuracoes from "./pages/Aluno/Configuracoes/Configuracoes"
 import DesenpenhoAdmin from "./pages/Admin/DesenpenhoAdmin/DesenpenhoAdmin"
 
 const isAuthenticated = () => {
