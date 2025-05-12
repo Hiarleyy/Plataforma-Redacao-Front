@@ -47,8 +47,8 @@ const router = createBrowserRouter([
       { path: "ranking", element: <RankingAlunos /> },
       { path: "cursos", element: <CursosAluno /> },
       { path: "cursos/:video_id", element: <VideoPage /> },
-      { path: "ControleDesempenho", element:<DesenpenhoAluno />}
-      {path: "configuracoes", element:<Configuracoes />},
+      { path: "ControleDesempenho", element:<DesenpenhoAluno />},
+      {path: "configuracoes", element:<Configuracoes />}
     ],
   },
 
