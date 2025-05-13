@@ -99,3 +99,10 @@
   margin-top: 60px;
   justify-content: center;
 }
+
+.redacao_container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

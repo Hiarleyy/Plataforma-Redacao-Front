@@ -68,6 +68,7 @@ const router = createBrowserRouter([
       { path: "cursos/:video_id", element: <VideoPage /> },
       { path: "corrigir-redacoes", element: <CorrigirRedacoes /> },
       { path: "pagamentos", element: <Pagamentos />},
+      {path: "configuracoes", element:<Configuracoes />}
     ],
   },
 ]);

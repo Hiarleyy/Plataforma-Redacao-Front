@@ -77,6 +77,7 @@ const Perfil = () => {
               }))}
               xKey="data"
               yKey="nota"
+              
               title="Evolução das Notas"
               height_size="300px"
             />
@@ -116,6 +117,8 @@ const Perfil = () => {
                           title={redacoes.titulo} 
                           subtitle={brasilFormatData(redacoes.data)}
                           button={false}
+                          img="https://static.vecteezy.com/system/resources/previews/028/049/250/non_2x/terms-icon-design-vector.jpg"
+                    
                       />
                     ))}
                   </div>
@@ -137,6 +140,8 @@ const Perfil = () => {
                           title={redacoesCorrigidas.titulo} 
                           subtitle={brasilFormatData(redacoesCorrigidas.data)}
                           button={false}
+                          img="https://static.vecteezy.com/system/resources/previews/028/049/250/non_2x/terms-icon-design-vector.jpg"
+                    
                       />
                     ))}
                   </div>

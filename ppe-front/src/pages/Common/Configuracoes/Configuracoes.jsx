@@ -19,6 +19,11 @@ const Configuracoes = () => {
     confirmPassword: ""
   });
   const [previewImage, setPreviewImage] = useState(null);
+  const [passwordVisibility, setPasswordVisibility] = useState({
+    currentPassword: false,
+    newPassword: false,
+    confirmPassword: false
+  });
 
   useEffect(() => {
     // Fetch user data when component mounts
@@ -134,6 +139,13 @@ const Configuracoes = () => {
     }
   };
 
+  const togglePasswordVisibility = (field) => {
+    setPasswordVisibility(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }));
+  };
+
   return (
     <div className={styles.container}>
       <Title title={"Configurações"} />
@@ -172,39 +184,56 @@ const Configuracoes = () => {
               
               <div className={styles.form_group}>
                 <label>Senha Atual</label>
-                <Input 
-                  type="password" 
+                <Input  
                   placeholder="Sua senha atual" 
-                  value={passwords.currentPassword}
                   name="currentPassword"
                   onChange={handlePasswordChange}
                   color="#1A1A1A"
-                ><i class="fa-solid fa-user"></i></Input>
+                  type={passwordVisibility.currentPassword ? "text" : "password"}
+                >
+                  <i 
+                    className={`fa-solid ${passwordVisibility.currentPassword ? "fa-eye-slash" : "fa-eye"}`} 
+                    style={{ cursor: "pointer" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      togglePasswordVisibility("currentPassword");
+                    }}
+                  ></i>
+                </Input>
               </div>
               
               <div className={styles.form_group}>
                 <label>Nova Senha</label>
                 <Input 
-                  type="password" 
                   placeholder="Nova senha" 
-                  value={passwords.newPassword}
                   name="newPassword"
                   color="#1A1A1A"
                   onChange={handlePasswordChange}
-
-                ><i class="fa-solid fa-key"></i></Input>
+                  type={passwordVisibility.newPassword ? "text" : "password"}
+                >
+                  <i 
+                    className={`fa-solid ${passwordVisibility.newPassword ? "fa-eye-slash" : "fa-eye"}`} 
+                    style={{ cursor: "pointer" }}
+                    onClick={() => togglePasswordVisibility("newPassword")}
+                  ></i>
+                </Input>
               </div>
               
               <div className={styles.form_group}>
                 <label>Confirmar Nova Senha</label>
                 <Input 
-                  type="password" 
                   placeholder="Confirmar nova senha" 
-                  value={passwords.confirmPassword}
                   name="confirmPassword"
                   onChange={handlePasswordChange}
                   color="#1A1A1A"
-                ><i class="fa-solid fa-key"></i></Input>
+                  type={passwordVisibility.confirmPassword ? "text" : "password"}
+                >
+                  <i 
+                    className={`fa-solid ${passwordVisibility.confirmPassword ? "fa-eye-slash" : "fa-eye"}`} 
+                    style={{ cursor: "pointer" }}
+                    onClick={() => togglePasswordVisibility("confirmPassword")}
+                  ></i>
+                </Input>
               </div>
               
               <div className={styles.button_container}>
