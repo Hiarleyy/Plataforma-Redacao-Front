@@ -8,8 +8,7 @@ const links = [
   { name: "Nova redação", icon: "fa-solid fa-pen", path: "nova-redacao" },
   { name: "Ranking", icon: "fa-solid fa-ranking-star", path: "ranking" },
   { name: "Cursos", icon: "fa-solid fa-tv", path: "cursos" },
-  { name: "Configuracoes", icon: "fa-solid fa-gear", path: "configuracoes" },
-  { name: "Controle de Desempenho", icon: "fa-solid fa-bullseye", path: "ControleDesempenho" }
+  { name: "Configurações", icon: "fa-solid fa-gear", path: "configuracoes" },
 ]
 
 const AlunoLayout = () => {

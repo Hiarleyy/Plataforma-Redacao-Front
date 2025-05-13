@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
 
 // Página comum
 import Login from "./pages/Common/Login/Login"
@@ -31,15 +31,52 @@ import CorrigirRedacoes from "./pages/Admin/CorrigirRedacoes/CorrigirRedacoes"
 import Pagamentos from "./pages/Admin/Pagamentos/pagamentos"
 import DesenpenhoAdmin from "./pages/Admin/DesenpenhoAdmin/DesenpenhoAdmin"
 
+const isAuthenticated = () => {
+  return localStorage.getItem("user_access_data") !== null
+}
+
+const getUserRole = () => {
+  const data = localStorage.getItem("user_access_data")
+  if (!data) return null
+
+  try {
+    const { role } = JSON.parse(data)
+    return role
+  } catch (error) {
+    console.error("Erro ao fazer parse de user_access_data:", error)
+    return null
+  }
+}
+
+const definePath = () => {
+  const role = getUserRole()?.toUpperCase()
+
+  if (role === "ADMIN") {
+    return "/admin"
+  } else if (role === "STANDARD") {
+    return "/aluno"
+  } else {
+    return "/"
+  }
+}
+
+const ProtectedHomeRoutes = ({ element }) => {
+  return isAuthenticated() ? element : <Navigate to="/" replace />
+}
+
+const ProtectedLoginRoute = ({ element }) => {
+  return isAuthenticated() ? <Navigate to={definePath()} replace /> : element
+}
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login />,
+    element: <ProtectedLoginRoute element={<Login />} />,
   },
 
   {
     path: "/aluno",
-    element: <AlunoLayout />,
+    element: <ProtectedHomeRoutes element={<AlunoLayout />} />,
     children: [
       { index: true, element: <AlunoInicio /> },
       { path: "perfil", element: <Perfil /> },
@@ -47,14 +84,14 @@ const router = createBrowserRouter([
       { path: "ranking", element: <RankingAlunos /> },
       { path: "cursos", element: <CursosAluno /> },
       { path: "cursos/:video_id", element: <VideoPage /> },
+      { path: "configuracoes", element: <Configuracoes /> },
       { path: "ControleDesempenho", element:<DesenpenhoAluno />},
-      {path: "configuracoes", element:<Configuracoes />}
     ],
   },
 
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: <ProtectedHomeRoutes element={<AdminLayout />} />,
     children: [
       { index: true, element: <DashboardAdmin /> },
       { path: "nova-proposta", element: <NovaProposta /> },
@@ -68,6 +105,7 @@ const router = createBrowserRouter([
       { path: "cursos/:video_id", element: <VideoPage /> },
       { path: "corrigir-redacoes", element: <CorrigirRedacoes /> },
       { path: "pagamentos", element: <Pagamentos />},
+      { path: "configuracoes", element: <Configuracoes /> }
       {path: "configuracoes", element:<Configuracoes />}
     ],
   },
