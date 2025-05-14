@@ -106,7 +106,6 @@ const router = createBrowserRouter([
       { path: "corrigir-redacoes", element: <CorrigirRedacoes /> },
       { path: "pagamentos", element: <Pagamentos />},
       { path: "configuracoes", element: <Configuracoes /> }
-      {path: "configuracoes", element:<Configuracoes />}
     ],
   },
 ]);
