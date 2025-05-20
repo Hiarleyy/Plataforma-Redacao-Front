@@ -10,27 +10,72 @@ import fetchData from "../../../utils/fetchData";
 
 const Inicio = () => {
   const [redacoes, setRedacoes] = useState([]);
+  const [usuario, setUsuario] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
+
+
+const getAlunoId = () => {
+    const aluno = localStorage.getItem('user_access_data')
+    const {id} = JSON.parse(aluno)
+    return id 
+}
+
+const handleDownloadProposta = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/propostas/download/3d0803ec-63cf-409c-97d0-27fa5177fa8b', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/pdf',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Falha no download');
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'proposta-da-semana.pdf');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url); 
+  } catch (error) {
+    console.error("Erro ao baixar proposta:", error);
+    alert("Houve um erro ao baixar a proposta. Por favor, tente novamente mais tarde.");
+  }
+};
+
+
 
   useEffect(() => {
     const getData = async () => {
-      const { getRedacoes, getRedacoesCorrigidas } = fetchData() 
+      const { getRedacoes, getRedacoesCorrigidas} = fetchData() 
       const response = await getRedacoes()
       setRedacoes(response)
       const responseCorrigidas = await getRedacoesCorrigidas()
       setRedacoesCorrigidas(responseCorrigidas)
-      console.log(response)
-      console.log(responseCorrigidas)
     }
     getData()
   },[])
+
+    useEffect(()=>{
+      const getData = async () => {
+        const {getAlunoById} = fetchData()
+        const response = await getAlunoById(getAlunoId())
+        setUsuario(response)  
+      }
+      getData()
+    },[])
 
   return (
     <div className={styles.container}>
       <Title title="Início" />
         <div className={styles.main_content}>
             <Card 
-          title="Bem-Vindo a Plataforma Redação Elite!" 
+          title={`Olá, ${usuario.nome} !`} 
           content="Aprimore suas habilidades de redação com feedback personalizado" 
           variant="default"
           actions={
@@ -53,8 +98,6 @@ const Inicio = () => {
             </>
           }
             />
-
-
              {/*STATUS DAS REDACOES*/}
         <div className={styles.status_container}>
           
@@ -110,6 +153,7 @@ const Inicio = () => {
               text_size="20px"
               text_color="#DA9E00"
               padding_sz="10px"
+              onClick={handleDownloadProposta}
               >
                 Baixar detalhes da Proposta
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

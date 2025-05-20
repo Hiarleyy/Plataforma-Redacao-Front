@@ -54,15 +54,20 @@ const fetchData = () => {
     return response.data.data
   }
 
-  const getRedacoesUser = async () => {
-    const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=1921a46c-2a02-45da-bb04-b93a60622746`)
+  const getRedacoesUser = async (id) => {
+    const response = await axios.get(`http://localhost:3000/redacoes${id}`)
     return response.data.data
   }
 
   
-  const getRedacoesCorrigidas = async () => {
-    const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=1921a46c-2a02-45da-bb04-b93a60622746&corrigidas=true`)
+  const getRedacoesCorrigidas = async (id) => {
+    const response = await axios.get(`http://localhost:3000/redacoes${id}&corrigidas=true`)
     return response.data.data
+  }
+
+  const downloadProposta = async () => {
+    const response = await axios.get("http://localhost:3000/propostas/download/3d0803ec-63cf-409c-97d0-27fa5177fa8b")
+    return response.data
   }
 
   return { 
@@ -75,7 +80,9 @@ const fetchData = () => {
     getVideoById,
     getRanking,
     getRedacoes,
+    getPropostas,
     getRedacoesCorrigidas,
+    downloadProposta,
     getRedacoesUser
   }
 }

@@ -1,264 +1,312 @@
-import styles from "./styles.module.css"
-import Title from "../../../components/Title/Title"
-import Input from "../../../components/Input/Input"
-import Button from "../../../components/Button/Button"
-import { useEffect, useState } from "react"
-import fetchData from "../../../utils/fetchData"
+import { useState, useEffect } from "react";
+import fetchData from "../../../utils/fetchData";
+import styles from "./styles.module.css";
+import Title from "../../../components/Title/Title";
+import Input from "../../../components/Input/Input";
+import Button from "../../../components/Button/Button";
+import defaultProfilePicture from "../../../images/Defalult_profile_picture.jpg";
 
-const Configuracoes = () => {
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    profilePicture: null
+function configuracoes() {
+  const [usuario, setUsuario] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+  const [senhaAtual, setSenhaAtual] = useState("");
+  const [novaSenha, setNovaSenha] = useState("");
+  const [showPassword, setShowPassword] = useState({
+    atual: false,
+    nova: false,
   });
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" });
-  const [passwords, setPasswords] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: ""
-  });
-  const [previewImage, setPreviewImage] = useState(null);
-  const [passwordVisibility, setPasswordVisibility] = useState({
-    currentPassword: false,
-    newPassword: false,
-    confirmPassword: false
-  });
+
+  const getAlunoId = () => {
+    const aluno = localStorage.getItem("user_access_data");
+    const { id } = JSON.parse(aluno);
+    return id;
+  };
 
   useEffect(() => {
-    // Fetch user data when component mounts
-    const getUserData = async () => {
+    const getData = async () => {
       try {
-        setLoading(true);
-        const response = await fetchData("user/profile", "GET");
-        if (response.success) {
-          setUser({
-            name: response.data.name || "",
-            email: response.data.email || "",
-            profilePicture: response.data.profilePicture || null
-          });
-          if (response.data.profilePicture) {
-            setPreviewImage(response.data.profilePicture);
-          }
+        const { getAlunoById } = fetchData();
+        const response = await getAlunoById(getAlunoId());
+        setUsuario(response);
+
+        if (response.caminho) {
+          // Set the initial profile image URL
+          setProfileImageUrl(
+            `http://localhost:3000/usuarios/${
+              response.id
+            }/profile-image?timestamp=${new Date().getTime()}`
+          );
         }
-      } catch (error) {
-        console.error("Erro ao carregar dados do usuário:", error);
-        setMessage({ type: "error", text: "Erro ao carregar dados do usuário" });
-      } finally {
-        setLoading(false);
+      } catch (err) {
+        setError("Erro ao buscar dados do usuário");
+        console.error(err);
+        alert("Erro ao buscar dados do usuário");
       }
     };
+    getData();
+  }, [refresh]);
 
-    getUserData();
-  }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUser(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswords(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+  const handleImageChange = (event) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      // Mostrar preview da imagem
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewImage(reader.result);
+        setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
-      setUser(prev => ({ ...prev, profilePicture: file }));
     }
   };
 
-  const updateProfile = async () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const fileInput = event.target.elements.profileImage;
+    if (!fileInput.files || !fileInput.files[0]) {
+      setError("Por favor, selecione uma imagem");
+      alert("Por favor, selecione uma imagem");
+      return;
+    }
+
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setIsLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
-      setMessage({ type: "", text: "" });
-
-      const formData = new FormData();
-      formData.append("name", user.name);
-      if (user.profilePicture && user.profilePicture instanceof File) {
-        formData.append("profilePicture", user.profilePicture);
+      if (!usuario || !usuario.id) {
+        throw new Error("Dados do usuário não disponíveis");
       }
 
-      const response = await fetchData("user/update-profile", "PUT", formData, true);
-      
-      if (response.success) {
-        setMessage({ type: "success", text: "Perfil atualizado com sucesso!" });
-      } else {
-        setMessage({ type: "error", text: response.message || "Erro ao atualizar perfil" });
+      const response = await fetch(
+        `http://localhost:3000/usuarios/${usuario.id}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erro ao fazer upload da imagem");
       }
+
+      alert("Imagem de perfil atualizada com sucesso!");
+
+      // Atualiza a URL da imagem de perfil
+      const newProfileImageUrl = `http://localhost:3000/usuarios/${
+        usuario.id
+      }/profile-image?timestamp=${new Date().getTime()}`;
+      setProfileImageUrl(newProfileImageUrl);
+      setImagePreview(null); //Limpa a pré-visualização
+      setRefresh(!refresh); // Trigger a refresh
+
+      // Reset the file input
+      event.target.reset();
     } catch (error) {
-      console.error("Erro ao atualizar perfil:", error);
-      setMessage({ type: "error", text: "Erro ao atualizar perfil" });
+      setError(error.message);
+      alert(`Erro: ${error.message}`);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const updatePassword = async () => {
-    // Validate passwords
-    if (passwords.newPassword !== passwords.confirmPassword) {
-      setMessage({ type: "error", text: "As senhas não coincidem" });
+  const handlePasswordSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!senhaAtual || !novaSenha) {
+      setError("Por favor, preencha todos os campos de senha");
       return;
     }
 
-    if (passwords.newPassword.length < 6) {
-      setMessage({ type: "error", text: "A nova senha deve ter pelo menos 6 caracteres" });
-      return;
-    }
+    setIsLoading(true);
+    setError(null);
 
     try {
-      setLoading(true);
-      setMessage({ type: "", text: "" });
-
-      const response = await fetchData("user/change-password", "PUT", {
-        currentPassword: passwords.currentPassword,
-        newPassword: passwords.newPassword
-      });
-
-      if (response.success) {
-        setMessage({ type: "success", text: "Senha atualizada com sucesso!" });
-        setPasswords({
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: ""
-        });
-      } else {
-        setMessage({ type: "error", text: response.message || "Erro ao atualizar senha" });
-      }
+      // implementar a logica de alteração de senha AQUI
+      // Simulando resposta bem-sucedida por enquanto
+      alert("Senha alterada com sucesso!");
+      setSenhaAtual("");
+      setNovaSenha("");
     } catch (error) {
-      console.error("Erro ao atualizar senha:", error);
-      setMessage({ type: "error", text: "Erro ao atualizar senha" });
+      setError("Erro ao alterar senha: " + error.message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   const togglePasswordVisibility = (field) => {
-    setPasswordVisibility(prev => ({
+    setShowPassword((prev) => ({
       ...prev,
-      [field]: !prev[field]
+      [field]: !prev[field],
     }));
   };
 
   return (
     <div className={styles.container}>
-      <Title title={"Configurações"} />
+      <Title title="Configurações" />
       <div className={styles.main_content}>
-        <div className={styles.config_container}>
-          <div className={styles.sections_wrapper}>
-            <div className={styles.section}>
-              <h2>Informações de Perfil</h2>
-              <div className={styles.profile_picture_container}>
-                <div className={styles.profile_picture}>
-                  {previewImage ? 
-                    <img src={previewImage} alt="Foto de perfil" /> : 
-                    <div className={styles.profile_placeholder}>
-                        <img src="https://github.com/hiarleyy.png" alt="" />
-                    </div>
-                  }
-                </div>
-                <div className={styles.upload_container}>
-                  <label htmlFor="profile-picture" className={styles.upload_btn}>
-                    Alterar foto de perfil
-                  </label>
-                  <input 
-                    type="file" 
-                    id="profile-picture" 
-                    accept="image/*" 
-                    onChange={handleFileChange} 
-                    style={{ display: 'none' }}
-                  />
-                  <span className={styles.file_info}>Formatos aceitos: JPG, PNG. Tamanho máximo: 5MB</span>
-                </div>
-              </div>
+        <div className={styles.config_section}>
+          <h3>Atualizar Imagem de Perfil</h3>
+
+          <div className={styles.profile_image_container}>
+            <div className={styles.current_image_container}>
+              <img
+                src={
+                  profileImageUrl ||
+                  (usuario.caminho
+                    ? `http://localhost:3000/usuarios/${usuario.id}/profile-image`
+                    : defaultProfilePicture)
+                }
+                alt="Foto de perfil"
+                className={styles.profile_image}
+              />
+              <p>Imagem atual</p>
             </div>
-            
-            <div className={styles.section}>
-              <h2>Alterar Senha</h2>
-              
-              <div className={styles.form_group}>
-                <label>Senha Atual</label>
-                <Input  
-                  placeholder="Sua senha atual" 
-                  name="currentPassword"
-                  onChange={handlePasswordChange}
-                  color="#1A1A1A"
-                  type={passwordVisibility.currentPassword ? "text" : "password"}
-                >
-                  <i 
-                    className={`fa-solid ${passwordVisibility.currentPassword ? "fa-eye-slash" : "fa-eye"}`} 
-                    style={{ cursor: "pointer" }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      togglePasswordVisibility("currentPassword");
-                    }}
-                  ></i>
-                </Input>
-              </div>
-              
-              <div className={styles.form_group}>
-                <label>Nova Senha</label>
-                <Input 
-                  placeholder="Nova senha" 
-                  name="newPassword"
-                  color="#1A1A1A"
-                  onChange={handlePasswordChange}
-                  type={passwordVisibility.newPassword ? "text" : "password"}
-                >
-                  <i 
-                    className={`fa-solid ${passwordVisibility.newPassword ? "fa-eye-slash" : "fa-eye"}`} 
-                    style={{ cursor: "pointer" }}
-                    onClick={() => togglePasswordVisibility("newPassword")}
-                  ></i>
-                </Input>
-              </div>
-              
-              <div className={styles.form_group}>
-                <label>Confirmar Nova Senha</label>
-                <Input 
-                  placeholder="Confirmar nova senha" 
-                  name="confirmPassword"
-                  onChange={handlePasswordChange}
-                  color="#1A1A1A"
-                  type={passwordVisibility.confirmPassword ? "text" : "password"}
-                >
-                  <i 
-                    className={`fa-solid ${passwordVisibility.confirmPassword ? "fa-eye-slash" : "fa-eye"}`} 
-                    style={{ cursor: "pointer" }}
-                    onClick={() => togglePasswordVisibility("confirmPassword")}
-                  ></i>
-                </Input>
-              </div>
-              
-              <div className={styles.button_container}>
-                <Button 
-                  onClick={updatePassword} 
-                  isLoading={loading} 
-                  bg_color="#DA9E00"
-                  padding_sz="10px"
-                  width_size="200px"
-                >
-                  Atualizar Senha
-                </Button>
-              </div>
+
+            {/* Container para visualização da pré-visualização */}
+            <div className={styles.image_preview_container}>
+              {imagePreview ? (
+                <>
+                  <div className={styles.imagePreview}>
+                    <img
+                      src={imagePreview}
+                      alt="Pré-visualização"
+                      className={styles.preview_image}
+                    />
+                  </div>
+                  <p>Nova imagem</p>
+                </>
+              ) : (
+                <div className={styles.no_preview}>
+                  <p>Selecione uma nova imagem</p>
+                </div>
+              )}
             </div>
           </div>
-          
-          {message.text && (
-            <div className={`${styles.message} ${styles[message.type]}`}>
-              {message.text}
-            </div>
-          )}
+
+          {/* Formulário para upload de imagem */}
+          <div className={styles.image_upload_form_container}>
+            <form onSubmit={handleSubmit} className={styles.image_upload_form}>
+              <div className={styles.file_input_container}>
+                <label
+                  htmlFor="profileImage"
+                  className={styles.file_input_label}
+                >
+                  Escolha uma imagem
+                </label>
+                <input
+                  type="file"
+                  id="profileImage"
+                  name="profileImage"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className={styles.file_input}
+                />
+              </div>
+
+              <div className={styles.button_container}>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={styles.submit_button}
+                >
+                  {isLoading ? "Enviando..." : "Enviar"}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Exibir mensagem de erro, se houver */}
+          {error && <div className={styles.error_message}>{error}</div>}
+
+          {/* Seção de alteração de senha */}
+          <div className={styles.password_section}>
+            <h3>Definir Nova Senha</h3>
+
+            <form
+              onSubmit={handlePasswordSubmit}
+              className={styles.password_form}
+            >
+              <div className={styles.form_group}>
+                <p>Digite a Senha Atual</p>
+                <Input
+                  type={showPassword.atual ? "text" : "password"}
+                  placeholder="Senha atual"
+                  value={senhaAtual}
+                  onChange={(e) => setSenhaAtual(e.target.value)}
+                  color="#1A1A1A"
+                >
+                  <i
+                    className={`fa-solid ${
+                      showPassword.atual ? "fa-eye-slash" : "fa-eye"
+                    }`}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => togglePasswordVisibility("atual")}
+                  ></i>
+                </Input>
+              </div>
+
+              <div className={styles.form_group}>
+                <p>Digite a Nova Senha</p>
+                <Input
+                  type={showPassword.nova ? "text" : "password"}
+                  placeholder="Nova senha"
+                  value={novaSenha}
+                  onChange={(e) => setNovaSenha(e.target.value)}
+                  color="#1A1A1A"
+                >
+                  <i
+                    className={`fa-solid ${
+                      showPassword.nova ? "fa-eye-slash" : "fa-eye"
+                    }`}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => togglePasswordVisibility("nova")}
+                  ></i>
+                </Input>
+              </div>
+
+              <div className={styles.form_group}>
+                <p>Confirme a Nova Senha</p>
+                <Input
+                  type={showPassword.nova ? "text" : "password"}
+                  placeholder="Nova senha"
+                  value={novaSenha}
+                  onChange={(e) => setNovaSenha(e.target.value)}
+                  color="#1A1A1A"
+                >
+                  <i
+                    className={`fa-solid ${
+                      showPassword.nova ? "fa-eye-slash" : "fa-eye"
+                    }`}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => togglePasswordVisibility("nova")}
+                  ></i>
+                </Input>
+              </div>
+
+              <div className={styles.button_container_password}>
+                <Button
+                  text_size="14px"
+                  text_color="#E0E0E0"
+                  padding_sz="10px 20px"
+                  bg_color="#DA9E00"
+                  isLoading={isLoading}
+                >
+                  Alterar Senha
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Configuracoes
+export default configuracoes;

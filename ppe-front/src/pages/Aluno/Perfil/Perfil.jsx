@@ -9,9 +9,10 @@ import fetchData from '../../../utils/fetchData';
 import Pagination from '../../../components/Pagination/Pagination';
 import InfoCard from '../../../components/InfoCard/InfoCard';
 import GraficoRedacoes from '../../../components/GraficoRedacoes/GraficoRedacoes';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer } from 'recharts';
+import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg';
 
 const Perfil = () => {
+  const [usuario, setUsuario] = useState([]);
   const [activeTab, setActiveTab] = useState('minhas');
   const [redacoes, setRedacoes] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
@@ -26,19 +27,37 @@ const Perfil = () => {
   const currentRedacoes = redacoes.slice(indexOfFirstItem, indexOfLastItem)
   const currentRedacoesCorrigidas = redacoesCorrigidas.slice(indexOfFirstItem, indexOfLastItem)
 
+  const getAlunoId = () => {
+      const aluno = localStorage.getItem('user_access_data')
+      const {id} = JSON.parse(aluno)
+      return id
+  }
+
+
   useEffect(() => {
     const getData = async () => {
-      const { getRedacoesUser, getRedacoesCorrigidas } = fetchData() 
+      const { getRedacoesUser, getRedacoesCorrigidas,getAlunoById } = fetchData() 
       const response = await getRedacoesUser()
+
+      const responseAluno = await getAlunoById(getAlunoId())
       setRedacoes(response)
       const responseCorrigidas = await getRedacoesCorrigidas()
       setRedacoesCorrigidas(responseCorrigidas)
-      console.log(response)
-      console.log(responseCorrigidas)
+      setUsuario(responseAluno)
+      console.log(responseAluno)
     }
   
     getData()
   }, [])
+
+  useEffect(() => {
+    const getData  = async () => {
+    const {getAlunoById} = fetchData()
+    const response = await getAlunoById(getAlunoId())
+    setUsuario(response)
+    }
+    getData()
+  },[])
 
   return (
     <div className={styles.container}>
@@ -47,8 +66,9 @@ const Perfil = () => {
         <div className={styles.perfil}>
           <div>
             <div className={styles.header_container}>
-              <img className={styles.img_container} src="https://github.com/hiarleyy.png" alt="" />
-              <h3>Fulano da silva teste</h3>
+              <img className={styles.img_container} 
+              src={usuario.caminho ? `http://localhost:3000/usuarios/${usuario.id}/profile-image` : defaultProfilePicture} alt="" />
+              <h3>{usuario.nome && usuario.nome}</h3>
               <p>Entrou em 24/04/2025</p>
             </div>
           </div>
