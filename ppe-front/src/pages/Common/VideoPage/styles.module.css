@@ -60,6 +60,7 @@
   min-height: 100%;
   background-color: #242424;
   border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .main_content .bg_right .title {
@@ -94,6 +95,9 @@
 }
 
 .main_content .bg_right .aulas .aula_card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   background-color: #1A1A1A;
   padding: 15px;
   border-radius: 8px;
@@ -103,7 +107,13 @@
 }
 
 .main_content .bg_right .aulas .aula_card:hover {
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  background-color: #262626;
+}
+
+.main_content .bg_right .aulas .aula_card i {
+  color: #E0E0E0;
+  margin-top: 1px;
 }
 
 .main_content .bg_right .aulas .aula_card p {
