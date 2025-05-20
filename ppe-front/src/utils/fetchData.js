@@ -45,10 +45,12 @@ const fetchData = () => {
     const response = await axios.get("http://localhost:3000/ranking")
     return response.data.data
   }
+  
   const getPropostas = async() =>{
     const response = await axios.get ("http://localhost:3000/propostas")
     return response.data.data
   }
+
   const getRedacoes = async () => {
     const response = await axios.get("http://localhost:3000/redacoes")
     return response.data.data
