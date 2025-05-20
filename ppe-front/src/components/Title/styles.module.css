@@ -7,13 +7,37 @@
 .title_container {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   max-width: 1500px;
   height: 100%;
   margin: 0 auto;
 }
 
-.title p {
+.title .title_container .text {
   font-size: 20px;
+  color: #E0E0E0;
   letter-spacing: 0.5px;
   margin-left: 50px;
+}
+
+.title .title_container .logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  margin-right: 50px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.title .title_container .logout:hover {
+  filter: opacity(50%);
+}
+
+.title .title_container .logout .logout_text {
+  color: #E0E0E0;
 }

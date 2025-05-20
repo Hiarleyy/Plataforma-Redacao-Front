@@ -51,8 +51,18 @@ const fetchData = () => {
     return response.data.data
   }
 
-  const getRedacoes = async () => {
+  const getRedacoes = async (corrigidas = false) => {
+    if (corrigidas) {
+      const response = await axios.get("http://localhost:3000/redacoes?corrigidas=true")
+      return response.data.data
+    }
+
     const response = await axios.get("http://localhost:3000/redacoes")
+    return response.data.data
+  }
+
+  const getRedacaoById = async (id) => {
+    const response = await axios.get(`http://localhost:3000/redacoes/${id}`)
     return response.data.data
   }
 
@@ -60,7 +70,6 @@ const fetchData = () => {
     const response = await axios.get(`http://localhost:3000/redacoes${id}`)
     return response.data.data
   }
-
   
   const getRedacoesCorrigidas = async (id) => {
     const response = await axios.get(`http://localhost:3000/redacoes${id}&corrigidas=true`)
@@ -85,7 +94,8 @@ const fetchData = () => {
     getPropostas,
     getRedacoesCorrigidas,
     downloadProposta,
-    getRedacoesUser
+    getRedacoesUser,
+    getRedacaoById
   }
 }
 

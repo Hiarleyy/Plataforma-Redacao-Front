@@ -26,6 +26,7 @@ import GerenciarAlunos from "./pages/Admin/GerenciarAlunos/GerenciarAlunos"
 import DetalhesAluno from "./pages/Admin/DetalhesAluno/DetalhesAluno"
 import GerenciarCursos from "./pages/Admin/GerenciarCursos/GerenciarCursos"
 import Correcao from "./pages/Admin/Correcao/Correcao"
+import CorrigirRedacao from "./pages/Admin/CorrigirRedacao/CorrigirRedacao"
 import Pagamentos from "./pages/Admin/Pagamentos/pagamentos"
 import DesenpenhoAdmin from "./pages/Admin/DesenpenhoAdmin/DesenpenhoAdmin"
 
@@ -102,6 +103,7 @@ const router = createBrowserRouter([
       { path: "cursos", element: <Cursos /> },
       { path: "cursos/:video_id", element: <VideoPage /> },
       { path: "correcao", element: <Correcao /> },
+      { path: "correcao/:redacao_id", element: <CorrigirRedacao /> },
       { path: "pagamentos", element: <Pagamentos />},
       {path: "configuracoes", element:<Configuracoes />}
     ],
