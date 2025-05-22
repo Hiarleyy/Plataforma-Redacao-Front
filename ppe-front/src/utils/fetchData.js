@@ -55,21 +55,24 @@ const fetchData = () => {
     const response = await axios.get("http://localhost:3000/redacoes")
     return response.data.data
   }
-
   const getRedacoesUser = async (id) => {
-    const response = await axios.get(`http://localhost:3000/redacoes${id}`)
+    if (id) {
+      const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${id}`)
+      return response.data.data
+    }
+    // Retorna todas as redações se nenhum ID de usuário for fornecido
+    const response = await axios.get(`http://localhost:3000/redacoes`)
     return response.data.data
   }
 
-  
-  const getRedacoesCorrigidas = async (id) => {
-    const response = await axios.get(`http://localhost:3000/redacoes${id}&corrigidas=true`)
+    const getRedacoesCorrigidas = async (id) => {
+    if (id) {
+      const response = await axios.get(`http://localhost:3000/redacoes/${id}?corrigidas=true`)
+      return response.data.data
+    }
+    // Busca todas as redações corrigidas se não houver ID específico
+    const response = await axios.get(`http://localhost:3000/redacoes?corrigidas=true`)
     return response.data.data
-  }
-
-  const downloadProposta = async () => {
-    const response = await axios.get("http://localhost:3000/propostas/download/3d0803ec-63cf-409c-97d0-27fa5177fa8b")
-    return response.data
   }
 
   return { 
@@ -84,7 +87,6 @@ const fetchData = () => {
     getRedacoes,
     getPropostas,
     getRedacoesCorrigidas,
-    downloadProposta,
     getRedacoesUser
   }
 }

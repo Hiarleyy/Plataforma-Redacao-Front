@@ -19,17 +19,21 @@ const Novaredacao = () => {
   const [tema, setTema] = useState("");
   const [formMessage, setFormMessage] = useState(null);
   const [fileBlob, setFileBlob] = useState(null); 
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("")  
   const [redacao, setRedacao] = useState([])
   const navigate = useNavigate()
   const itemsPerPage = 5
   const [currentPage, setCurrentPage] = useState(1)
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentredacaos= redacao.slice(indexOfFirstItem, indexOfLastItem)
-  const[usuarioId, setUsuarioId] = useState("")
-  const formData = new FormData();
-
+  const currentredacaos = redacao.slice(indexOfFirstItem, indexOfLastItem)
+  const [usuario, setUsuario] = useState([]);
+  
+  const getAlunoId = () => {
+      const aluno = localStorage.getItem('user_access_data')
+      const {id} = JSON.parse(aluno)
+      return id
+  }
 
   const onDrop = async (acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -82,40 +86,66 @@ const Novaredacao = () => {
       "application/pdf": [".pdf"],
     },
     maxFiles: 1,
-  });
-
-  const handleSubmit = async () => {
+  });  const handleSubmit = async () => {
     if (!fileBlob || !tema.trim()) {
-      alert("Preencha o tema e envie um arquivo válido.");
+      setFormMessage({
+        type: "error",
+        text: "Preencha o tema e envie um arquivo válido."
+      });
+      return;
+    }
+    
+    // Verificar tamanho do arquivo (limite de 10MB)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB em bytes
+    if (fileBlob.size > MAX_FILE_SIZE) {
+      setFormMessage({
+        type: "error",
+        text: "O arquivo é muito grande. O tamanho máximo permitido é 10MB."
+      });
       return;
     }
 
+    const alunoId = getAlunoId();
+      // Criar um novo FormData a cada envio para evitar acumular dados
+    const formData = new FormData();
     formData.append("titulo", tema);
     formData.append("file", fileBlob, fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`);
-
-    
-    try { 
-      const usuarioId = redacao.map(item => item.usuarioId)
-      formData.append("usuarioId", usuarioId)
-      
-      const response = await axios.post(`http://localhost:3000/redacoes/${usuarioId}/upload`, formData, {
+    // Adicionar o ID do aluno no próprio formData para garantir que o backend o receba
+    formData.append("usuarioId", alunoId);    try { 
+      const response = await axios.post(`http://localhost:3000/redacoes/${alunoId}/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      });
-
+      });      // Limpar o formulário após o sucesso
       setFormMessage({
         type: "success",
-        text: `redacao enviada com sucesso!`,
+        text: `Redação enviada com sucesso!`,
       });
+      setTema("");
+      setFilesName("Nenhum arquivo enviado");
+      setFileBlob(null);
     } catch (error) {
-      console.error(error);
-      setFormMessage({
-        type: "error",
-        text: error.response?.data?.error || "Erro ao enviar redacao.",
-      });
+      console.error(error);    // Melhorar a exibição de mensagens de erro
+    let errorMessage = "Erro ao enviar redação.";
+    if (error.response) {
+      if (error.response.status === 400) {
+        errorMessage = error.response.data?.error || "Erro de validação: Verifique se os dados enviados estão corretos.";
+      } else if (error.response.status === 401 || error.response.status === 403) {
+        errorMessage = "Você não tem permissão para enviar esta redação.";
+      } else if (error.response.status === 500) {
+        errorMessage = "Erro no servidor. Tente novamente mais tarde.";
+      } else {
+        errorMessage = error.response.data?.error || "Erro desconhecido ao enviar a redação.";
+      }
+    }
+    
+    setFormMessage({
+      type: "error",
+      text: errorMessage,
+    });
     }
   };
+  
   const formatarData = (data) => {
     if (!data) return "-";
     return new Date(data).toLocaleDateString("pt-BR",{
@@ -127,32 +157,51 @@ const Novaredacao = () => {
       minute: "2-digit",
     });
   };
-
   useEffect(()=>{
     const getData = async() =>{
-      const { getRedacoes } = fetchData()
-      const redacoesResponse = await getRedacoes()
-    
-    const options = redacoesResponse.map(item =>({
-      id: item.id,
-      titulo: item.titulo,
-      status: item.status,
-      data: item.data,
-      usuarioId: item.usuarioId
-    })).sort((a, b) => new Date(b.data) - new Date(a.data)); // Ordena por data decrescente
-    setRedacao(options)
-    
-  }
-  getData()
+      try {        
+        const alunoId = getAlunoId();
+        const { getRedacoesUser } = fetchData();
+        const redacoesResponse = await axios.get(`http://localhost:3000/redacoes/?${alunoId}`);
+        if (redacoesResponse.data && redacoesResponse.data.data) {
+          const options = redacoesResponse.data.data.map(item =>({
+            id: item.id,
+            titulo: item.titulo,
+            status: item.status,
+            data: item.data,
+            usuarioId: item.usuarioId
+          })).sort((a, b) => new Date(b.data) - new Date(a.data)); // Ordena por data decrescente
+          setRedacao(options);
+        } else {
+          console.error('Formato de resposta inesperado:', redacoesResponse);
+          setRedacao([]);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar redações:', error);
+        setRedacao([]);
+      }
+    }
+    getData()
+  }, [formMessage]) // Atualizar quando enviar uma nova redação
 
-  }, [])
+  useEffect(() => {
+    const getData  = async () => {
+      const {getAlunoById} = fetchData()
+      const alunoId = getAlunoId();
+      const response = await getAlunoById(alunoId)
+      setUsuario(response)
+    }
+    getData()
+  },[])
+
   const deleteRedacao = async (id) => {
     const confirmation = confirm("Tem certeza que deseja excluir essa redacao?")
     if (!confirmation) {
       navigate("/admin/nova-redacao")
       return
     }
-    await axios.delete(`http://localhost:3000/redacaos/${id}`)
+    const alunoId = getAlunoId();
+    await axios.delete(`http://localhost:3000/redacoes/${id}?userId=${alunoId}`)
     navigate("/admin/nova-redacao")
   }
 
@@ -208,24 +257,26 @@ const Novaredacao = () => {
             onChange={(e) => setTema(e.target.value)}
             >
             <i className="fa-solid fa-pen"></i>
-          </Input>
-          <div className={styles.upload_container}>
-            <svg
-              className={styles.img}
-              viewBox="0 0 309 197"
-            >
-              <path
-                d="M69.369 196.821C31.0715 196.821 0 168.484 0 133.557C0 105.967 19.3655 82.5065 46.3423 73.8517C46.2942 72.6655 46.246 71.4793 46.246 70.2931C46.246 31.4562 80.7378 0 123.323 0C151.889 0 176.795 14.1465 190.138 35.2344C197.461 30.7532 206.325 28.1172 215.815 28.1172C241.346 28.1172 262.061 47.0085 262.061 70.2931C262.061 75.653 260.953 80.7492 258.978 85.494C287.111 90.6781 308.307 113.392 308.307 140.586C308.307 171.647 280.703 196.821 246.645 196.821H69.369ZM107.426 101.486C102.897 105.615 102.897 112.293 107.426 116.379C111.954 120.465 119.276 120.509 123.756 116.379L142.544 99.2451L142.592 158.16C142.592 164.003 147.746 168.703 154.153 168.703C160.56 168.703 165.715 164.003 165.715 158.16V99.2451L184.502 116.379C189.03 120.509 196.353 120.509 200.833 116.379C205.313 112.249 205.361 105.571 200.833 101.486L162.295 66.3391C157.766 62.2094 150.444 62.2094 145.964 66.3391L107.426 101.486Z"
-                fill="#474747" className={styles.img}
-              />
-            </svg>
+          </Input>          <div className={styles.upload_container}>
+            <div className={styles.img_container}>
+              <svg
+                className={styles.img}
+                viewBox="0 0 309 197"
+              >
+                <path
+                  d="M69.369 196.821C31.0715 196.821 0 168.484 0 133.557C0 105.967 19.3655 82.5065 46.3423 73.8517C46.2942 72.6655 46.246 71.4793 46.246 70.2931C46.246 31.4562 80.7378 0 123.323 0C151.889 0 176.795 14.1465 190.138 35.2344C197.461 30.7532 206.325 28.1172 215.815 28.1172C241.346 28.1172 262.061 47.0085 262.061 70.2931C262.061 75.653 260.953 80.7492 258.978 85.494C287.111 90.6781 308.307 113.392 308.307 140.586C308.307 171.647 280.703 196.821 246.645 196.821H69.369ZM107.426 101.486C102.897 105.615 102.897 112.293 107.426 116.379C111.954 120.465 119.276 120.509 123.756 116.379L142.544 99.2451L142.592 158.16C142.592 164.003 147.746 168.703 154.153 168.703C160.56 168.703 165.715 164.003 165.715 158.16V99.2451L184.502 116.379C189.03 120.509 196.353 120.509 200.833 116.379C205.313 112.249 205.361 105.571 200.833 101.486L162.295 66.3391C157.766 62.2094 150.444 62.2094 145.964 66.3391L107.426 101.486Z"
+                  fill="#474747"
+                />
+              </svg>
+            </div>
             <div className={styles.button_container}>
               <div {...getRootProps()} className={styles.button_upload}>
                 <input {...getInputProps()} />
                 <Button
                   bg_color="#363636"
                   text="Selecionar arquivo"
-                  radius = "50px"
+                  radius = "10px"
+                  padding_sz="15px"
                 >
                   Escolher Arquivo
                 </Button>

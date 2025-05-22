@@ -32,8 +32,6 @@ const Perfil = () => {
       const {id} = JSON.parse(aluno)
       return id
   }
-
-
   useEffect(() => {
     const getData = async () => {
       const { getRedacoesUser, getRedacoesCorrigidas,getAlunoById } = fetchData() 

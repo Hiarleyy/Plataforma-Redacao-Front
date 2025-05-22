@@ -22,7 +22,7 @@ const getAlunoId = () => {
 
 const handleDownloadProposta = async () => {
   try {
-    const response = await fetch('http://localhost:3000/propostas/download/3d0803ec-63cf-409c-97d0-27fa5177fa8b', {
+    const response = await fetch('http://localhost:3000/propostas/download', {
       method: 'GET',
       headers: {
         Accept: 'application/pdf',

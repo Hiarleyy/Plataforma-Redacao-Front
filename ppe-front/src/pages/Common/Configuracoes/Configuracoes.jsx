@@ -4,20 +4,23 @@ import styles from "./styles.module.css";
 import Title from "../../../components/Title/Title";
 import Input from "../../../components/Input/Input";
 import Button from "../../../components/Button/Button";
+import Message from "../../../components/Message/Message";
 import defaultProfilePicture from "../../../images/Defalult_profile_picture.jpg";
 
 function configuracoes() {
   const [usuario, setUsuario] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [formMessage, setFormMessage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const [refresh, setRefresh] = useState(false);
   const [senhaAtual, setSenhaAtual] = useState("");
   const [novaSenha, setNovaSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
   const [showPassword, setShowPassword] = useState({
     atual: false,
     nova: false,
+    confirmar: false,
   });
 
   const getAlunoId = () => {
@@ -25,7 +28,6 @@ function configuracoes() {
     const { id } = JSON.parse(aluno);
     return id;
   };
-
   useEffect(() => {
     const getData = async () => {
       try {
@@ -42,9 +44,11 @@ function configuracoes() {
           );
         }
       } catch (err) {
-        setError("Erro ao buscar dados do usuário");
+        setFormMessage({
+          text: "Erro ao buscar dados do usuário",
+          type: "error",
+        });
         console.error(err);
-        alert("Erro ao buscar dados do usuário");
       }
     };
     getData();
@@ -61,14 +65,15 @@ function configuracoes() {
       reader.readAsDataURL(file);
     }
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const fileInput = event.target.elements.profileImage;
     if (!fileInput.files || !fileInput.files[0]) {
-      setError("Por favor, selecione uma imagem");
-      alert("Por favor, selecione uma imagem");
+      setFormMessage({
+        text: "Por favor, selecione uma imagem",
+        type: "error",
+      });
       return;
     }
 
@@ -77,13 +82,12 @@ function configuracoes() {
     formData.append("file", file);
 
     setIsLoading(true);
-    setError(null);
+    setFormMessage(null);
 
     try {
       if (!usuario || !usuario.id) {
         throw new Error("Dados do usuário não disponíveis");
       }
-
       const response = await fetch(
         `http://localhost:3000/usuarios/${usuario.id}`,
         {
@@ -96,9 +100,10 @@ function configuracoes() {
         throw new Error("Erro ao fazer upload da imagem");
       }
 
-      alert("Imagem de perfil atualizada com sucesso!");
-
-      // Atualiza a URL da imagem de perfil
+      setFormMessage({
+        text: "Imagem de perfil atualizada com sucesso!",
+        type: "success",
+      });
       const newProfileImageUrl = `http://localhost:3000/usuarios/${
         usuario.id
       }/profile-image?timestamp=${new Date().getTime()}`;
@@ -106,35 +111,101 @@ function configuracoes() {
       setImagePreview(null); //Limpa a pré-visualização
       setRefresh(!refresh); // Trigger a refresh
 
-      // Reset the file input
       event.target.reset();
     } catch (error) {
-      setError(error.message);
-      alert(`Erro: ${error.message}`);
+      setFormMessage({
+        text: error.message,
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
     }
-  };
+  };  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    setFormMessage(null);
 
-  const handlePasswordSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!senhaAtual || !novaSenha) {
-      setError("Por favor, preencha todos os campos de senha");
+    if (!senhaAtual || !novaSenha || !confirmarSenha) {
+      setFormMessage({
+        text: "Preencha todos os campos de senha.",
+        type: "error",
+      });
       return;
     }
-
+    if (novaSenha !== confirmarSenha) {
+      setFormMessage({
+        text: "As novas senhas não coincidem.",
+        type: "error",
+      });
+      return;
+    }
     setIsLoading(true);
-    setError(null);
 
     try {
-      // implementar a logica de alteração de senha AQUI
-      // Simulando resposta bem-sucedida por enquanto
-      alert("Senha alterada com sucesso!");
+      // Primeiro, verificamos se o usuário existe
+      if (!usuario || !usuario.id) {
+        throw new Error("Dados do usuário não disponíveis");
+      }
+      
+      const response = await fetch(
+        `http://localhost:3000/usuarios/${usuario.id}/trocar-senha`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            senhaAtual,
+            novaSenha,
+          }),
+        }
+      );
+
+      // Verifica se a resposta foi bem-sucedida (status 2xx)
+      if (!response.ok) {
+        // Se não for 2xx, tenta obter a mensagem de erro do servidor
+        const errorText = await response.text();
+        let errorMessage = "Erro ao trocar a senha.";
+        
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch (parseError) {
+          console.error("Erro ao parsear resposta de erro:", parseError);
+        }
+        
+        throw new Error(errorMessage);
+      }
+
+      // Processa a resposta de sucesso
+      const responseText = await response.text();
+      let responseData;
+      
+      // Tentamos fazer o parse apenas se houver conteúdo
+      if (responseText) {
+        try {
+          responseData = JSON.parse(responseText);
+        } catch (parseError) {
+          console.error("Erro ao parsear resposta:", parseError);
+          // Se não conseguir fazer o parse, apenas continue sem o dado
+        }
+      }
+
+      // Limpa os campos de senha
       setSenhaAtual("");
       setNovaSenha("");
-    } catch (error) {
-      setError("Erro ao alterar senha: " + error.message);
+      setConfirmarSenha("");
+
+      // Exibe mensagem de sucesso
+      setFormMessage({
+        text: responseData?.message || "Senha alterada com sucesso!",
+        type: "success",
+      });
+    } catch (err) {
+      console.error("Erro ao trocar senha:", err);
+      setFormMessage({
+        text: err.message || "Erro ao trocar a senha. Por favor, tente novamente.",
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -217,20 +288,21 @@ function configuracoes() {
                   className={styles.submit_button}
                 >
                   {isLoading ? "Enviando..." : "Enviar"}
-                </button>
+                </button>{" "}
               </div>
-            </form>
+            </form>{" "}
           </div>
 
-          {/* Exibir mensagem de erro, se houver */}
-          {error && <div className={styles.error_message}>{error}</div>}
+          {/* Exibir mensagem de erro ou sucesso na seção de upload */}
+          {formMessage && (
+            <Message text={formMessage.text} type={formMessage.type} />
+          )}
 
           {/* Seção de alteração de senha */}
           <div className={styles.password_section}>
             <h3>Definir Nova Senha</h3>
-
             <form
-              onSubmit={handlePasswordSubmit}
+              onSubmit={handlePasswordChange}
               className={styles.password_form}
             >
               <div className={styles.form_group}>
@@ -251,7 +323,6 @@ function configuracoes() {
                   ></i>
                 </Input>
               </div>
-
               <div className={styles.form_group}>
                 <p>Digite a Nova Senha</p>
                 <Input
@@ -270,26 +341,24 @@ function configuracoes() {
                   ></i>
                 </Input>
               </div>
-
               <div className={styles.form_group}>
                 <p>Confirme a Nova Senha</p>
                 <Input
-                  type={showPassword.nova ? "text" : "password"}
-                  placeholder="Nova senha"
-                  value={novaSenha}
-                  onChange={(e) => setNovaSenha(e.target.value)}
+                  type={showPassword.confirmar ? "text" : "password"}
+                  placeholder="Confirme a nova senha"
+                  value={confirmarSenha}
+                  onChange={(e) => setConfirmarSenha(e.target.value)}
                   color="#1A1A1A"
                 >
                   <i
                     className={`fa-solid ${
-                      showPassword.nova ? "fa-eye-slash" : "fa-eye"
+                      showPassword.confirmar ? "fa-eye-slash" : "fa-eye"
                     }`}
                     style={{ cursor: "pointer" }}
-                    onClick={() => togglePasswordVisibility("nova")}
+                    onClick={() => togglePasswordVisibility("confirmar")}
                   ></i>
                 </Input>
-              </div>
-
+              </div>{" "}
               <div className={styles.button_container_password}>
                 <Button
                   text_size="14px"
@@ -297,6 +366,7 @@ function configuracoes() {
                   padding_sz="10px 20px"
                   bg_color="#DA9E00"
                   isLoading={isLoading}
+                  type="submit"
                 >
                   Alterar Senha
                 </Button>
