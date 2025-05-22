@@ -123,6 +123,7 @@ const VideoPage = () => {
                 key={video.id}
                 to={`../cursos/${video.id}`}
               >
+                <i class="fa-solid fa-video"></i>
                 <p>{video.titulo}</p>
               </Link>
             ))}
