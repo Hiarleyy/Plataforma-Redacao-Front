@@ -48,6 +48,7 @@ const Login = () => {
 
         <p className={styles.credits}>&copy; 2025 Redação Elite</p>
       </div>
+      
       <div className={styles.bg_right}>
         <p>Acesse sua conta e aproveite nossos serviços</p>
 

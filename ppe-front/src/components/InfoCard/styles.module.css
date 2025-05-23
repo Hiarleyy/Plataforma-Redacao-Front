@@ -45,3 +45,27 @@
 .container .btn_container {
   width: 400px;
 }
+
+@media (max-width: 768px) {
+  .container {
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .container img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .container .infos .title {
+    font-size: 16px;
+  }
+
+  .container .infos .subtitle {
+    font-size: 11px;
+  }
+
+  .container .btn_container {
+    width: 120px;
+  }
+}

@@ -26,7 +26,7 @@ const Correcao = () => {
     const getData = async () => {
       const { getRedacoes } = fetchData() 
       const response = await getRedacoes()
-      const corrigidasResponse = await getRedacoes(true)
+      const corrigidasResponse = await getRedacoes(false, true)
 
       setRedacoes(response)
       setRedacoesCorrigidas(corrigidasResponse)

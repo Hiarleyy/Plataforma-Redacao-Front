@@ -51,9 +51,29 @@ const fetchData = () => {
     return response.data.data
   }
 
-  const getRedacoes = async (corrigidas = false) => {
-    if (corrigidas) {
-      const response = await axios.get("http://localhost:3000/redacoes?corrigidas=true")
+  const getRedacoes = async (usuarioId = undefined, corrigidas = undefined) => {
+    if (usuarioId && corrigidas) {
+      const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}&corrigidas=true`)
+      return response.data.data
+    }
+
+    if (usuarioId && corrigidas === false) {
+      const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}&corrigidas=false`)
+      return response.data.data
+    }
+
+    if (usuarioId === false && corrigidas) {
+      const response = await axios.get(`http://localhost:3000/redacoes?corrigidas=true`)
+      return response.data.data
+    }
+
+    if (usuarioId === false && corrigidas === false) {
+      const response = await axios.get(`http://localhost:3000/redacoes?corrigidas=false`)
+      return response.data.data
+    }
+
+    if (usuarioId && corrigidas === false) {
+      const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}`)
       return response.data.data
     }
 

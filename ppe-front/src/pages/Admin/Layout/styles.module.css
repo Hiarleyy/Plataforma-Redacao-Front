@@ -4,6 +4,23 @@
   overflow: hidden;
 }
 
+.header_mobile {
+  display: none;
+}
+
+.header_mobile img {
+  width: 25px;
+}
+
+.header_mobile .menu_btn {
+  cursor: pointer;
+}
+
+.header_mobile .menu_btn i {
+  font-size: 20px;
+  color: #E0E0E0;
+}
+
 .sidebar {
   flex-shrink: 0;
   height: 100vh;
@@ -21,4 +38,21 @@
   flex-grow: 1;
   overflow-y: auto;
   background-color: #1A1A1A;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .header_mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+  }
+
+  .sidebar {
+    display: none;
+  }
 }

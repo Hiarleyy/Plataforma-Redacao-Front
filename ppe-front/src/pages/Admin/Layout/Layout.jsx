@@ -2,6 +2,8 @@ import styles from "./styles.module.css"
 import { Outlet } from "react-router-dom"
 import Header from "../../../components/Header/Header"
 
+import logo from "../../../images/logo02.png"
+
 const links = [
   { name: "Dashboard", icon: "fa-solid fa-house", path: "" },
   { name: "Nova proposta", icon: "fa-solid fa-pen", path: "nova-proposta" },
@@ -19,6 +21,14 @@ const links = [
 const AdminLayout = () => {
   return (
     <div className={styles.container}>
+
+      <aside className={styles.header_mobile}>
+        <img src={logo} />
+
+        <div className={styles.menu_btn}>
+          <i class="fa-solid fa-bars"></i>
+        </div>
+      </aside>
 
       <aside className={styles.sidebar}>
         <Header options={links} />
