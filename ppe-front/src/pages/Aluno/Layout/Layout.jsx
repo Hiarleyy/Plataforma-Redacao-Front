@@ -2,6 +2,8 @@ import styles from "./styles.module.css"
 import { Outlet } from "react-router-dom"
 import Header from "../../../components/Header/Header"
 
+import logo from "../../../images/logo02.png"
+
 const links = [
   { name: "Início", icon: "fa-solid fa-house", path: "" },
   { name: "Perfil", icon: "fa-solid fa-user", path: "perfil" },
@@ -14,6 +16,15 @@ const links = [
 const AlunoLayout = () => {
   return (
     <div className={styles.container}>
+
+      <aside className={styles.header_mobile}>
+        <img src={logo} />
+
+        <div className={styles.menu_btn}>
+          <i class="fa-solid fa-bars"></i>
+        </div>
+      </aside>
+
 
       <aside className={styles.sidebar}>
         <Header options={links} />
