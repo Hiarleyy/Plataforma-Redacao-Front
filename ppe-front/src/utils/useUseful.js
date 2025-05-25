@@ -17,7 +17,15 @@ const useUseful = () => {
     return new Intl.DateTimeFormat("pt-BR", options).format(dataObject).replace(",", "");
   }
 
-  return { brasilFormatData }
+  const countNotesOfValue1000 = (notes) => {
+    return notes.filter(item => item.nota === 1000).length;
+  }
+
+  const avgNotes = (notes) => {
+    return notes.reduce((soma, item) => soma + item.nota, 0) / notes.length
+  }
+
+  return { brasilFormatData, countNotesOfValue1000, avgNotes }
 }
 
 export default useUseful

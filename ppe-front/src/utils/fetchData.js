@@ -51,35 +51,47 @@ const fetchData = () => {
     return response.data.data
   }
 
-  const getRedacoes = async (usuarioId = undefined, corrigidas = undefined) => {
+  const getRedacoes = async (usuarioId = false, corrigidas = false, pendentes = false) => {
+    // Buscando as redações corrigidas de um usuário específico
     if (usuarioId && corrigidas) {
       const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}&corrigidas=true`)
       return response.data.data
     }
 
-    if (usuarioId && corrigidas === false) {
-      const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}&corrigidas=false`)
+    // Buscando as redações pendentes de um usuário específico
+    if (usuarioId && pendentes) {
+      const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}&pendentes=true`)
       return response.data.data
     }
 
-    if (usuarioId === false && corrigidas) {
+    // Buscando todas as redações corrigidas
+    if (corrigidas) {
       const response = await axios.get(`http://localhost:3000/redacoes?corrigidas=true`)
       return response.data.data
     }
 
-    if (usuarioId === false && corrigidas === false) {
-      const response = await axios.get(`http://localhost:3000/redacoes?corrigidas=false`)
+    // Buscando todas as redações pendentes
+    if (pendentes) {
+      const response = await axios.get(`http://localhost:3000/redacoes?pendentes=true`)
       return response.data.data
     }
 
-    if (usuarioId && corrigidas === false) {
+    // Buscando as redações de um usuário específico
+    if (usuarioId) {
       const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}`)
       return response.data.data
     }
 
+    // Buscando todas as redações
     const response = await axios.get("http://localhost:3000/redacoes")
     return response.data.data
   }
+
+  const getRedacaoById = async (id) => {
+    const response = await axios.get(`http://localhost:3000/redacoes/${id}`)
+    return response.data.data
+  }
+
   const getRedacoesUser = async (id) => {
     if (id) {
       const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${id}`)
@@ -112,7 +124,8 @@ const fetchData = () => {
     getRedacoes,
     getPropostas,
     getRedacoesCorrigidas,
-    getRedacoesUser
+    getRedacoesUser,
+    getRedacaoById
   }
 }
 

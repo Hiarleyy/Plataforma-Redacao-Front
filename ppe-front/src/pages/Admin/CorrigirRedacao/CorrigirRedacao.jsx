@@ -35,6 +35,10 @@ const CorrigirRedacao = () => {
     getData()
   }, [])
 
+  useEffect(() => {
+    console.log(redacao)
+  }, [])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
