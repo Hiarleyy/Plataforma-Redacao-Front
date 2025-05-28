@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useUseful from '../../../utils/useUseful';
 import styles from "./styles.module.css";
 import Title from "../../../components/Title/Title";
@@ -16,6 +15,7 @@ const Perfil = () => {
   const [activeTab, setActiveTab] = useState('minhas');
   const [redacoes, setRedacoes] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const { brasilFormatData } = useUseful()
 
@@ -32,9 +32,20 @@ const Perfil = () => {
       const {id} = JSON.parse(aluno)
       return id
   }
+
+  // Responsividade para mobile
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   useEffect(() => {
     const getData = async () => {
-      const { getRedacoesUser, getRedacoesCorrigidas,getAlunoById } = fetchData() 
+      const { getRedacoesUser, getRedacoesCorrigidas, getAlunoById } = fetchData() 
       const response = await getRedacoesUser()
 
       const responseAluno = await getAlunoById(getAlunoId())
@@ -42,20 +53,10 @@ const Perfil = () => {
       const responseCorrigidas = await getRedacoesCorrigidas()
       setRedacoesCorrigidas(responseCorrigidas)
       setUsuario(responseAluno)
-      console.log(responseAluno)
     }
   
     getData()
   }, [])
-
-  useEffect(() => {
-    const getData  = async () => {
-    const {getAlunoById} = fetchData()
-    const response = await getAlunoById(getAlunoId())
-    setUsuario(response)
-    }
-    getData()
-  },[])
 
   return (
     <div className={styles.container}>
@@ -95,9 +96,8 @@ const Perfil = () => {
               }))}
               xKey="data"
               yKey="nota"
-              
               title="Evolução das Notas"
-              height_size="300px"
+              height_size={isMobile ? "250px" : "300px"}
             />
           </div>
         </div>
@@ -136,7 +136,6 @@ const Perfil = () => {
                           subtitle={brasilFormatData(redacoes.data)}
                           button={false}
                           img="https://static.vecteezy.com/system/resources/previews/028/049/250/non_2x/terms-icon-design-vector.jpg"
-                    
                       />
                     ))}
                   </div>
@@ -159,7 +158,6 @@ const Perfil = () => {
                           subtitle={brasilFormatData(redacoesCorrigidas.data)}
                           button={false}
                           img="https://static.vecteezy.com/system/resources/previews/028/049/250/non_2x/terms-icon-design-vector.jpg"
-                    
                       />
                     ))}
                   </div>
@@ -175,7 +173,6 @@ const Perfil = () => {
               )}
             </div>
           </div>
-         
         </div>
       </div>
     </div>

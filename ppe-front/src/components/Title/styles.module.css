@@ -11,6 +11,7 @@
   max-width: 1500px;
   height: 100%;
   margin: 0 auto;
+  padding: 0 15px;
 }
 
 .title .title_container .text {
@@ -29,9 +30,25 @@
   border: none;
   outline: none;
   margin-right: 50px;
-  font-size: 20px;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .title {
+    height: 60px;
+  }
+  
+  .title .title_container .text {
+    font-size: 18px;
+    margin-left: 15px;
+  }
+  
+  .title .title_container .logout {
+    margin-right: 15px;
+  }
+  
+  .title .title_container .logout_text {
+    display: none; 
+  }
 }
 
 .title .title_container .logout:hover {

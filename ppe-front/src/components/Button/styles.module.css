@@ -8,7 +8,7 @@
   border: none;
   border-radius: 8px;
 
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 500;
   color: #ffffff;
   background-color: #2C3E50;
@@ -16,12 +16,32 @@
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  --text-color: #ffffff;
+}
+
+.btn * {
+  color: var(--text-color);
 }
 
 .btn:hover {
   background-color: #3B5771;
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
   transform: translateY(-2px);
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+  .btn {
+    padding: 8px 14px;
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn {
+    padding: 6px 10px;
+    font-size: 8px;
+  }
 }
 
 .btn:active {

@@ -1,8 +1,7 @@
 "use client"
 
 import styles from "./styles.module.css"
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Card from '../../../components/Card/Card';
 import Title from '../../../components/Title/Title';
 import BTN from '../../../components/Button/Button';
@@ -20,8 +19,11 @@ const getAlunoId = () => {
     return id 
 }
 
+const [isDownloading, setIsDownloading] = useState(false);
+
 const handleDownloadProposta = async () => {
   try {
+    setIsDownloading(true);
     const response = await fetch('http://localhost:3000/propostas/download', {
       method: 'GET',
       headers: {
@@ -42,9 +44,11 @@ const handleDownloadProposta = async () => {
     link.click();
     link.remove();
     window.URL.revokeObjectURL(url); 
+    setIsDownloading(false);
   } catch (error) {
     console.error("Erro ao baixar proposta:", error);
     alert("Houve um erro ao baixar a proposta. Por favor, tente novamente mais tarde.");
+    setIsDownloading(false);
   }
 };
 
@@ -80,18 +84,18 @@ const handleDownloadProposta = async () => {
           variant="default"
           actions={
             <>
-            <div className={styles.button}>
-            <BTN
+            <div className={styles.button}>            <BTN
             bg_color="#FFF5CC" 
-            text_size="20px"
+            text_size={{default: "20px", mobile: "16px"}}
             text_color="#DA9E00"
-            padding_sz="10px"
+            padding_sz={{default: "10px", mobile: "8px"}}
             onClick={() => window.location.href = '/aluno/nova-redacao'} 
+            className={styles.responsive_button}
             > 
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={styles.button_icon}>
             <path d="M14.1677 0.732422L12.2771 2.62305L17.3552 7.70117L19.2458 5.81055C20.2224 4.83398 20.2224 3.25195 19.2458 2.27539L17.7068 0.732422C16.7302 -0.244141 15.1482 -0.244141 14.1716 0.732422H14.1677ZM11.3943 3.50586L2.28879 12.6152C1.88254 13.0215 1.58567 13.5254 1.4216 14.0762L0.0387918 18.7754C-0.0588645 19.1074 0.0309793 19.4629 0.273167 19.7051C0.515354 19.9473 0.870823 20.0371 1.19895 19.9434L5.89817 18.5605C6.44895 18.3965 6.95285 18.0996 7.3591 17.6934L16.4724 8.58398L11.3943 3.50586Z" fill="#DA9E00"/>
             </svg>
-            Criar Nova Redação 
+            <span className={styles.button_text}>Criar Nova Redação</span>
             </BTN>
 
             </div>
@@ -147,19 +151,23 @@ const handleDownloadProposta = async () => {
             variant="default"
             actions={
               <>  
-              <div className={styles.button}>
-              <BTN
+              <div className={styles.button}>              <BTN
               bg_color="#FFF5CC" 
-              text_size="20px"
+              text_size={{default: "20px", mobile: "16px"}}
               text_color="#DA9E00"
-              padding_sz="10px"
+              padding_sz={{default: "10px", mobile: "8px"}}
               onClick={handleDownloadProposta}
+              className={styles.responsive_button}
+              isLoading={isDownloading}
               >
-                Baixar detalhes da Proposta
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M11.25 1.25C11.25 0.558594 10.6914 0 10 0C9.30859 0 8.75 0.558594 8.75 1.25V10.7305L5.88281 7.86328C5.39453 7.375 4.60156 7.375 4.11328 7.86328C3.625 8.35156 3.625 9.14453 4.11328 9.63281L9.11328 14.6328C9.60156 15.1211 10.3945 15.1211 10.8828 14.6328L15.8828 9.63281C16.3711 9.14453 16.3711 8.35156 15.8828 7.86328C15.3945 7.375 14.6016 7.375 14.1133 7.86328L11.25 10.7305V1.25ZM2.5 13.75C1.12109 13.75 0 14.8711 0 16.25V17.5C0 18.8789 1.12109 20 2.5 20H17.5C18.8789 20 20 18.8789 20 17.5V16.25C20 14.8711 18.8789 13.75 17.5 13.75H13.5352L11.7656 15.5195C10.7891 16.4961 9.20703 16.4961 8.23047 15.5195L6.46484 13.75H2.5ZM16.875 15.9375C17.1236 15.9375 17.3621 16.0363 17.5379 16.2121C17.7137 16.3879 17.8125 16.6264 17.8125 16.875C17.8125 17.1236 17.7137 17.3621 17.5379 17.5379C17.3621 17.7137 17.1236 17.8125 16.875 17.8125C16.6264 17.8125 16.3879 17.7137 16.2121 17.5379C16.0363 17.3621 15.9375 17.1236 15.9375 16.875C15.9375 16.6264 16.0363 16.3879 16.2121 16.2121C16.3879 16.0363 16.6264 15.9375 16.875 15.9375Z" fill="#DA9E00"/>
-                </svg>
-
+                {!isDownloading && (
+                  <>
+                    <span className={styles.button_text} style={{color: "#DA9E00"}}>Baixar detalhes da Proposta</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className={styles.button_icon}>
+                    <path d="M11.25 1.25C11.25 0.558594 10.6914 0 10 0C9.30859 0 8.75 0.558594 8.75 1.25V10.7305L5.88281 7.86328C5.39453 7.375 4.60156 7.375 4.11328 7.86328C3.625 8.35156 3.625 9.14453 4.11328 9.63281L9.11328 14.6328C9.60156 15.1211 10.3945 15.1211 10.8828 14.6328L15.8828 9.63281C16.3711 9.14453 16.3711 8.35156 15.8828 7.86328C15.3945 7.375 14.6016 7.375 14.1133 7.86328L11.25 10.7305V1.25ZM2.5 13.75C1.12109 13.75 0 14.8711 0 16.25V17.5C0 18.8789 1.12109 20 2.5 20H17.5C18.8789 20 20 18.8789 20 17.5V16.25C20 14.8711 18.8789 13.75 17.5 13.75H13.5352L11.7656 15.5195C10.7891 16.4961 9.20703 16.4961 8.23047 15.5195L6.46484 13.75H2.5ZM16.875 15.9375C17.1236 15.9375 17.3621 16.0363 17.5379 16.2121C17.7137 16.3879 17.8125 16.6264 17.8125 16.875C17.8125 17.1236 17.7137 17.3621 17.5379 17.5379C17.3621 17.7137 17.1236 17.8125 16.875 17.8125C16.6264 17.8125 16.3879 17.7137 16.2121 17.5379C16.0363 17.3621 15.9375 17.1236 15.9375 16.875C15.9375 16.6264 16.0363 16.3879 16.2121 16.2121C16.3879 16.0363 16.6264 15.9375 16.875 15.9375Z" fill="#DA9E00"/>
+                    </svg>
+                  </>
+                )}
               </BTN>
 
               </div>

@@ -45,3 +45,43 @@
 .container .btn_container {
   width: 400px;
 }
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .container img {
+    width: 48px;
+    border-width: 3px;
+  }
+  
+  .container .infos .title {
+    font-size: 16px;
+  }
+  
+  .container .infos .subtitle {
+    font-size: 11px;
+  }
+  
+  .container .btn_container {
+    width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 8px;
+    gap: 8px;
+  }
+  
+  .container img {
+    width: 40px;
+  }
+  
+  .container .infos .title {
+    font-size: 14px;
+  }
+}
