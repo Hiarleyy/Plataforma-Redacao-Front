@@ -7,16 +7,16 @@ import Pagination from "../../../components/Pagination/Pagination"
 import { useState, useEffect } from "react"
 
 const Correcao = () => {
-  const [redacoes, setRedacoes] = useState([])
+  const [redacoesPendentes, setRedacoesPendentes] = useState([])
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([])
 
   const itemsPerPage = 5
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPagePen, setCurrentPagePen] = useState(1)
   const [currentPageCorr, setCurrentPageCorr] = useState(1)
   
-  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfLastItem = currentPagePen * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentRedacoes = redacoes.slice(indexOfFirstItem, indexOfLastItem)
+  const currentRedacoesPen = redacoesPendentes.slice(indexOfFirstItem, indexOfLastItem)
 
   const indexOfLastItemCorr = currentPageCorr * itemsPerPage
   const indexOfFirstItemCorr = indexOfLastItemCorr - itemsPerPage
@@ -25,10 +25,10 @@ const Correcao = () => {
   useEffect(() => {
     const getData = async () => {
       const { getRedacoes } = fetchData() 
-      const response = await getRedacoes()
-      const corrigidasResponse = await getRedacoes(true)
+      const pendentesResponse = await getRedacoes(false, false, true)
+      const corrigidasResponse = await getRedacoes(false, true)
 
-      setRedacoes(response)
+      setRedacoesPendentes(pendentesResponse)
       setRedacoesCorrigidas(corrigidasResponse)
     }
 
@@ -40,12 +40,12 @@ const Correcao = () => {
       <Title title="Correção" />
       <div className={styles.main_content}>
         <div className={styles.bg_left}>
-          {redacoes.length === 0 ? <div className={styles.loading}><Loading /></div> : 
+          {redacoesPendentes.length === 0 ? <div className={styles.loading}><Loading /></div> : 
             <>
               <p className={styles.title}>Redaçõs pendentes</p>
 
               <div className={styles.redacoes_container}>
-                {currentRedacoes.map((redacao) => (
+                {currentRedacoesPen.map((redacao) => (
                   <InfoCard 
                     key={redacao.id}
                     title={redacao.titulo} 
@@ -57,10 +57,10 @@ const Correcao = () => {
 
               <div className={styles.pagination}>
                 <Pagination
-                  currentPage={currentPage}
-                  totalItems={redacoes.length}
+                  currentPage={currentPagePen}
+                  totalItems={redacoesPendentes.length}
                   itemsPerPage={itemsPerPage}
-                  setCurrentPage={setCurrentPage}
+                  setCurrentPage={setCurrentPagePen}
                 />
               </div>
             </>
@@ -68,7 +68,7 @@ const Correcao = () => {
         </div>
 
         <div className={styles.bg_right}>
-          {redacoes.length === 0 ? <div className={styles.loading}><Loading /></div> : 
+          {redacoesCorrigidas.length === 0 ? <div className={styles.loading}><Loading /></div> : 
             <>
               <p className={styles.title}>Redaçõs Corrigidas</p>
 

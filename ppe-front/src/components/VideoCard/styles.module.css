@@ -68,3 +68,50 @@
   color: #ffffff;
 }
 
+@media (max-width: 768px) {
+  .card {
+    width: 200px;
+  }
+
+  .card .imagem {
+    height: calc(200px * 9 / 16); 
+  }
+
+  .card .info p {
+    font-size: 13px;
+  }
+
+  .card .info .icone {
+    width: 32px;
+    height: 32px;
+  }
+
+  .card .info .icone i {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    width: 140px;
+  }
+
+  .card .imagem {
+    height: calc(140px * 9 / 16);
+  }
+
+  .card .info p {
+    font-size: 11px;
+  }
+
+  .card .info .icone {
+    width: 28px;
+    height: 28px;
+  }
+
+  .card .info .icone i {
+    font-size: 10px;
+  }
+}
+
+

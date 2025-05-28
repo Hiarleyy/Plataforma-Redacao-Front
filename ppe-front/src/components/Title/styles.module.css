@@ -58,3 +58,24 @@
 .title .title_container .logout .logout_text {
   color: #E0E0E0;
 }
+
+@media (max-width: 768px) {
+  .title {
+    height: 50px;
+  }
+  
+  .title .title_container .text {
+    font-size: 16px;
+    margin-left: 20px;
+  }
+
+  .title .title_container .logout {
+    margin-right: 20px;
+    font-size: 16px;
+    gap: 6px;
+  }
+
+  .title .title_container .logout .logout_text {
+    font-size: 14px;
+  }
+}

@@ -7,6 +7,70 @@ const RedacoesTabela = ({ redacoes }) => {
   const { brasilFormatData } = useUseful()
   const navigate = useNavigate()
 
+  const tableDefault = [
+    {
+      titulo: "",
+      data: "",
+      correcao: {
+        data: "",
+        nota: ""
+      },
+    },
+    {
+      titulo: "",
+      data: "",
+      correcao: {
+        data: "",
+        nota: ""
+      },
+    },
+    {
+      titulo: "",
+      data: "",
+      correcao: {
+        data: "",
+        nota: ""
+      },
+    },
+    {
+      titulo: "",
+      data: "",
+      correcao: {
+        data: "",
+        nota: ""
+      },
+    }
+  ]
+
+  if (redacoes.length === 0) {
+    return (
+      <div className={styles.tabela_container}>
+        <table className={styles.tabela}>
+          <thead>
+            <tr>
+              <th className={styles.cabecalho}>Título</th>
+              <th className={styles.cabecalho}>Envio</th>
+              <th className={styles.cabecalho}>Correção</th>
+              <th className={styles.cabecalho}>Nota</th>
+              <th className={styles.cabecalho}>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tableDefault.map((redacao, index) => (
+              <tr key={index}>
+                <td className={styles.celula}>{redacao.titulo}</td>
+                <td className={styles.celula}>{redacao.data}</td>
+                <td className={styles.celula}>{redacao.correcao.data}</td>
+                <td className={styles.celula}>{redacao.correcao.nota}</td>
+                <td className={styles.celula}></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
   return (
     <div className={styles.tabela_container}>
       <table className={styles.tabela}>
@@ -23,8 +87,8 @@ const RedacoesTabela = ({ redacoes }) => {
           {redacoes.map((redacao, index) => (
             <tr key={index}>
               <td className={styles.celula}>{redacao.titulo}</td>
-              <td className={styles.celula}>{redacao.data}</td>
-              <td className={styles.celula}>{redacao.correcao.data}</td>
+              <td className={styles.celula}>{brasilFormatData(redacao.data)}</td>
+              <td className={styles.celula}>{brasilFormatData(redacao.correcao.data)}</td>
               <td className={styles.celula}>{redacao.correcao.nota}</td>
               <td className={styles.celula}>
                 <Button 
