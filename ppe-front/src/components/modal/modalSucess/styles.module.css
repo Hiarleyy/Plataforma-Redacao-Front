@@ -12,36 +12,31 @@
 }
 
 .sucessModal {
-  width: 500px;
-  height: 500px;
-  background: rgb(194, 186, 151);
-  padding: 2rem;
+  width: 300px;
+  height: 380px;
+  background: rgb(255, 255, 255);
   border-radius: 15px;
   text-align:center;
   box-shadow: 0 0 10px rgba(0, 2, 0, 0.993);
 }
 
 .sucessButton {
-  margin-top: 4rem;
-  padding: 0.5rem 1rem;
-  background-color: rgb(173, 158, 40);
+  background-color: #DA9E00;
   color: rgb(3, 3, 3);
-  border: none;
+  border: 10px;
+  margin-top: 20px;
   border-radius: 15px;
   cursor: pointer;
-  height: 50px;
-  font-size: 20px;
+  height: 10%;
+  width: 30%;
+  font-size: 12px;
   font-weight: bold;
+  align-items: center;
+  justify-content: center;
 }
-.sucessTitle {
-  font-size: 30px;
-  color: rgb(0, 0, 0);
-}
-
 .sucessMessage {
   color: rgb(29, 25, 5);
-  font-size: 25px;
-  margin-top: 20px;
+  font-size: 16px;
 }
 .sucessSvg{
   width: 100px;

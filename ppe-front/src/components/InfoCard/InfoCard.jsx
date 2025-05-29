@@ -2,7 +2,7 @@ import styles from "./styles.module.css"
 import Button from "../Button/Button"
 import { Link } from 'react-router-dom'
 
-const InfoCard = ({ img, title, subtitle = undefined, link, button = true, onClick = undefined }) => {
+const InfoCard = ({ img, title, subtitle, link, button_registrar = false, button = true, onClick = undefined }) => {
   return (
     <Link className={styles.container} to={link}>
       {img && <img src={img} alt="foto do aluno" />}
@@ -14,6 +14,7 @@ const InfoCard = ({ img, title, subtitle = undefined, link, button = true, onCli
 
       <div className={styles.btn_container}>
         {button === true ? <Button bg_color="#B2433F" padding_sz="20px" onClick={onClick} >EXCLUIR</Button> : null}
+        {button_registrar === true ? <Button bg_color="#DA9E00" padding_sz="16px" onClick={onClick} >REGISTRAR NOTA</Button> : null}
       </div>
     </Link>
   )

@@ -1,0 +1,66 @@
+.container {
+  width: 100%;
+  height: 100vh;
+}
+
+.main_content {
+  flex-direction: column;
+  background-color: #242424;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  margin-left: 50px;
+}
+
+.main_content .header {
+  background-color: #242424;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.main_content .header .title {
+  width: 20%;
+}
+
+.main_content .header .title p {
+  color: #dfd6d6;
+  text-align: center;
+  font-size: 30px;
+  margin-top: 20px;
+}
+.main_content .header .seach {
+  margin-right: 10px;
+  width: 70%;
+}
+
+.main_content .header .seach input {
+  margin-right: 10px;
+  margin-top: 20px;
+  width: 30%;
+  position: relative;
+  left: 70%;
+  background-color: #524f4fc7;
+  color: #fffdfd;
+  border: 1px solid #e7b40a;
+}
+
+.main_content .header .button {
+  margin-right: 10px;
+  width: 17%;
+}
+
+.main_content .CardSimulados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 60px;
+  margin-left: 10px;
+  margin-top: 40px;
+  width: 50%;
+
+
+}
+
+  
+

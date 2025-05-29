@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from './Card.module.css';
+import styles from "../CardDash/styles.module.css";
 
 const Card = ({
   title,
@@ -13,6 +13,7 @@ const Card = ({
   className,
   onClick,
   color,
+  gradient,
   fontSize,
   titleColor,
   contentColor,
@@ -28,16 +29,21 @@ const Card = ({
     color: contentColor || 'inherit',
   };
 
+  const cardStyle = {
+    backgroundColor: color,
+    backgroundImage: gradient, // Ex: 'linear-gradient(to right,rgb(158, 146, 143),rgba(226, 98, 0, 0.93))'
+  };
+
   return (
     <div 
       className={`${styles.card} ${styles[variant]} ${className || ''}`} 
       onClick={onClick}
-      style={{ backgroundColor: color }} // Cor de fundo do card
+      style={cardStyle}
     >     
       <div className={styles.content}>
         {title && (
           <div className={styles.titleContainer}>
-            <h3 className={styles.title} style={titleStyle}>{title}</h3>
+            <p className={styles.title} style={titleStyle}>{title}</p>
             {icon && <div className={styles.iconContainer}>{icon}</div>}
           </div>
         )}
@@ -66,6 +72,7 @@ Card.propTypes = {
   onClick: PropTypes.func,
   children: PropTypes.node,
   color: PropTypes.string,
+  gradient: PropTypes.string,
   fontSize: PropTypes.string,
   titleColor: PropTypes.string,
   contentColor: PropTypes.string,
