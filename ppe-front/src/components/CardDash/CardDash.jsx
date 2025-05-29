@@ -36,7 +36,7 @@ const Card = ({
 
   return (
     <div 
-      className={`${styles.card} ${styles[variant]} ${className || ''}`} 
+      className={`${styles.card} ${styles[variant]}`} 
       onClick={onClick}
       style={cardStyle}
     >     

@@ -128,11 +128,8 @@ const fetchData = () => {
     return response.data.data
   }
 
-
-
   return { 
     getTurmas, 
-    getNotasById,
     getTurmaById, 
     getAlunos, 
     getAlunoById,

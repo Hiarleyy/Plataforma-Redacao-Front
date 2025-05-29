@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import styles from "../Simulados/styles.module.css";
 import Title from "../../../components/Title/Title";
 import SimuladosCard from "../../../components/SimuladoCard/SimuladoCard";
 import Button from "../../../components/Button/Button";
-import RegistrarSimuladoModal from "../../../components/ModalRegistrarSimulado/ModalRegistrarSimulado";
 import fetchData from "../../../utils/fetchData";
 import { useNavigate } from "react-router-dom";
+import DetailsCard from "../../../components/DetailsCard/DetailsCard";
+import Input from "../../../components/Input/Input";
+import Pagination from "../../../components/Pagination/Pagination";
+import Message from "../../../components/Message/Message";
+// ... imports
 
 const Simulados = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -14,67 +19,112 @@ const Simulados = () => {
   const [turmas, setTurmas] = useState([]);
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [titulo, setTitulo] = useState("");
+  const [formMessage, setFormMessage] = useState(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!turma || !titulo.trim()) {
+      alert("Selecione uma turma e digite um título para o simulado");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:3000/simulados", {
+        turmaId: turma,
+        titulo: titulo,
+      });
+
+      setFormMessage({
+        type: "success",
+        text: `Simulado "${response.data.data.titulo}" criado com sucesso.`,
+      });
+
+      setTitulo("");
+      setTurma("");
+      await getDataSimulados();
+    } catch (error) {
+      console.error("Erro ao registrar simulado", error);
+      setFormMessage({
+        type: "error",
+        text: error.response?.data?.error || "Erro desconhecido.",
+      });
+    }
+  };
+
+  // Filtro dos simulados com base na busca
   const simuladosFiltrados = TotalSimulados.filter(
     (item) =>
       item.titulo.toLowerCase().includes(search.toLowerCase()) ||
       item.nomeTurma.toLowerCase().includes(search.toLowerCase())
   );
 
-  function handleCriarSimulado() {
-    setMostrarModal(true);
-  }
+  // Atualiza a página para 1 sempre que houver nova busca
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
-  function handleSalvarSimulado() {
-    console.log("Turma registrada:", turma);
-    setMostrarModal(false);
-    setTurma("");
-  }
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentSimulados = simuladosFiltrados.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
-  function handleResultados(simuladoId) {
+  useEffect(() => {
+    const getData = async () => {
+      const { getTurmas } = fetchData();
+      const response = await getTurmas();
+      const options = response.map((item) => ({
+        id: item.id,
+        nome: item.nome,
+      }));
+      setTurmas(options);
+    };
+    getData();
+  }, []);
+
+  const handleResultados = (simuladoId) => {
     if (!simuladoId) {
       console.error("ID do simulado está indefinido!");
       return;
     }
     navigate(`/admin/Simulados/${simuladoId}`);
-  }
+  };
+
+  const getDataSimulados = async () => {
+    const { getSimulados, getTurmaById } = fetchData();
+    const response = await getSimulados();
+
+    const turmaIdsUnicos = [...new Set(response.map((turma) => turma.turmaId))];
+    const turmasCompletas = await Promise.all(
+      turmaIdsUnicos.map((id) => getTurmaById(id))
+    );
+
+    const turmaMap = {};
+    turmasCompletas.forEach((turma) => {
+      turmaMap[turma.id] = turma;
+    });
+
+    const opctions = response
+      .map((item) => ({
+        id: item.id,
+        titulo: item.titulo,
+        data: item.data,
+        turmaId: item.turmaId,
+        nomeTurma: turmaMap[item.turmaId]?.nome || "Sem nome",
+        totalAlunos: turmaMap[item.turmaId]?.usuarios?.length || 0,
+      }))
+      .sort((a, b) => new Date(b.data) - new Date(a.data));
+
+    setTotalSimulados(opctions);
+    setTurmas(turmasCompletas);
+  };
 
   useEffect(() => {
-    const getDataSimulados = async () => {
-      const { getSimulados, getTurmaById } = fetchData();
-
-      const response = await getSimulados();
-
-      // Busca todas as turmas relacionadas aos simulados
-      const turmaIdsUnicos = [
-        ...new Set(response.map((turma) => turma.turmaId)),
-      ];
-
-      const turmasCompletas = await Promise.all(
-        turmaIdsUnicos.map((id) => getTurmaById(id))
-      );
-
-      // Cria um mapa rápido para acesso ao nome da turma
-      const turmaMap = {};
-      turmasCompletas.forEach((turma) => {
-        turmaMap[turma.id] = turma;
-      });
-
-      const opctions = response
-        .map((item) => ({
-          id: item.id,
-          titulo: item.titulo,
-          data: item.data,
-          turmaId: item.turmaId,
-          nomeTurma: turmaMap[item.turmaId]?.nome || "Sem nome",
-          totalAlunos: turmaMap[item.turmaId]?.usuarios?.length || 0,
-        }))
-        .sort((a, b) => new Date(b.data) - new Date(a.data));
-
-      setTotalSimulados(opctions);
-      setTurmas(turmasCompletas);
-    };
-
     getDataSimulados();
   }, []);
 
@@ -85,57 +135,102 @@ const Simulados = () => {
 
   return (
     <div className={styles.container}>
-      <Title title="Simulados" />
-
+      <Title title="Simulado" />
       <div className={styles.main_content}>
-        <div className={styles.header}>
-          <div className={styles.title}>
-            <p>Seus Simulados</p>
+        <div className={styles.bg_left}>
+          <h2 style={{ textAlign: "center", marginBottom: "0px" }}>
+            SIMULADOS REGISTRADOS
+          </h2>
+          <DetailsCard
+            title="TOTAL DE SIMULADOS"
+            content={TotalSimulados.length}
+            bg_color="#1A1A1A"
+          />
+          <DetailsCard
+            title="TOTAL DE TURMAS"
+            content={turmas.length}
+            bg_color="#1A1A1A"
+          />
+          <Input
+            placeholder="Pesquisar"
+            value={search}
+            color="#1A1A1A"
+            onChange={(e) => setSearch(e.target.value)}
+          >
+            <i className="fa-solid fa-magnifying-glass"></i>
+          </Input>
+
+          <div className={styles.CardSimulados}>
+            {currentSimulados.map((item) => (
+              <SimuladosCard
+                key={item.id}
+                titulo={item.titulo}
+                data={formatarData(item.data)}
+                status={item.status}
+                participantes={item.totalAlunos}
+                turmas={item.nomeTurma}
+                color="#1A1A1A"
+                onRegistrarResultados={() => handleResultados(item.id)}
+              />
+            ))}
           </div>
-          <div className={styles.seach}>
-            <input
-              type="text"
-              placeholder="Pesquisar"
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <div className={styles.button}>
-            <Button
-              children="Criar Simulado"
-              bg_color="#DA9E00"
-              padding_sz="25px"
-              radius="15px"
-              marginTop="16px"
-              onClick={handleCriarSimulado}
-              height_size={"5px"}
+
+          <div className={styles.pagination}>
+            <Pagination
+              currentPage={currentPage}
+              totalItems={simuladosFiltrados.length}
+              itemsPerPage={itemsPerPage}
+              setCurrentPage={setCurrentPage}
             />
           </div>
         </div>
 
-        <div className={styles.CardSimulados}>
-          {simuladosFiltrados.map((item) => (
-            <SimuladosCard
-              gradient="linear-gradient(to right,rgb(22, 22, 22) , #DA9E00)"
-              key={item.id}
-              titulo={item.titulo}
-              data={formatarData(item.data)}
-              status={"Concluído"}
-              participantes={item.totalAlunos}
-              turmas={item.nomeTurma}
-              onRegistrarResultados={() => handleResultados(item.id)}
-            />
-          ))}
+        <div className={styles.bg_right}>
+          <div className={styles.form}>
+            <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+              CADASTRAR SIMULADO
+            </h2>
+            <Input
+              placeholder="Adicione um título para o simulado"
+              value={titulo}
+              color="#1A1A1A"
+              onChange={(e) => setTitulo(e.target.value)}
+            >
+              <i className="fa-solid fa-pencil"></i>
+            </Input>
+          </div>
+
+          <div className={styles.SelectTurma}>
+            <select
+              placeholder="Selecione uma turma"
+              value={turma}
+              onChange={(e) => setTurma(e.target.value)}
+            >
+              <option value="">Selecione uma turma</option>
+              {turmas.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <Button
+            text_size="20px"
+            text_color="#E0E0E0"
+            padding_sz="10px"
+            bg_color="#DA9E00"
+            onClick={handleSubmit}
+          >
+            CADASTRAR
+          </Button>
+
+          <Message
+            text={formMessage ? formMessage.text : ""}
+            type={formMessage ? formMessage.type : ""}
+          />
         </div>
       </div>
-
-      {/* Modal de registro */}
-      <RegistrarSimuladoModal
-        isOpen={mostrarModal}
-        onClose={() => setMostrarModal(false)}
-        onSave={handleSalvarSimulado}
-        turma={turma}
-        setTurma={setTurma}
-      />
     </div>
   );
 };

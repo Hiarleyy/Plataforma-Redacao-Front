@@ -97,13 +97,13 @@ function NotasSimulados() {
           <DetailsCard
             title="Título do Simulado"
             content={nomeSimulado && nomeSimulado[0]}
-            bg_color="#DA9E00"
+            bg_color="#1A1A1A"
           />
-          <DetailsCard title="Turma" content={nomeTurma} bg_color="#DA9E00" />
+          <DetailsCard title="Turma" content={nomeTurma} bg_color="#1A1A1A" />
           <DetailsCard
             title="Data"
             content={formatarData(dataSimulado)}
-            bg_color="#DA9E00"
+            bg_color="#1A1A1A"
           />
           <NotasTabela SimuladoId={simulado_id} />
         </div>

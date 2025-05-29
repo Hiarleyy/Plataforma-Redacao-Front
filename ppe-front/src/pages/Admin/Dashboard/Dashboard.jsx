@@ -174,16 +174,15 @@ const Dashboard = () => {
 
   return (
     <div className={styles.container}>
-      <Title title="Desempenho" />
+      <Title title="Dashboard" />
       <div className={styles.container_desenpenho}>
         <div className={styles.CardDashs_container}>
           <CardDash
             title="Total de alunos"
             content={alunos.length}
-            gradient="linear-gradient(to right, #ca7e0b,rgb(115, 120, 129))"
             titleColor="#ffffff"
             contentColor="#ffffff"
-            color="#ca7e0b"
+            color="#1A1A1A"
             fontSize="22px"
             
             icon={
@@ -205,7 +204,7 @@ const Dashboard = () => {
             }
           />
           <CardDash
-            gradient="linear-gradient(to right, #ca7e0b,rgb(115, 120, 129))"
+            color={"#1A1A1A"}
             title="Total de turmas"
             content={turmas.length}
             fontSize="22px"
@@ -229,9 +228,9 @@ const Dashboard = () => {
             }
           />
           <CardDash
-            gradient="linear-gradient(to right, #ca7e0b,rgb(115, 120, 129))"
             title="Total de simulados"
             content={simulados.length}
+            color={"#1A1A1A"}
             fontSize="22px"
             icon={
               <svg
