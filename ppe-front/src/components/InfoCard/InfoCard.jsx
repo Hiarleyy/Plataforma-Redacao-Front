@@ -9,7 +9,7 @@ const InfoCard = ({ img, title, subtitle, link, button_registrar = false, button
 
       <div className={styles.infos}>
         <p className={styles.title}>{title}</p>
-        <p className={styles.subtitle}>{subtitle}</p>
+        {subtitle === undefined ? null : <p className={styles.subtitle}>{subtitle}</p>}
       </div>
 
       <div className={styles.btn_container}>

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useUseful from '../../../utils/useUseful';
 import styles from "./styles.module.css";
 import Title from "../../../components/Title/Title";
@@ -9,12 +8,14 @@ import fetchData from '../../../utils/fetchData';
 import Pagination from '../../../components/Pagination/Pagination';
 import InfoCard from '../../../components/InfoCard/InfoCard';
 import GraficoRedacoes from '../../../components/GraficoRedacoes/GraficoRedacoes';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer } from 'recharts';
+import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg';
 
 const Perfil = () => {
+  const [usuario, setUsuario] = useState([]);
   const [activeTab, setActiveTab] = useState('minhas');
   const [redacoes, setRedacoes] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const { brasilFormatData } = useUseful()
 
@@ -26,15 +27,32 @@ const Perfil = () => {
   const currentRedacoes = redacoes.slice(indexOfFirstItem, indexOfLastItem)
   const currentRedacoesCorrigidas = redacoesCorrigidas.slice(indexOfFirstItem, indexOfLastItem)
 
+  const getAlunoId = () => {
+      const aluno = localStorage.getItem('user_access_data')
+      const {id} = JSON.parse(aluno)
+      return id
+  }
+
+  // Responsividade para mobile
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   useEffect(() => {
     const getData = async () => {
-      const { getRedacoesUser, getRedacoesCorrigidas } = fetchData() 
+      const { getRedacoesUser, getRedacoesCorrigidas, getAlunoById } = fetchData() 
       const response = await getRedacoesUser()
+
+      const responseAluno = await getAlunoById(getAlunoId())
       setRedacoes(response)
       const responseCorrigidas = await getRedacoesCorrigidas()
       setRedacoesCorrigidas(responseCorrigidas)
-      console.log(response)
-      console.log(responseCorrigidas)
+      setUsuario(responseAluno)
     }
   
     getData()
@@ -47,8 +65,9 @@ const Perfil = () => {
         <div className={styles.perfil}>
           <div>
             <div className={styles.header_container}>
-              <img className={styles.img_container} src="https://github.com/hiarleyy.png" alt="" />
-              <h3>Fulano da silva teste</h3>
+              <img className={styles.img_container} 
+              src={usuario.caminho ? `http://localhost:3000/usuarios/${usuario.id}/profile-image` : defaultProfilePicture} alt="" />
+              <h3>{usuario.nome && usuario.nome}</h3>
               <p>Entrou em 24/04/2025</p>
             </div>
           </div>
@@ -78,7 +97,7 @@ const Perfil = () => {
               xKey="data"
               yKey="nota"
               title="Evolução das Notas"
-              height_size="300px"
+              height_size={isMobile ? "250px" : "300px"}
             />
           </div>
         </div>
@@ -116,6 +135,7 @@ const Perfil = () => {
                           title={redacoes.titulo} 
                           subtitle={brasilFormatData(redacoes.data)}
                           button={false}
+                          img="https://static.vecteezy.com/system/resources/previews/028/049/250/non_2x/terms-icon-design-vector.jpg"
                       />
                     ))}
                   </div>
@@ -137,6 +157,7 @@ const Perfil = () => {
                           title={redacoesCorrigidas.titulo} 
                           subtitle={brasilFormatData(redacoesCorrigidas.data)}
                           button={false}
+                          img="https://static.vecteezy.com/system/resources/previews/028/049/250/non_2x/terms-icon-design-vector.jpg"
                       />
                     ))}
                   </div>
@@ -152,7 +173,6 @@ const Perfil = () => {
               )}
             </div>
           </div>
-         
         </div>
       </div>
     </div>

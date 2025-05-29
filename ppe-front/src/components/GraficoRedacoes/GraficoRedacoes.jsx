@@ -1,5 +1,6 @@
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { useEffect, useState } from 'react';
 
 const GraficoRedacoes = ({ 
   data = [], 
@@ -13,6 +14,16 @@ const GraficoRedacoes = ({
   lineColor = '#DA9E00',
   backgroundColor = '#1a1a1a88',
 }) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Format X-axis labels based on the labelFormat
   const formatLabel = (value) => {
@@ -38,7 +49,6 @@ const GraficoRedacoes = ({
       }
     ]
   };
-
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -48,13 +58,13 @@ const GraficoRedacoes = ({
         text: title,
         color: '#E0E0E0',
         font: {
-          size: 18,
+          size: isMobile ? 14 : 18,
           weight: 'bold',
           family: 'Inter, sans-serif'
         },
         padding: {
-          top: 10,
-          bottom: 30
+          top: isMobile ? 5 : 10,
+          bottom: isMobile ? 15 : 30
         }
       },
       legend: {
@@ -101,10 +111,12 @@ const GraficoRedacoes = ({
         }
       }
     }
-  };
-
-  return (
-    <div style={{ width: "100%", height: height_size }}>
+  };  return (
+    <div style={{ 
+      width: "100%", 
+      height: isMobile ? "250px" : height_size,
+      padding: isMobile ? "0 5px" : "0"
+    }}>
       <Line data={chartData} options={options} />
     </div>
   );

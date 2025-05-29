@@ -41,19 +41,48 @@ const fetchData = () => {
     return response.data.data
   }
 
-  const getNotasById = async (id) => {
-    const response = await axios.get(`http://localhost:3000/redacoes/${id}`)
-    return response.data.data
-  }
   const getRanking = async () => {
     const response = await axios.get("http://localhost:3000/ranking")
     return response.data.data
   }
+  
   const getPropostas = async() =>{
     const response = await axios.get ("http://localhost:3000/propostas")
     return response.data.data
   }
-  const getRedacoes = async () => {
+
+  const getRedacoes = async (usuarioId = false, corrigidas = false, pendentes = false) => {
+    // Buscando as redações corrigidas de um usuário específico
+    if (usuarioId && corrigidas) {
+      const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}&corrigidas=true`)
+      return response.data.data
+    }
+
+    // Buscando as redações pendentes de um usuário específico
+    if (usuarioId && pendentes) {
+      const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}&pendentes=true`)
+      return response.data.data
+    }
+
+    // Buscando todas as redações corrigidas
+    if (corrigidas) {
+      const response = await axios.get(`http://localhost:3000/redacoes?corrigidas=true`)
+      return response.data.data
+    }
+
+    // Buscando todas as redações pendentes
+    if (pendentes) {
+      const response = await axios.get(`http://localhost:3000/redacoes?pendentes=true`)
+      return response.data.data
+    }
+
+    // Buscando as redações de um usuário específico
+    if (usuarioId) {
+      const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}`)
+      return response.data.data
+    }
+
+    // Buscando todas as redações
     const response = await axios.get("http://localhost:3000/redacoes")
     return response.data.data
   }
@@ -112,6 +141,7 @@ const fetchData = () => {
     getVideoById,
     getRanking,
     getRedacoes,
+    getPropostas,
     getRedacoesCorrigidas,
     getRedacoesUser,
     getPropostas,

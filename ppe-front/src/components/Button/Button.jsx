@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import styles from "./styles.module.css"
 import Loading from "../../components/Loading/Loading"
 
@@ -12,19 +13,44 @@ const Button = ({
   height_size = undefined,
   onClick = undefined,
   isLoading,
-  marginTop  = null
-}) => {
+  className
+}) => {  // HOOK PARA INTERFACE MOBILE
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+  // Handle responsive properties
+  const getFinalValue = (prop) => {
+    if (typeof prop === 'object' && prop !== null) {
+      return isMobile && prop.mobile ? prop.mobile : prop.default || prop;
+    }
+    return prop;
+  };
   return (
-    <button className={styles.btn} type= "submit"onClick={onClick} style={{ 
-      backgroundColor: bg_color, 
-      color: text_color,
-      fontSize: text_size,
-      padding: padding_sz,
-      borderRadius: radius,
-      width: width_size,
-      height: height_size,
-      marginTop: marginTop
-    }}>{isLoading ? <Loading size={"20px"} /> : children}</button>
+    <button 
+      className={`${styles.btn} ${className || ''}`} 
+      type="submit"
+      onClick={onClick} 
+      style={{ 
+        backgroundColor: bg_color, 
+        color: text_color,
+        fontSize: getFinalValue(text_size),
+        padding: getFinalValue(padding_sz),
+        borderRadius: getFinalValue(radius),
+        width: getFinalValue(width_size),
+        height: getFinalValue(height_size),
+        "--text-color": text_color, 
+      }}
+    >
+      {isLoading ? <Loading size={"20px"} /> : children}
+    </button>
   )
 }
 

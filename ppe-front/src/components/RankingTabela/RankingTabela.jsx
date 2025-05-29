@@ -3,7 +3,7 @@ import styles from './styles.module.css'
 const RankingTabela = ({ ranking }) => {
 
   return (
-    <div className={styles.tabela_container}>
+    <div className={styles.tabela_container} role="region" aria-label="Tabela de classificação">
       <table className={styles.tabela}>
         <thead>
           <tr>
@@ -17,8 +17,8 @@ const RankingTabela = ({ ranking }) => {
           {ranking.slice(3).map((item, index) => (
             <tr key={item.id}>
               <td className={styles.celula}>{`${index + 4}º`}</td>
-              <td className={styles.celula}>{item.nome}</td>
-              <td className={styles.celula}>{item.turma}</td>
+              <td className={styles.celula} title={item.nome}>{item.nome}</td>
+              <td className={styles.celula} title={item.turma}>{item.turma}</td>
               <td className={styles.celula}>{item.media}</td>    
             </tr>
           ))}
