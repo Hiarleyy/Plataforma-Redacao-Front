@@ -54,6 +54,7 @@ const DetalhesTurma = () => {
   
     getData()
   }, [])
+  
 
   return (
     <div className={styles.container}>
@@ -90,7 +91,7 @@ const DetalhesTurma = () => {
               padding_sz="20px" 
               bg_color="#B2433F" 
               onClick={deleteTurma}
-            ><i class="fa-solid fa-trash"></i> EXCLUIR TURMA</Button>
+            ><i className="fa-solid fa-trash"></i> EXCLUIR TURMA</Button>
           </div>
         </div>
 

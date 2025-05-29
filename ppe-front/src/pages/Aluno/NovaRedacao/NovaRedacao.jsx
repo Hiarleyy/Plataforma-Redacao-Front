@@ -27,8 +27,8 @@ const Novaredacao = () => {
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentredacaos= redacao.slice(indexOfFirstItem, indexOfLastItem)
-  const[usuarioId, setUsuarioId] = useState("")
   const formData = new FormData();
+  const usuarioId = '66ef8409-473b-454e-97ff-beb62db0a8c2'
 
 
   const onDrop = async (acceptedFiles) => {
@@ -95,7 +95,7 @@ const Novaredacao = () => {
 
     
     try { 
-      const usuarioId = redacao.map(item => item.usuarioId)
+     
       formData.append("usuarioId", usuarioId)
       
       const response = await axios.post(`http://localhost:3000/redacoes/${usuarioId}/upload`, formData, {
@@ -130,8 +130,8 @@ const Novaredacao = () => {
 
   useEffect(()=>{
     const getData = async() =>{
-      const { getRedacoes } = fetchData()
-      const redacoesResponse = await getRedacoes()
+      const { getRedacaoById } = fetchData()
+      const redacoesResponse = await getRedacaoById(usuarioId)
     
     const options = redacoesResponse.map(item =>({
       id: item.id,

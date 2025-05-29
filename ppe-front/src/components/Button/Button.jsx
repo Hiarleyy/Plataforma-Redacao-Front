@@ -11,7 +11,8 @@ const Button = ({
   width_size = "100%",
   height_size = undefined,
   onClick = undefined,
-  isLoading
+  isLoading,
+  marginTop  = null
 }) => {
   return (
     <button className={styles.btn} type= "submit"onClick={onClick} style={{ 
@@ -22,6 +23,7 @@ const Button = ({
       borderRadius: radius,
       width: width_size,
       height: height_size,
+      marginTop: marginTop
     }}>{isLoading ? <Loading size={"20px"} /> : children}</button>
   )
 }

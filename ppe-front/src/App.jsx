@@ -29,7 +29,8 @@ import RankingAdmin from "./pages/Common/Ranking/Ranking"
 import CursosAdmin from "./pages/Common/Cursos/Cursos"
 import CorrigirRedacoes from "./pages/Admin/CorrigirRedacoes/CorrigirRedacoes"
 import Pagamentos from "./pages/Admin/Pagamentos/pagamentos"
-import DesenpenhoAdmin from "./pages/Admin/DesenpenhoAdmin/DesenpenhoAdmin"
+import Simulados from "./pages/Admin/Simulados/Simulados"
+import NotasSimulados from "./pages/Admin/NotasSimulados/NotasSimulados"
 
 const router = createBrowserRouter([
   {
@@ -47,8 +48,8 @@ const router = createBrowserRouter([
       { path: "ranking", element: <RankingAlunos /> },
       { path: "cursos", element: <CursosAluno /> },
       { path: "cursos/:video_id", element: <VideoPage /> },
-      { path: "ControleDesempenho", element:<DesenpenhoAluno />}
-      {path: "configuracoes", element:<Configuracoes />},
+      { path: "ControleDesempenho", element:<DesenpenhoAluno />},
+      { path: "configuracoes", element:<Configuracoes />},
     ],
   },
 
@@ -68,6 +69,8 @@ const router = createBrowserRouter([
       { path: "cursos/:video_id", element: <VideoPage /> },
       { path: "corrigir-redacoes", element: <CorrigirRedacoes /> },
       { path: "pagamentos", element: <Pagamentos />},
+      { path: "Simulados", element:<Simulados />},
+      { path: "Simulados/:simulado_id", element: <NotasSimulados />},
     ],
   },
 ]);

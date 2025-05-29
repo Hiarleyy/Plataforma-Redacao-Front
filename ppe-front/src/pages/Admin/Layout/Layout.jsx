@@ -13,7 +13,7 @@ const links = [
   { name: "Ranking", icon: "fa-solid fa-ranking-star", path: "ranking" },
   { name: "Cursos", icon: "fa-solid fa-tv", path: "cursos" },
   { name: "Configuracoes", icon: "fa-solid fa-gear", path: "configuracoes" },
-  { name: "Controle de Desempenho", icon: "fa-solid fa-bullseye", path: "ControleDesempenhoAdmin" },
+  { name: "Simulados", icon: "fa-solid fa-bullseye", path: "Simulados" },
 ]
 
 const AdminLayout = () => {
