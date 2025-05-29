@@ -81,12 +81,10 @@ const fetchData = () => {
       const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}`)
       return response.data.data
     }
-
     // Buscando todas as redações
     const response = await axios.get("http://localhost:3000/redacoes")
     return response.data.data
   }
-
   const getRedacaoById = async (id) => {
     const response = await axios.get(`http://localhost:3000/redacoes/${id}`)
     return response.data.data
@@ -94,7 +92,7 @@ const fetchData = () => {
 
   const getRedacoesUser = async (id) => {
     if (id) {
-      const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${id}`)
+      const response = await axios.get(`http://localhost:3000/redacoes/?usuarioId=${id}`)
       return response.data.data
     }
     // Retorna todas as redações se nenhum ID de usuário for fornecido
@@ -125,7 +123,7 @@ const fetchData = () => {
     getPropostas,
     getRedacoesCorrigidas,
     getRedacoesUser,
-    getRedacaoById
+    getRedacaoById,
   }
 }
 
