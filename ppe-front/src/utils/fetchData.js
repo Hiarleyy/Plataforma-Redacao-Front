@@ -90,6 +90,20 @@ const fetchData = () => {
     return response.data.data
   }
 
+  const getSimulados = async () => {
+    const response = await axios.get(`http://localhost:3000/simulados`)
+    return response.data.data
+  }
+  const getNotasbySimuladoId = async (id) => {
+    const response = await axios.get(`http://localhost:3000/notaSimulado/simuladoId/${id}`)
+    return response.data.data
+  }
+  const getSimuladoByIdTurma = async (id) => {
+    const response = await axios.get(`http://localhost:3000/simulados/turmaId/${id}`)
+    return response.data.data
+  }
+
+
   const getRedacoesUser = async (id) => {
     if (id) {
       const response = await axios.get(`http://localhost:3000/redacoes/?usuarioId=${id}`)
@@ -99,6 +113,19 @@ const fetchData = () => {
     const response = await axios.get(`http://localhost:3000/redacoes`)
     return response.data.data
   }
+   const getCorrecoes= async () => {
+    const response = await axios.get(`http://localhost:3000/correcoes`)
+    return response.data.data
+  }
+  const getNotaSimulados = async () => {
+    const response = await axios.get(`http://localhost:3000/notaSimulado`)
+    return response.data.data
+  } 
+  const getSimuladoById = async (id) => {
+    const response = await axios.get(`http://localhost:3000/simulados/${id}`)
+    return response.data.data
+  }
+
 
     const getRedacoesCorrigidas = async (id) => {
     if (id) {
@@ -124,6 +151,13 @@ const fetchData = () => {
     getRedacoesCorrigidas,
     getRedacoesUser,
     getRedacaoById,
+     getRedacoesUser,
+    getPropostas,
+    getRedacaoById,
+    getSimuladoById,
+    getSimulados,
+    getNotasbySimuladoId,
+    getSimuladoByIdTurma
   }
 }
 
