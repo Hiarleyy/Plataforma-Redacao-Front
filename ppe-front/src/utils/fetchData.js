@@ -81,29 +81,39 @@ const fetchData = () => {
       const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${usuarioId}`)
       return response.data.data
     }
-
     // Buscando todas as redações
     const response = await axios.get("http://localhost:3000/redacoes")
     return response.data.data
   }
-
   const getRedacaoById = async (id) => {
-    const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=${id}`)
+    const response = await axios.get(`http://localhost:3000/redacoes/${id}`)
     return response.data.data
   }
 
-  const getRedacoesUser = async () => {
-    const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=66ef8409-473b-454e-97ff-beb62db0a8c2`)
+  const getSimulados = async () => {
+    const response = await axios.get(`http://localhost:3000/simulados`)
+    return response.data.data
+  }
+  const getNotasbySimuladoId = async (id) => {
+    const response = await axios.get(`http://localhost:3000/notaSimulado/simuladoId/${id}`)
+    return response.data.data
+  }
+  const getSimuladoByIdTurma = async (id) => {
+    const response = await axios.get(`http://localhost:3000/simulados/turmaId/${id}`)
     return response.data.data
   }
 
-  
-  const getRedacoesCorrigidas = async () => {
-    const response = await axios.get(`http://localhost:3000/redacoes?usuarioId=66ef8409-473b-454e-97ff-beb62db0a8c2&corrigidas=true`)
+
+  const getRedacoesUser = async (id) => {
+    if (id) {
+      const response = await axios.get(`http://localhost:3000/redacoes/?usuarioId=${id}`)
+      return response.data.data
+    }
+    // Retorna todas as redações se nenhum ID de usuário for fornecido
+    const response = await axios.get(`http://localhost:3000/redacoes`)
     return response.data.data
   }
-
-  const getCorrecoes= async () => {
+   const getCorrecoes= async () => {
     const response = await axios.get(`http://localhost:3000/correcoes`)
     return response.data.data
   }
@@ -115,16 +125,15 @@ const fetchData = () => {
     const response = await axios.get(`http://localhost:3000/simulados/${id}`)
     return response.data.data
   }
-  const getSimulados = async () => {
-    const response = await axios.get(`http://localhost:3000/simulados`)
-    return response.data.data
-  }
-  const getNotasbySimuladoId = async (id) => {
-    const response = await axios.get(`http://localhost:3000/notaSimulado/simuladoId/${id}`)
-    return response.data.data
-  }
-  const getSimuladoByIdTurma = async (id) => {
-    const response = await axios.get(`http://localhost:3000/simulados/turmaId/${id}`)
+
+
+    const getRedacoesCorrigidas = async (id) => {
+    if (id) {
+      const response = await axios.get(`http://localhost:3000/redacoes/${id}?corrigidas=true`)
+      return response.data.data
+    }
+    // Busca todas as redações corrigidas se não houver ID específico
+    const response = await axios.get(`http://localhost:3000/redacoes?corrigidas=true`)
     return response.data.data
   }
 
@@ -141,10 +150,10 @@ const fetchData = () => {
     getPropostas,
     getRedacoesCorrigidas,
     getRedacoesUser,
+    getRedacaoById,
+     getRedacoesUser,
     getPropostas,
     getRedacaoById,
-    getCorrecoes,
-    getNotaSimulados,
     getSimuladoById,
     getSimulados,
     getNotasbySimuladoId,

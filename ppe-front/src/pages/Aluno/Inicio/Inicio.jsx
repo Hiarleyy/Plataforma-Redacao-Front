@@ -56,10 +56,11 @@ const handleDownloadProposta = async () => {
 
   useEffect(() => {
     const getData = async () => {
-      const { getRedacoes, getRedacoesCorrigidas} = fetchData() 
-      const response = await getRedacoes()
+      const { getRedacoes, getAlunoById} = fetchData() 
+      const alunoId = getAlunoId()
+      const response = await getRedacoes(alunoId)
       setRedacoes(response)
-      const responseCorrigidas = await getRedacoesCorrigidas()
+      const responseCorrigidas = await getRedacoes(alunoId,true)
       setRedacoesCorrigidas(responseCorrigidas)
     }
     getData()

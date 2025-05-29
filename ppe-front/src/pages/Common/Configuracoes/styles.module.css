@@ -117,21 +117,26 @@
 /* Container do formulário alinhado horizontalmente com as imagens */
 .image_upload_form_container {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-top: 20px;
+  width: 100%;
 }
 
 .image_upload_form {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: flex-start;
   gap: 15px;
-  align-items: center;
   width: 100%;
+  max-width: 350px; /* Reduzido para melhor centralização */
 }
 
 /* Estilização do input de arquivo */
 .file_input_container {
   position: relative;
+  width: auto; /* Alterado de 100% para auto */
+  margin-bottom: 0; /* Removido margin bottom */
+  flex: 0 0 auto; /* Evita crescimento do item */
 }
 
 .file_input {
@@ -153,6 +158,9 @@
   transition: background-color 0.2s;
   border: 1px solid #ddd;
   display: inline-block;
+  width: auto; /* Alterado de 100% para auto */
+  text-align: center;
+  white-space: nowrap; /* Evita quebra de texto */
 }
 
 .file_input_label:hover {
@@ -163,6 +171,9 @@
 .button_container {
   display: flex;
   align-items: center;
+  width: auto; /* Alterado de 100% para auto */
+  margin-left: 10px; /* Adicionado pequeno espaçamento */
+  flex: 0 0 auto; /* Evita crescimento do item */
 }
 
 .button_container_password {
@@ -250,23 +261,125 @@
   gap: 10px;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
+/* Media queries para responsividade */
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .main_content {
+    padding: 1rem;
+  }
+
+  .config_section {
+    width: 100%;
+  }
+
   .profile_image_container {
+    flex-direction: row;
+    align-items: center;
     justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .current_image_container,
+  .image_preview_container {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile_image,
+  .preview_image {
+    width: 150px;
+    height: 150px;
+  }
+
+  .image_upload_form_container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 
   .image_upload_form {
-    flex-direction: column;
-    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .file_input_container {
+    width: auto;
+    margin-bottom: 0;
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
   }
 
   .button_container {
-    margin-top: 15px;
+    width: auto;
+    margin-left: 10px;
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .password_form {
     width: 100%;
   }
 
-  .submit_button {
+  .form_group {
     width: 100%;
+  }
+
+  .image_preview_container {
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .profile_image,
+  .preview_image {
+    width: 120px;
+    height: 120px;
+  }
+
+  .form_group p {
+    font-size: 14px;
+  }
+
+  .file_input_label {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .submit_button {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+  
+  .image_upload_form {
+    width: 100%;
+    max-width: 300px; /* Ainda mais compacto para telas muito pequenas */
+    justify-content: center;
+  }
+  
+  .file_input_container,
+  .button_container {
+    margin: 0 5px; /* Espaçamento reduzido entre os botões */
+  }
+  
+  /* Garante que o botão e o label tenham tamanhos similares em telas muito pequenas */
+  .file_input_label,
+  .submit_button {
+    font-size: 13px;
+    padding: 8px 10px;
+    min-width: 110px;
+    text-align: center;
   }
 }

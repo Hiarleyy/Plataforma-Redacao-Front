@@ -14,8 +14,12 @@ const Perfil = () => {
   const [usuario, setUsuario] = useState([]);
   const [activeTab, setActiveTab] = useState('minhas');
   const [redacoes, setRedacoes] = useState([]);
+  const [correcoes, setCorrecoes] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  // Estados para o modal
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedRedacao, setSelectedRedacao] = useState(null);
 
   const { brasilFormatData } = useUseful()
 
@@ -33,6 +37,18 @@ const Perfil = () => {
       return id
   }
 
+  // Função para abrir o modal com a redação selecionada
+  const handleRedacaoClick = (redacao) => {
+    setSelectedRedacao(redacao);
+    setModalOpen(true);
+  };
+
+  // Função para fechar o modal
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedRedacao(null);
+  };
+
   // Responsividade para mobile
   useEffect(() => {
     const handleResize = () => {
@@ -45,18 +61,105 @@ const Perfil = () => {
   
   useEffect(() => {
     const getData = async () => {
-      const { getRedacoesUser, getRedacoesCorrigidas, getAlunoById } = fetchData() 
-      const response = await getRedacoesUser()
-
-      const responseAluno = await getAlunoById(getAlunoId())
+      const { getRedacoes, getAlunoById, getCorrecoes} = fetchData() 
+      const alunoId = getAlunoId()
+      
+      // Buscar todas as redações do usuário
+      const response = await getRedacoes(alunoId)
       setRedacoes(response)
-      const responseCorrigidas = await getRedacoesCorrigidas()
+      
+      // Buscar redações corrigidas do usuário
+      const responseCorrigidas = await getRedacoes(alunoId, true)
       setRedacoesCorrigidas(responseCorrigidas)
+
+      
+      // Buscar dados do aluno
+      const responseAluno = await getAlunoById(alunoId)
       setUsuario(responseAluno)
     }
-  
+
     getData()
   }, [])
+
+  // Componente do Modal
+  const RedacaoModal = ({ redacao, isOpen, onClose }) => {
+    const [correcao, setCorrecao] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+      const getCorrecao = async () => {
+        if (!correcao) return;
+        
+        try {
+          setLoading(true);
+          const { getCorrecoes } = fetchData();
+          // Buscar correção específica para esta redação
+          const correcaoData = await getCorrecoes(correcao.id);
+          setCorrecao(correcaoData);
+        } catch (error) {
+          console.error("Erro ao buscar correção:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      if (isOpen && redacao) {
+        getCorrecao();
+      }
+    }, [redacao, isOpen]);
+
+    if (!isOpen || !redacao) return null;
+
+    return (
+      <div className={styles.modal_overlay} onClick={onClose}>
+        <div className={styles.modal_content} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.modal_header}>
+            <h2>{redacao.titulo}</h2>
+            <button className={styles.close_button} onClick={onClose}>×</button>
+          </div>
+          <div className={styles.modal_body}>
+            <div className={styles.redacao_info}>
+              <p><strong>Data:</strong> {brasilFormatData(redacao.data)}</p>
+              <p><strong>Tema:</strong> {redacao.tema}</p>
+              {activeTab === 'avaliadas' && redacao.correcao && (
+                <div className={styles.correcao_info}>
+                  <h3>Correção</h3>
+                  {loading ? (
+                    <p>Carregando dados da correção...</p>
+                  ) : correcao ? (
+                    <>
+                      <p><strong>Nota final:</strong> {correcao.nota}</p>
+                      <div className={styles.competencias}>
+                        <p><strong>Competência 1:</strong> {correcao.competencia1}</p>
+                        <p><strong>Competência 2:</strong> {correcao.competencia2}</p>
+                        <p><strong>Competência 3:</strong> {correcao.competencia3}</p>
+                        <p><strong>Competência 4:</strong> {correcao.competencia4}</p>
+                        <p><strong>Competência 5:</strong> {correcao.competencia5}</p>
+                      </div>
+                      {correcao.comentario && (
+                        <div className={styles.comentario}>
+                          <h4>Comentário do corretor:</h4>
+                          <p>{correcao.comentario}</p>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p>Nenhuma correção disponível</p>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className={styles.texto_redacao}>
+              <h3>Texto</h3>
+              <div className={styles.texto_container}>
+                <p>{redacao.texto}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className={styles.container}>
@@ -129,14 +232,15 @@ const Perfil = () => {
               {activeTab === 'minhas' ? (
                 <div className={styles.minhas_redacoes}>
                   <div className={styles.cards_container}>
-                    {currentRedacoes.map((redacoes) => (
-                      <InfoCard 
-                          key={redacoes.id}
-                          title={redacoes.titulo} 
-                          subtitle={brasilFormatData(redacoes.data)}
+                    {currentRedacoes.map((redacao) => (
+                      <div key={redacao.id} onClick={() => handleRedacaoClick(redacao)} className={styles.card_clickable}>
+                        <InfoCard 
+                          title={redacao.titulo} 
+                          subtitle={brasilFormatData(redacao.data)}
                           button={false}
                           img="https://static.vecteezy.com/system/resources/previews/028/049/250/non_2x/terms-icon-design-vector.jpg"
-                      />
+                        />
+                      </div>
                     ))}
                   </div>
                   <div className={styles.pagination_container}>
@@ -151,14 +255,15 @@ const Perfil = () => {
               ) : (
                 <div className={styles.redacoes_avaliadas}>
                   <div className={styles.cards_container}>
-                    {currentRedacoesCorrigidas.map((redacoesCorrigidas) => (
-                      <InfoCard 
-                          key={redacoesCorrigidas.id}
-                          title={redacoesCorrigidas.titulo} 
-                          subtitle={brasilFormatData(redacoesCorrigidas.data)}
+                    {currentRedacoesCorrigidas.map((redacao) => (
+                      <div key={redacao.id} onClick={() => handleRedacaoClick(redacao)} className={styles.card_clickable}>
+                        <InfoCard 
+                          title={redacao.titulo} 
+                          subtitle={brasilFormatData(redacao.data)}
                           button={false}
                           img="https://static.vecteezy.com/system/resources/previews/028/049/250/non_2x/terms-icon-design-vector.jpg"
-                      />
+                        />
+                      </div>
                     ))}
                   </div>
                   <div className={styles.pagination_container}>
@@ -175,6 +280,13 @@ const Perfil = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal para exibir detalhes da redação */}
+      <RedacaoModal 
+        redacao={selectedRedacao} 
+        isOpen={modalOpen} 
+        onClose={closeModal} 
+      />
     </div>
   );
 };
