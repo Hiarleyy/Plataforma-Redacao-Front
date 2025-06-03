@@ -10,6 +10,7 @@ import axios from "axios"
 import fetchData from "../../../utils/fetchData"
 import InfoCard from "../../../components/InfoCard/InfoCard"
 import Loading from "../../../components/Loading/Loading"
+import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg';
 
 const GerenciarAlunos = () => {
   const [formMessage, setFormMessage] = useState(null)
@@ -45,6 +46,13 @@ const GerenciarAlunos = () => {
         type: "success", 
         text: `Usuário(a) ${response.data.data.nome} criado(a) com sucesso.` 
       })
+
+      setNome("")
+      setEmail("")
+      setTipoUsuario("")
+      setTurma("")
+
+      await getAlunos()
     } catch (error) {
       setFormMessage({
         type: "error",
@@ -111,7 +119,7 @@ const GerenciarAlunos = () => {
                 {currentAlunos.map((aluno) => (
                   <InfoCard 
                     key={aluno.id}
-                    img="https://cdn-icons-png.flaticon.com/512/219/219969.png" 
+                    img={aluno.caminho ? `http://localhost:3000/usuarios/${aluno.id}/profile-image` : defaultProfilePicture}
                     title={aluno.nome} 
                     subtitle={aluno.email} 
                     link={aluno.id}

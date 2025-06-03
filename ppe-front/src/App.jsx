@@ -61,7 +61,27 @@ const definePath = () => {
 }
 
 const ProtectedHomeRoutes = ({ element }) => {
-  return isAuthenticated() ? element : <Navigate to="/" replace />
+  if (!isAuthenticated()) {
+    return <Navigate to="/" replace />
+  }
+
+  if (getUserRole()?.toUpperCase() !== "STANDARD") {
+    return <Navigate to="/" replace />
+  }
+
+  return element
+}
+
+const ProtectedHomeAdminRoutes = ({ element }) => {
+  if (!isAuthenticated()) {
+    return <Navigate to="/" replace />
+  }
+
+  if (getUserRole()?.toUpperCase() !== "ADMIN") {
+    return <Navigate to="/" replace />
+  }
+
+  return element
 }
 
 const ProtectedLoginRoute = ({ element }) => {
@@ -91,7 +111,7 @@ const router = createBrowserRouter([
 
   {
     path: "/admin",
-    element: <ProtectedHomeRoutes element={<AdminLayout />} />,
+    element: <ProtectedHomeAdminRoutes element={<AdminLayout />} />,
     children: [
       { index: true, element: <DashboardAdmin /> },
       { path: "nova-proposta", element: <NovaProposta /> },

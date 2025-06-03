@@ -1,13 +1,20 @@
 import axios from "axios"
 
+const getUserToken = () => {
+  const response = localStorage.getItem('user_access_data')
+  const { token } = JSON.parse(response)
+  return token
+}
+
 const fetchData = () => {
   const getTurmas = async () => {
-    const response = await axios.get("http://localhost:3000/turmas")
+    const response = await axios.get("http://localhost:3000/turmas", { headers: { Authorization: `Bearer ${getUserToken()}` } })
+    
     return response.data.data
   }
 
   const getTurmaById = async (id) => {
-    const response = await axios.get(`http://localhost:3000/turmas/${id}`)
+    const response = await axios.get(`http://localhost:3000/turmas/${id}`, { headers: { Authorization: `Bearer ${getUserToken()}` } })
     return response.data.data
   }
 

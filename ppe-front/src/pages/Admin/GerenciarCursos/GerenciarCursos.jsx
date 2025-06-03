@@ -42,6 +42,12 @@ const GerenciarCursos = () => {
         type: "success", 
         text: `Curso ${response.data.data.nome} criado com sucesso.` 
       })
+
+      setNome("")
+      setDescricao("")
+      setPlaylistUrl("")
+
+      await getData()
     } catch (error) {
       setFormMessage({
         type: "error",
@@ -52,13 +58,13 @@ const GerenciarCursos = () => {
     }
   }
 
+  const getData = async () => {
+    const { getModulos } = fetchData() 
+    const response = await getModulos()
+    setModulos(response)
+  }
+
   useEffect(() => {
-    const getData = async () => {
-      const { getModulos } = fetchData() 
-      const response = await getModulos()
-      setModulos(response)
-    }
-  
     getData()
   }, [])
 
