@@ -78,6 +78,7 @@
     padding-left: 15px;
     padding-right: 15px;
     padding-top: 20px;
+    margin-bottom: 100px;
   }
   
   .status_container {
@@ -110,6 +111,7 @@
   .main_content {
     padding-left: 30px;
     padding-right: 30px;
+    margin-bottom: 100px;
   }
   
   .status_container {

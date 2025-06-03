@@ -87,7 +87,7 @@ const handleDownloadProposta = async () => {
             <>
             <div className={styles.button}>            <BTN
             bg_color="#FFF5CC" 
-            text_size={{default: "20px", mobile: "16px"}}
+            text_size={{default: "20px", mobile: "20px"}}
             text_color="#DA9E00"
             padding_sz={{default: "10px", mobile: "8px"}}
             onClick={() => window.location.href = '/aluno/nova-redacao'} 
@@ -152,9 +152,10 @@ const handleDownloadProposta = async () => {
             variant="default"
             actions={
               <>  
-              <div className={styles.button}>              <BTN
+              <div className={styles.button}>
+              <BTN
               bg_color="#FFF5CC" 
-              text_size={{default: "20px", mobile: "16px"}}
+              text_size={{default: "20px", mobile: "20px"}}
               text_color="#DA9E00"
               padding_sz={{default: "10px", mobile: "8px"}}
               onClick={handleDownloadProposta}
@@ -179,7 +180,35 @@ const handleDownloadProposta = async () => {
 
           
         </div>
-        
+
+        <div className={styles.status_container}>
+        <Card 
+            title="Simulados" 
+            content="Veja aqui as informações sobre os simulados realizados" 
+            variant="default"
+            actions={
+              <>  
+              <div className={styles.button}>
+               <BTN
+              bg_color="#FFF5CC" 
+              text_size={{default: "20px", mobile: "20px"}}
+              text_color="#DA9E00"
+              padding_sz={{default: "10px", mobile: "8px"}}
+              
+              className={styles.responsive_button}
+              isLoading={isDownloading}
+              >
+                {!isDownloading && (
+                  <>
+                    <span className={styles.button_text} style={{color: "#DA9E00"}}>Simulados</span>
+                  </>
+                )}
+              </BTN>
+              </div>
+              </>
+            }
+          />
+        </div>
         </div>  
       </div>
   )

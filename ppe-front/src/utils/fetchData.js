@@ -151,13 +151,12 @@ const fetchData = () => {
     getRedacoesCorrigidas,
     getRedacoesUser,
     getRedacaoById,
-     getRedacoesUser,
-    getPropostas,
-    getRedacaoById,
     getSimuladoById,
     getSimulados,
     getNotasbySimuladoId,
-    getSimuladoByIdTurma
+    getSimuladoByIdTurma,
+    getCorrecoes,
+    getNotaSimulados
   }
 }
 

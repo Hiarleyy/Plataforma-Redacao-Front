@@ -264,7 +264,7 @@
 /* Media queries para responsividade */
 @media screen and (max-width: 768px) {
   .container {
-    padding: 1rem;
+    margin-bottom: 100px;
   }
 
   .main_content {
@@ -343,6 +343,14 @@
 }
 
 @media screen and (max-width: 480px) {
+  .container {
+    margin-bottom: 120px;  /* Increased from 100px to 120px for extra space */
+  }
+  
+  .main_content {
+    margin-bottom: 100px; /* Added margin-bottom to main_content */
+  }
+  
   .profile_image,
   .preview_image {
     width: 120px;

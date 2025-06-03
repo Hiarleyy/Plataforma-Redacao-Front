@@ -260,7 +260,7 @@
 
 .pagination_container {
   position: absolute;
-  margin-top: 590px;
+  margin-top: 690px;
   left: 0;
   right: 0;
   display: flex;
@@ -390,6 +390,7 @@
   .main_content {
     flex-direction: column;
     padding: 20px;
+    margin-bottom: 100px;
     gap: 15px;
   }
 
