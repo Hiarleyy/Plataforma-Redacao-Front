@@ -31,6 +31,10 @@ const Button = ({
     if (typeof prop === 'object' && prop !== null) {
       return isMobile && prop.mobile ? prop.mobile : prop.default || prop;
     }
+    // For text_size specifically, use 16px for mobile
+    if (prop === text_size && isMobile) {
+      return "16px";
+    }
     return prop;
   };
   return (

@@ -83,9 +83,9 @@
 
 .content {
   padding: 16px;
-  font-size: 17px;
+  font-size: 16px;
   color:#B0B0B0;
-  font-weight: bold;
+  font-weight: 500;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }

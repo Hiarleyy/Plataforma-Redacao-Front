@@ -332,16 +332,15 @@
 
 .mobile_content {
   flex: 1;
+  padding-left: 30px;
+  padding-right: 30px;
   display: flex;
   flex-direction: column;
   padding: 0;
-  border-radius: 10px;
+  width: 100%;
   background-color: #242424;
   margin-top: 10px; /* Espaço para o componente Title */
   margin-bottom: 100px; /* Added margin-bottom for mobile interface */
-  margin-left: 30px; /* Added left margin for mobile interface */
-  margin-right: 30px; /* Added right margin for mobile interface */
-  width: calc(100% - 30px); /* Adjust width to account for side margins */
 }
 
 .mobile_form {
@@ -655,9 +654,6 @@
   background-color: #242424;
   margin-top: 10px; /* Espaço para o componente Title */
   margin-bottom: 100px; /* Added margin-bottom for mobile interface */
-  margin-left: 15px; /* Added left margin for mobile interface */
-  margin-right: 15px; /* Added right margin for mobile interface */
-  width: calc(100% - 30px); /* Adjust width to account for side margins */
 }
 
 .card_wrapper {

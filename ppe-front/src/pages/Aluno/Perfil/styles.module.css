@@ -135,7 +135,7 @@
 
 
 .metrics_status > a{
-    color:#42464D;
+    color: #b0b0b0;;
     text-decoration: none;
 }
 
@@ -163,6 +163,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     width: 100%;
+    color: #b0b0b0;
     padding: 20px;
     background-color: #242424;
     border-radius: 20px;
