@@ -38,6 +38,9 @@ const GerenciarTurmas = () => {
         type: "success", 
         text: `Turma ${response.data.data.nome} criada com sucesso.` 
       })
+
+      setTurma("")
+      await getData()
     } catch (error) {
       setFormMessage({
         type: "error",
@@ -46,6 +49,12 @@ const GerenciarTurmas = () => {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const getData = async () => {
+    const { getTurmas } = fetchData() 
+    const response = await getTurmas()
+    setTurmas(response)
   }
 
   const deleteTurma = async (id) => {
@@ -60,12 +69,6 @@ const GerenciarTurmas = () => {
   }
 
   useEffect(() => {
-    const getData = async () => {
-      const { getTurmas } = fetchData() 
-      const response = await getTurmas()
-      setTurmas(response)
-    }
-  
     getData()
   }, [])
 

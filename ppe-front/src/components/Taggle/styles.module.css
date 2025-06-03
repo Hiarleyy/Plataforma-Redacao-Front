@@ -20,8 +20,8 @@
 }
 
 .active {
-  background-color: #ca7e0b;
-  color: black;
+  background-color: #DA9E00;
+  color: rgb(255, 255, 255);
   height: 50px;
   font-weight: bold;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);

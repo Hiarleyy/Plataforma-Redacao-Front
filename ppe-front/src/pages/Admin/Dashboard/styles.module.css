@@ -7,16 +7,17 @@
   background-color: #242424;
   position: relative;
   display: flex;
+  margin-right: 20px;
   justify-content: space-between;
   padding: 20px;
   margin-left: 150px;
+  
   
 }
 
 .container_desenpenho .CardDashs_container {
   display: flex;
-  gap: 20px;
-  width: 100%;
+  gap: 52px;
 }
 
 .container_desenpenho .selects {
@@ -32,11 +33,12 @@
 }
 
 .container_desenpenho .select_turma {
-  align-items: center;
   width: 40%;
   margin-top: 40px;
   height: 35%;
-  margin-left: 0px;
+  left: 55px;
+  position: relative;
+
 }
 
 .container_desenpenho .select_turma select {
@@ -45,7 +47,7 @@
   font-size: 16px;
   color: #ffffff;
   border-radius: 6px;
-  background-color: #ca7e0b;
+  background-color: #DA9E00;
   transition: all 0.5s ease;
   outline: none;
   appearance: none;
@@ -80,11 +82,11 @@
   height: 100%;
   padding: 20px;
   border-radius: 10px;
-  border: 1px solid #dba905;
+  border: 1px solid #DA9E00;
 }
 
 .container_desenpenho .container_graficos .right {
-  border: 1px solid #dba905;
+  border: 1px solid #DA9E00;
   padding: 20px;
   border-radius: 10px;
 }

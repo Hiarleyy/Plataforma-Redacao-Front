@@ -1,13 +1,12 @@
 
 .simuladoCard {
-  background: #575454;
   border-radius: 10px;
   padding: 16px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   font-family: 'Segoe UI', sans-serif;
   cursor: pointer;
   width: 100%;
-  height: 100%
+  height: 40%;
 }
 
 .header {
@@ -18,75 +17,66 @@
 
 .title {
   margin: 0;
-  font-size: 24px;
+  font-size: 15px;
   font-weight: 600;
   color: #ffffff;
 }
 
 .date {
-  font-size: 14px;
+  font-size: 12px;
   color: #f7f2f2;
   margin-top: 4px;
+  margin-bottom: 5px;
 }
 
 .statusConcluido {
   padding: 4px 12px;
-  font-size: 13px;
+  font-size: 12px;
   border-radius: 20px;
   font-weight: 500;
   background-color: #d4f8dd;
   color: #2d8a50;
+ 
 }
 
 .infoContainer {
   display: flex;
   gap: 16px;
-  margin: 16px 0;
+  margin: 0px 0;
+  width: 100%;
+  height: 40%;
 }
 
 .infoCard {
-  background-color: #ebcb4d80;
-  padding: 12px;
+  background-color: #DA9E00;
+  padding: 4px 12px;
   border-radius: 8px;
   flex: 1;
 }
 
 .label {
   font-size: 14px;
-  color: #000000;
+  color: #ffffff;
+  
 }
 
 .value {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600;
-  margin-top: 4px;
   color: #000000; 
   font-style: italic;
+  margin-left: 25px;
 
-}
-
-.buttons {
-  display: flex;
-  gap: 12px;
 }
 
 .btnDark {
-  padding: 10px 20px;
+  padding: 6px 8px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
-  background-color: #DA9E00;
+  background-color: #131210;
   color: #fff;
   border: 1px solid #DA9E00;
   border-color: #fff;
-}
-
-.btnOutline {
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  background-color: transparent;
-  color: #0d1321;
-  border: 1px solid #dee2e6;
+  margin-top: 10px;
 }

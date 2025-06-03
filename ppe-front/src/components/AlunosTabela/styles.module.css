@@ -47,3 +47,28 @@ tr:nth-child(even) .celula {
 tr:hover .celula {
   background-color: #222;
 }
+
+@media (max-width: 768px) {
+  .tabela {
+    font-size: 13px;
+    min-width: 500px;
+  }
+
+  .celula,
+  .cabecalho {
+    padding: 10px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabela {
+    font-size: 12px;
+    min-width: 450px;
+  }
+
+  .celula,
+  .cabecalho {
+    padding: 8px 8px;
+  }
+}
+
