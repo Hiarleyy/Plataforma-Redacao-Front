@@ -6,6 +6,7 @@ import Message from "../../../components/Message/Message"
 import Pagination from "../../../components/Pagination/Pagination"
 import InputSelect from "../../../components/InputSelect/InputSelect"
 import { useState, useEffect } from "react"
+import { useNavigate } from 'react-router-dom';
 import axios from "axios"
 import fetchData from "../../../utils/fetchData"
 import InfoCard from "../../../components/InfoCard/InfoCard"
@@ -29,6 +30,8 @@ const GerenciarAlunos = () => {
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
   const currentAlunos = alunos.slice(indexOfFirstItem, indexOfLastItem)
+
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -67,6 +70,17 @@ const GerenciarAlunos = () => {
     const { getAlunos } = fetchData() 
     const response = await getAlunos(busca)
     setAlunos(response)
+  }
+
+  const deleteAluno = async (nome, id) => {
+    const confirmation = confirm(`Você tem certeza que deseja excluir o(a) aluno(a) ${nome}?`)
+    if (!confirmation) {
+      navigate("/admin/gerenciar-alunos")
+      return
+    } 
+
+    await axios.delete(`http://localhost:3000/usuarios/${id}`)
+    navigate("/admin/gerenciar-alunos")
   }
 
   useEffect(() => { 
@@ -123,6 +137,7 @@ const GerenciarAlunos = () => {
                     title={aluno.nome} 
                     subtitle={aluno.email} 
                     link={aluno.id}
+                    onClick={() => deleteAluno(aluno.nome, aluno.id)}
                   />
                 ))}
               </div>
@@ -189,7 +204,6 @@ const GerenciarAlunos = () => {
 
             <Button 
               text_size="20px" 
-              text_color="#E0E0E0" 
               padding_sz="10px" 
               bg_color="#DA9E00"
               isLoading={isLoading}

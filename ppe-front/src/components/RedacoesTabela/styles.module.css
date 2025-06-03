@@ -26,7 +26,7 @@
   text-align: left;
   padding: 10px 14px;
   background-color: #1E1E1E;
-  color: #f1f1f1;
+  color: #B0B0B0;
   font-weight: 600;
   position: sticky;
   top: 0;
@@ -36,6 +36,7 @@
 
 .celula {
   text-align: left;
+  color: #B0B0B0;
   padding: 12px 14px;
   background-color: #1A1A1A;
   transition: background 0.2s ease;

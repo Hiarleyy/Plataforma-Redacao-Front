@@ -6,6 +6,7 @@
 }
 
 .card p {
+  color: #B0B0B0;
   letter-spacing: 0.3px;
   font-weight: 500;
   user-select: none;
