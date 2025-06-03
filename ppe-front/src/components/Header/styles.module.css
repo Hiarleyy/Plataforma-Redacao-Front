@@ -40,6 +40,14 @@
   transition: background-color 0.2s ease;
 }
 
+.header .menu_options .link p {
+  color: #E0E0E0;
+}
+
+.header .menu_options .link i {
+  color: #E0E0E0;
+}
+
 .header .menu_options .link:hover {
   filter: brightness(0.85);
 }

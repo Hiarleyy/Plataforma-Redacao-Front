@@ -64,6 +64,16 @@ const GerenciarCursos = () => {
     setModulos(response)
   }
 
+  const deleteModulo = async (id) => {
+    const confirmation = confirm("Você tem certeza que deseja excluir esse modulo?")
+    if (!confirmation) {
+      navigate("/admin/gerenciar-cursos")
+      return
+    } 
+
+    await axios.delete(`http://localhost:3000/modulos/${id}`)
+  }
+
   useEffect(() => {
     getData()
   }, [])
@@ -84,7 +94,7 @@ const GerenciarCursos = () => {
                     key={modulo.id}
                     title={modulo.nome}
                     subtitle={brasilFormatData(modulo.dataCriacao)}
-                    link={modulo.id}
+                    onClick={() => deleteModulo(modulo.id)}
                   />
                 ))}
               </div>

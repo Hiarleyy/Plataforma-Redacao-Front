@@ -33,6 +33,7 @@
 }
 
 .container .infos .title {
+  color: #E0E0E0;
   font-size: 18px;
   font-weight: bold;
   letter-spacing: 0.5px;
@@ -64,7 +65,7 @@
 
   font-size: 14px;
   font-weight: 500;
-  color: #ffffff;
+  color: #E0E0E0;
   background-color: #B2433F;
 
   cursor: pointer;

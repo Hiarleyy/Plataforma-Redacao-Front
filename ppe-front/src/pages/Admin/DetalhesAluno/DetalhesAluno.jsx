@@ -6,7 +6,7 @@ import Message from "../../../components/Message/Message"
 import InputSelect from "../../../components/InputSelect/InputSelect"
 import DetailsCard from "../../../components/DetailsCard/DetailsCard"
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import axios from "axios"
 import fetchData from "../../../utils/fetchData"
 import useUseful from "../../../utils/useUseful"
@@ -25,6 +25,7 @@ const DetalhesAluno = () => {
   const [turma, setTurma] = useState("")
   const [turmas, setTurmas] = useState([])
   const { brasilFormatData, avgNotes } = useUseful()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,6 +48,14 @@ const DetalhesAluno = () => {
         text: error.response.data.error
       });
     }
+  }
+
+  const deleteAluno = async () => {
+    const confirmation = confirm(`Você tem certeza que deseja excluir o(a) aluno(a) ${alunoData.nome}?`)
+    if (!confirmation) return
+
+    await axios.delete(`http://localhost:3000/usuarios/${aluno_id}`)
+    navigate("/admin/gerenciar-alunos")
   }
 
   useEffect(() => {
@@ -140,6 +149,7 @@ const DetalhesAluno = () => {
             text_color="#E0E0E0" 
             padding_sz="10px" 
             bg_color="#B2433F" 
+            onClick={deleteAluno}
           ><i class="fa-solid fa-trash"></i> EXCLUIR ALUNO</Button>
         </div>
 
