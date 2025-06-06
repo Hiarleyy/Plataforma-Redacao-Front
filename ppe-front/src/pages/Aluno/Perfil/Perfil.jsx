@@ -7,7 +7,7 @@ import styles from "./styles.module.css";
 import Title from "../../../components/Title/Title";
 import fetchData from '../../../utils/fetchData';
 import Pagination from '../../../components/Pagination/Pagination';
-import InfoCard from '../../../components/InfoCard/InfoCard';
+import InfoCard from '../../../components/InfoCardRedacao/InfoCardRedacao';
 import GraficoRedacoes from '../../../components/GraficoRedacoes/GraficoRedacoes';
 import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg';
 import Button from '../../../components/Button/Button';
@@ -66,8 +66,8 @@ const Perfil = () => {
       const { getRedacoes, getAlunoById, getCorrecoes} = fetchData() 
       const alunoId = getAlunoId()
       
-      // Buscar todas as redações do usuário
-      const response = await getRedacoes(alunoId)
+      // Buscar todas as redações do usuário pendentes
+      const response = await getRedacoes(alunoId,false,true)
       setRedacoes(response)
       
       // Buscar redações corrigidas do usuário

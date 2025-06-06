@@ -23,7 +23,6 @@ const RedacaoModal = ({ redacao, isOpen, onClose, activeTab, brasilFormatData })
               <div className={styles.correcao_info}>
                 
                 <>
-                
                     <span className={styles.nota_final}>Nota final: {redacao.correcao.nota}</span>
                     <div className={styles.competencias}>
                     <p>Competência 1: {redacao?.correcao.competencia01}</p>

@@ -16,6 +16,7 @@ import AlunoInicio from "./pages/Aluno/Inicio/Inicio"
 import Perfil from "./pages/Aluno/Perfil/Perfil"
 import NovaRedacao from "./pages/Aluno/NovaRedacao/NovaRedacao"
 import DesenpenhoAluno from "./pages/Aluno/DesenpenhoAluno/DesenpenhoAluno"
+import SimuladosAluno from "./pages/Aluno/Simulados/Simulados"
 
 // Admin Pages
 import DashboardAdmin from "./pages/Admin/Dashboard/Dashboard"
@@ -106,6 +107,7 @@ const router = createBrowserRouter([
       { path: "cursos/:video_id", element: <VideoPage /> },
       { path: "configuracoes", element: <Configuracoes /> },
       { path: "ControleDesempenho", element:<DesenpenhoAluno />},
+      { path: "SimuladosAluno", element:<SimuladosAluno />},
     ],
   },
 

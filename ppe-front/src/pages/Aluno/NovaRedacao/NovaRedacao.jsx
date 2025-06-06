@@ -7,7 +7,7 @@ import { PDFDocument } from "pdf-lib";
 import imageCompression from "browser-image-compression";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
-import InfoCard from "../../../components/InfoCard/InfoCard";
+import InfoCard from "../../../components/infoCardRedacao/InfoCardRedacao";
 import Pagination from "../../../components/Pagination/Pagination";
 import Loading from "../../../components/Loading/Loading";
 import Message from "../../../components/Message/Message";
@@ -271,16 +271,19 @@ const Novaredacao = () => {
                     onChange={(e) => setSearch(e.target.value)}
                   >
                     <i className="fa-solid fa-magnifying-glass"></i>
-                  </Input>                  <div className={styles.redacao_container}>
+                  </Input>                   <div className={styles.redacao_container}>
                     {currentredacaos.map((redacao) => (
-                      <div key={redacao.id} className={styles.card_wrapper} onClick={() => handleRedacaoClick(redacao)}>
+                      <div key={redacao.id} className={styles.card_wrapper}>
                         <InfoCard
-                          key={redacao.id}
                           img="https://static.vecteezy.com/system/resources/previews/028/049/250/non_2x/terms-icon-design-vector.jpg"
                           title={redacao.titulo}
                           subtitle={formatarData(redacao.data)}
                           link="#"
                           button={false}
+                          infoCardOnClick={(e) => {
+                            e.preventDefault();
+                            handleRedacaoClick(redacao);
+                          }}
                         />
                       </div>
                     ))}
