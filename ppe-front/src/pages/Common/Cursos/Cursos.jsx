@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import fetchData from "../../../utils/fetchData"
 import Carousel from "../../../components/Carousel/Carousel"
 import Loading from "../../../components/Loading/Loading"
+import Message from "../../../components/Message/Message"
 
 const Cursos = () => {
   const [modulos, setModulos] = useState([])
@@ -32,7 +33,10 @@ const Cursos = () => {
       <div className={styles.container}>
         <Title title="Cursos" />
         <div className={styles.main_content}>
-          <p>Ainda não existe nenhum curso cadastrado.</p>
+          <Message 
+            text="Nenhum curso cadastrado." 
+            text_color="#E0E0E0"
+          />
         </div>
       </div>
     )

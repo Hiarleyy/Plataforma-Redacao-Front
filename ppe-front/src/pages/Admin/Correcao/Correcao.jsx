@@ -5,6 +5,7 @@ import fetchData from "../../../utils/fetchData"
 import InfoCard from "../../../components/InfoCard/InfoCard"
 import Pagination from "../../../components/Pagination/Pagination"
 import Button from "../../../components/Button/Button"
+import Message from "../../../components/Message/Message"
 import useUseful from "../../../utils/useUseful"
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
@@ -12,6 +13,7 @@ import { Link } from "react-router-dom"
 const Correcao = () => {
   const [redacoesPendentes, setRedacoesPendentes] = useState([])
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([])
+  const [isLoading, setIsLoading] = useState(true) 
   const [modalIsClicked, setModalIsClicked] = useState(false)
   const [modalData, setModalData] = useState({})
 
@@ -31,12 +33,18 @@ const Correcao = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const { getRedacoes } = fetchData() 
-      const pendentesResponse = await getRedacoes(false, false, true)
-      const corrigidasResponse = await getRedacoes(false, true)
+      try {
+        const { getRedacoes } = fetchData() 
+        const pendentesResponse = await getRedacoes(false, false, true)
+        const corrigidasResponse = await getRedacoes(false, true)
 
-      setRedacoesPendentes(pendentesResponse)
-      setRedacoesCorrigidas(corrigidasResponse)
+        setRedacoesPendentes(pendentesResponse)
+        setRedacoesCorrigidas(corrigidasResponse)
+      } catch (error) {
+        console.error("Erro ao buscar redações:", error)
+      } finally {
+        setIsLoading(false)
+      }
     }
 
     getData()
@@ -107,11 +115,17 @@ const Correcao = () => {
       <Title title="Correção" />
       <div className={styles.main_content}>
         <div className={styles.bg_left}>
-          {
-            redacoesPendentes.length === 0 ? <div className={styles.loading}><Loading /></div> : 
+          <p className={styles.title}>Redações Pendentes</p>
+          {isLoading ? (
+            <div className={styles.loading}><Loading /></div>
+          ) : redacoesPendentes.length === 0 ? (
+            <Message 
+              text="Nenhuma redação pendente encontrada." 
+              text_color="#E0E0E0"
+              marginTop="30px"
+            />
+          ) : (
             <>
-              <p className={styles.title}>Redações Pendentes</p>
-
               <div className={styles.redacoes_container}>
                 {currentRedacoesPen.map((redacao) => (
                   <InfoCard 
@@ -122,7 +136,6 @@ const Correcao = () => {
                   />
                 ))}
               </div>
-
               <div className={styles.pagination}>
                 <Pagination
                   currentPage={currentPagePen}
@@ -132,14 +145,21 @@ const Correcao = () => {
                 />
               </div>
             </>
-          }
+          )}
         </div>
 
         <div className={styles.bg_right}>
-          {redacoesCorrigidas.length === 0 ? <div className={styles.loading}><Loading /></div> : 
+          <p className={styles.title}>Redações Corrigidas</p>
+          {isLoading ? (
+            <div className={styles.loading}><Loading /></div>
+          ) : redacoesCorrigidas.length === 0 ? (
+            <Message 
+              text="Nenhuma redação corrigida encontrada." 
+              text_color="#E0E0E0"
+              marginTop="30px"
+            />
+          ) : (
             <>
-              <p className={styles.title}>Redações Corrigidas</p>
-
               <div className={styles.redacoes_container}>
                 {currentRedacoesCorr.map((redacao) => (
                   <InfoCard 
@@ -153,7 +173,6 @@ const Correcao = () => {
                   />
                 ))}
               </div>
-
               <div className={styles.pagination}>
                 <Pagination
                   currentPage={currentPageCorr}
@@ -163,7 +182,7 @@ const Correcao = () => {
                 />
               </div>
             </>
-          }
+          )}
         </div>
       </div>
     </div>
@@ -171,3 +190,4 @@ const Correcao = () => {
 }
 
 export default Correcao
+

@@ -22,7 +22,9 @@ const GerenciarAlunos = () => {
   const [turmas, setTurmas] = useState([])
   const [alunos, setAlunos] = useState([])
   const [search, setSearch] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+
+  const [isLoading, setIsLoading] = useState(false)            
+  const [isLoadingData, setIsLoadingData] = useState(false)    
 
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
@@ -67,9 +69,17 @@ const GerenciarAlunos = () => {
   }
 
   const getAlunos = async (busca) => {
-    const { getAlunos } = fetchData() 
-    const response = await getAlunos(busca)
-    setAlunos(response)
+    setIsLoadingData(true)
+    try {
+      const { getAlunos } = fetchData() 
+      const response = await getAlunos(busca)
+      setAlunos(response)
+    } catch (error) {
+      console.error("Erro ao buscar alunos:", error)
+      setAlunos([])
+    } finally {
+      setIsLoadingData(false)
+    }
   }
 
   const deleteAluno = async (nome, id) => {
@@ -80,32 +90,35 @@ const GerenciarAlunos = () => {
     } 
 
     await axios.delete(`http://localhost:3000/usuarios/${id}`)
+    await getAlunos()
     navigate("/admin/gerenciar-alunos")
   }
 
   useEffect(() => { 
     setCurrentPage(1)
-    
-    if (search === "") {
-      getAlunos()
-    } else {
-      getAlunos(search) 
-    }
+    getAlunos(search)
   }, [search])
 
   useEffect(() => {
     const getData = async () => {
-      const { getTurmas, getAlunos } = fetchData() 
-      const turmasResponse = await getTurmas()
-      const alunosResponse = await getAlunos()
+      setIsLoadingData(true)
+      try {
+        const { getTurmas, getAlunos } = fetchData() 
+        const turmasResponse = await getTurmas()
+        const alunosResponse = await getAlunos()
 
-      const options = turmasResponse.map(item => ({
-        value: item.id,       
-        label: item.nome
-      }))
+        const options = turmasResponse.map(item => ({
+          value: item.id,       
+          label: item.nome
+        }))
 
-      setTurmas(options)
-      setAlunos(alunosResponse)
+        setTurmas(options)
+        setAlunos(alunosResponse)
+      } catch (error) {
+        console.error("Erro ao carregar dados iniciais:", error)
+      } finally {
+        setIsLoadingData(false)
+      }
     }
 
     getData()
@@ -117,7 +130,9 @@ const GerenciarAlunos = () => {
 
       <div className={styles.main_content}>
         <div className={styles.bg_left}>
-          {alunos.length === 0 ? <div className={styles.loading}><Loading /></div> : 
+          {isLoadingData ? (
+            <div className={styles.loading}><Loading /></div>
+          ) : (
             <>
               <Input 
                 type="text" 
@@ -129,29 +144,39 @@ const GerenciarAlunos = () => {
                 <i className="fa-solid fa-magnifying-glass"></i>
               </Input>
 
-              <div className={styles.alunos_container}>
-                {currentAlunos.map((aluno) => (
-                  <InfoCard 
-                    key={aluno.id}
-                    img={aluno.caminho ? `http://localhost:3000/usuarios/${aluno.id}/profile-image` : defaultProfilePicture}
-                    title={aluno.nome} 
-                    subtitle={aluno.email} 
-                    link={aluno.id}
-                    onClick={() => deleteAluno(aluno.nome, aluno.id)}
-                  />
-                ))}
-              </div>
-
-              <div className={styles.pagination}>
-                <Pagination
-                  currentPage={currentPage}
-                  totalItems={alunos.length}
-                  itemsPerPage={itemsPerPage}
-                  setCurrentPage={setCurrentPage}
+              {alunos.length === 0 ? (
+                <Message 
+                  text="Nenhum aluno cadastrado." 
+                  text_color="#E0E0E0"
+                  marginTop="30px"
                 />
-              </div>
+              ) : (
+                <>
+                  <div className={styles.alunos_container}>
+                    {currentAlunos.map((aluno) => (
+                      <InfoCard 
+                        key={aluno.id}
+                        img={aluno.caminho ? `http://localhost:3000/usuarios/${aluno.id}/profile-image` : defaultProfilePicture}
+                        title={aluno.nome} 
+                        subtitle={aluno.email} 
+                        link={aluno.id}
+                        onClick={() => deleteAluno(aluno.nome, aluno.id)}
+                      />
+                    ))}
+                  </div>
+
+                  <div className={styles.pagination}>
+                    <Pagination
+                      currentPage={currentPage}
+                      totalItems={alunos.length}
+                      itemsPerPage={itemsPerPage}
+                      setCurrentPage={setCurrentPage}
+                    />
+                  </div>
+                </>
+              )}
             </>
-          }
+          )}
         </div>
 
         <div className={styles.bg_right}>
@@ -207,7 +232,9 @@ const GerenciarAlunos = () => {
               padding_sz="10px" 
               bg_color="#DA9E00"
               isLoading={isLoading}
-            >CADASTRAR</Button>
+            >
+              CADASTRAR
+            </Button>
           </form>
         </div>
       </div>
@@ -216,3 +243,4 @@ const GerenciarAlunos = () => {
 }
 
 export default GerenciarAlunos
+
