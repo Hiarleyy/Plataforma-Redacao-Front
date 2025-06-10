@@ -17,7 +17,7 @@ const DetalhesTurma = () => {
   const [formMessage, setFormMessage] = useState(null)
   const [turmaData, setTurmaData] = useState({})
   const [turma, setTurma] = useState("")
-  const { brasilFormatData } = useUseful()
+  const { brasilFormatData, getHeaders } = useUseful()
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingData, setIsLoadingData] = useState(false)
   const navigate = useNavigate()
@@ -27,7 +27,11 @@ const DetalhesTurma = () => {
     setIsLoading(true)
 
     try {
-      const response = await axios.put(`http://localhost:3000/turmas/${turma_id}`, { "nome": turma })
+      const response = await axios.put(
+        `http://localhost:3000/turmas/${turma_id}`, 
+        { "nome": turma },
+        { headers: getHeaders() }
+      )
 
       setFormMessage({ 
         type: "success", 
@@ -47,7 +51,7 @@ const DetalhesTurma = () => {
     const confirmation = confirm("Você tem certeza que deseja excluir essa turma?")
     if (!confirmation) return
 
-    await axios.delete(`http://localhost:3000/turmas/${turma_id}`)
+    await axios.delete(`http://localhost:3000/turmas/${turma_id}`, { headers: getHeaders() })
     navigate("/admin/gerenciar-turmas")
   }
 

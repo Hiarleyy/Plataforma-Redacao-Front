@@ -28,7 +28,7 @@ const DetalhesAluno = () => {
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
 
-  const { brasilFormatData, avgNotes } = useUseful()
+  const { brasilFormatData, avgNotes, getHeaders } = useUseful()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -36,12 +36,16 @@ const DetalhesAluno = () => {
     setIsLoading(true)
 
     try {
-      const response = await axios.put(`http://localhost:3000/usuarios/${aluno_id}`, { 
-        nome,
-        email,
-        tipoUsuario,
-        turmaId: turma 
-      });
+      const response = await axios.put(
+        `http://localhost:3000/usuarios/${aluno_id}`, 
+        { 
+          nome,
+          email,
+          tipoUsuario,
+          turmaId: turma 
+        },
+        { headers: getHeaders() }
+      );
 
       setFormMessage({ 
         type: "success", 
@@ -61,7 +65,7 @@ const DetalhesAluno = () => {
     const confirmation = confirm(`Você tem certeza que deseja excluir o(a) aluno(a) ${alunoData.nome}?`)
     if (!confirmation) return;
 
-    await axios.delete(`http://localhost:3000/usuarios/${aluno_id}`)
+    await axios.delete(`http://localhost:3000/usuarios/${aluno_id}`, { headers: getHeaders() })
     navigate("/admin/gerenciar-alunos")
   };
 

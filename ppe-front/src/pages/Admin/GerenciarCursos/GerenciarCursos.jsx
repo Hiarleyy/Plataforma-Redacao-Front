@@ -17,7 +17,7 @@ const GerenciarCursos = () => {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [playlistUrl, setPlaylistUrl] = useState("");
-  const { brasilFormatData } = useUseful();
+  const { brasilFormatData, getHeaders } = useUseful();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(false);
@@ -34,11 +34,15 @@ const GerenciarCursos = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:3000/modulos", {
-        nome,
-        descricao,
-        playlistUrl,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/modulos", 
+        {
+          nome,
+          descricao,
+          playlistUrl,
+        },
+        { headers: getHeaders() }
+      );
 
       setFormMessage({
         type: "success",
@@ -78,7 +82,7 @@ const GerenciarCursos = () => {
     if (!confirmation) return;
 
     try {
-      await axios.delete(`http://localhost:3000/modulos/${id}`);
+      await axios.delete(`http://localhost:3000/modulos/${id}`, { headers: getHeaders() });
       await getData();
     } catch (error) {
       console.error("Erro ao excluir curso:", error);
