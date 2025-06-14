@@ -9,14 +9,15 @@ import BTN from '../../../components/Button/Button';
 import InfoCard from '../../../components/InfoCardRedacao/InfoCardRedacao';
 import fetchData from "../../../utils/fetchData";
 import SimuladoModal from '../../../components/SimuladoModal/SimuladoModal';
+import Loading from '../../../components/Loading/Loading';
 
-const Inicio = () => {
-  const [redacoes, setRedacoes] = useState([]);
+const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
   const [usuario, setUsuario] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
   const [simulado,setSimulado] = useState([]);
   const [selectedSimulado, setSelectedSimulado] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoadingSimulados, setIsLoadingSimulados] = useState(true);
   const { brasilFormatData } = useUseful()
 
 
@@ -73,7 +74,6 @@ const Inicio = () => {
   };
 
 
-
   useEffect(() => {
     const getData = async () => {
       const { getRedacoes,getSimulados } = fetchData()
@@ -84,6 +84,7 @@ const Inicio = () => {
       setSimulado(responseSimulados)
       setRedacoes(response)
       setRedacoesCorrigidas(responseCorrigidas)
+      setIsLoadingSimulados(false)
     }
     getData()
   }, [])
@@ -193,20 +194,26 @@ const Inicio = () => {
               </>
             }
           />
-        </div>        
-        <div className={styles.simulados_container}>    
+        </div>          <div className={styles.simulados_container}>    
           <h3>Simulados Recentes</h3>
-          <div className={styles.cards_container}>
-            {simulado.slice(-4).map((simulado) => (
-              <div key={simulado.id} onClick={() => handleSimuladoClick(simulado)} className={styles.card_clickable}>
-                <InfoCard
-                  text_size={{default: "14px", mobile: "14px" }}
-                  title={simulado.titulo}
-                  subtitle={brasilFormatData(simulado.data)}
-                  button={false}
-                />
-              </div>
-            ))}          </div>
+          {isLoadingSimulados ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
+              <Loading size="40px"/>
+            </div>
+          ) : (
+            <div className={styles.cards_container}>
+              {simulado.slice(-4).map((simulado) => (
+                <div key={simulado.id} onClick={() => handleSimuladoClick(simulado)} className={styles.card_clickable}>
+                  <InfoCard
+                    text_size={{default: "14px", mobile: "14px" }}
+                    title={simulado.titulo}
+                    subtitle={brasilFormatData(simulado.data)}
+                    button={false}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

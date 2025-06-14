@@ -10,13 +10,14 @@ import InfoCard from '../../../components/InfoCardRedacao/InfoCardRedacao';
 import GraficoRedacoes from '../../../components/GraficoRedacoes/GraficoRedacoes';
 import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg';
 import RedacaoModal from '../../../components/RedacaoModal/RedacaoModal';
+import Loading from '../../../components/Loading/Loading';
 
-const Perfil = () => {
-  const [usuario, setUsuario] = useState([]);
+const Perfil = () => {  const [usuario, setUsuario] = useState([]);
   const [activeTab, setActiveTab] = useState('minhas');
   const [redacoes, setRedacoes] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [loading, setLoading] = useState(true);
   // Estados para o modal
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRedacao, setSelectedRedacao] = useState(null);
@@ -58,24 +59,27 @@ const Perfil = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
-  useEffect(() => {
+    useEffect(() => {
     const getData = async () => {
       const { getRedacoes, getAlunoById, getCorrecoes} = fetchData() 
       const alunoId = getAlunoId()
       
-      // Buscar todas as redações do usuário pendentes
-      const response = await getRedacoes(alunoId,false,true)
-      setRedacoes(response)
-      
-      // Buscar redações corrigidas do usuário
-      const responseCorrigidas = await getRedacoes(alunoId, true)
-      setRedacoesCorrigidas(responseCorrigidas)
+      try {
+        // Buscar todas as redações do usuário pendentes
+        const response = await getRedacoes(alunoId,false,true)
+        setRedacoes(response)
+        
+        // Buscar redações corrigidas do usuário
+        const responseCorrigidas = await getRedacoes(alunoId, true)
+        setRedacoesCorrigidas(responseCorrigidas)
 
-      
-      // Buscar dados do aluno
-      const responseAluno = await getAlunoById(alunoId)
-      setUsuario(responseAluno)
+        
+        // Buscar dados do aluno
+        const responseAluno = await getAlunoById(alunoId)
+        setUsuario(responseAluno)
+      } finally {
+        setLoading(false)
+      }
     }
 
     getData()
@@ -148,9 +152,12 @@ const Perfil = () => {
                 </svg>
                 Redações Avaliadas
               </button>
-            </div>
-            <div className={styles.tab_content}>
-              {activeTab === 'minhas' ? (
+            </div>            <div className={styles.tab_content}>
+              {loading ? (
+                <div className={styles.loading_container}>
+                  <Loading size="50px"/>
+                </div>
+              ) : activeTab === 'minhas' ? (
                 <div className={styles.minhas_redacoes}>
                   <div className={styles.cards_container}>
                     {currentRedacoes.map((redacao) => (

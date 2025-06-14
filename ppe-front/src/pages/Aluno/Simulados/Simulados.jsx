@@ -70,7 +70,7 @@ const Simulados = () => {
   };  const getDataSimulados = async () => {
     try {
       setLoading(true);
-      const { getSimulados, getTurmaById, getNotasByUsuarioId } = fetchData();
+      const { getSimulados, getTurmaById, getNotasByUsuarioId, getNotasbySimuladoId } = fetchData();
       const alunoId = getAlunoId();
       
       const simulados = await getSimulados();
@@ -87,18 +87,26 @@ const Simulados = () => {
             // Verificar se o aluno tem nota para este simulado
             const notaSimulado = notasAluno.find(nota => nota.simuladoId === simulado.id);
             
+            // Buscar todas as notas do simulado para contar quantos alunos fizeram
+            let totalNotasCadastradas = 0;
+            try {
+              const notasDoSimulado = await getNotasbySimuladoId(simulado.id);
+              totalNotasCadastradas = notasDoSimulado.length;
+            } catch (error) {
+              totalNotasCadastradas = 0;
+            }
+            
             return {
               id: simulado.id,
               titulo: simulado.titulo,
               data: simulado.data,
               turmaId: simulado.turmaId,
               nomeTurma: turma?.nome || "Sem nome",
-              totalAlunos: turma?.usuarios?.length || 0,
+              totalAlunos: totalNotasCadastradas,
               notaAluno: notaSimulado?.notaGeral || null,
               realizou: !!notaSimulado,
             };
-          } catch (error) {
-            console.error(`Erro ao buscar turma ${simulado.turmaId}:`, error);
+          } catch (error) {            console.error(`Erro ao buscar turma ${simulado.turmaId}:`, error);
             return {
               id: simulado.id,
               titulo: simulado.titulo,
@@ -215,7 +223,7 @@ const Simulados = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-        </div>{/* Lista de simulados */}
+        </div>        {/* Lista de simulados */}
         <div className={styles.simulados_list}>
           {loading ? (
             <div className={styles.loading_container}>
@@ -237,7 +245,6 @@ const Simulados = () => {
                   </div>
                   <div className={styles.simulado_info}>
                     <p>📅 Data: {formatarData(simulado.data)}</p>
-                    <p>📚 Turma: {simulado.nomeTurma}</p>
                     <p>👥 Participantes: {simulado.totalAlunos}</p>
                     {simulado.realizou && (
                       <p className={styles.nota_simulado}>
