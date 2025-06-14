@@ -1,47 +1,51 @@
-import styles from "./styles.module.css";
-import Title from "../../../components/Title/Title";
-import InfoCard from "../../../components/InfoCard/InfoCard";
-import Input from "../../../components/Input/Input";
-import Button from "../../../components/Button/Button";
-import axios from "axios";
-import fetchData from "../../../utils/fetchData";
-import useUseful from "../../../utils/useUseful";
-import { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-import Pagination from "../../../components/Pagination/Pagination";
-import Message from "../../../components/Message/Message";
-import Loading from "../../../components/Loading/Loading";
+import styles from "./styles.module.css"
+import Title from "../../../components/Title/Title"
+import InfoCard from "../../../components/InfoCard/InfoCard"
+import Input from "../../../components/Input/Input"
+import Button from "../../../components/Button/Button"
+import axios from "axios"
+import fetchData from "../../../utils/fetchData"
+import useUseful from "../../../utils/useUseful"
+import { useState, useEffect } from "react"
+import { useNavigate } from 'react-router-dom'
+import Pagination from "../../../components/Pagination/Pagination"
+import Message from "../../../components/Message/Message"
+import Loading from "../../../components/Loading/Loading"
 
 const GerenciarTurmas = () => {
-  const [formMessage, setFormMessage] = useState(null);
-  const [turma, setTurma] = useState("");
-  const [turmas, setTurmas] = useState([]);
-  const { brasilFormatData } = useUseful();
-  const [isLoading, setIsLoading] = useState(false); 
-  const [isLoadingData, setIsLoadingData] = useState(true); 
+  const [formMessage, setFormMessage] = useState(null)
+  const [turma, setTurma] = useState("")
+  const [turmas, setTurmas] = useState([])
+  const { brasilFormatData, getHeaders } = useUseful()
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true)
   const navigate = useNavigate();
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5;
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentTurmas = turmas.slice(indexOfFirstItem, indexOfLastItem);
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentTurmas = turmas.slice(indexOfFirstItem, indexOfLastItem)
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+    e.preventDefault()
+    setIsLoading(true)
 
     try {
-      const response = await axios.post("http://localhost:3000/turmas", { "nome": turma });
+      const response = await axios.post(
+        "http://localhost:3000/turmas", 
+        { "nome": turma }, 
+        { headers: getHeaders() }
+      )
 
       setFormMessage({
         type: "success",
         text: `Turma ${response.data.data.nome} criada com sucesso.`
       });
 
-      setTurma("");
-      await getData();
+      setTurma("")
+      await getData()
     } catch (error) {
       setFormMessage({
         type: "error",
@@ -72,7 +76,7 @@ const GerenciarTurmas = () => {
       return;
     }
 
-    await axios.delete(`http://localhost:3000/turmas/${id}`);
+    await axios.delete(`http://localhost:3000/turmas/${id}`, { headers: getHeaders() });
     await getData();
   };
 

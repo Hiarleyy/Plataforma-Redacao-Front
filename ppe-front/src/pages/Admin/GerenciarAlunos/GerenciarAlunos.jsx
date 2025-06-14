@@ -12,6 +12,7 @@ import fetchData from "../../../utils/fetchData"
 import InfoCard from "../../../components/InfoCard/InfoCard"
 import Loading from "../../../components/Loading/Loading"
 import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg';
+import useUseful from "../../../utils/useUseful"
 
 const GerenciarAlunos = () => {
   const [formMessage, setFormMessage] = useState(null)
@@ -34,18 +35,23 @@ const GerenciarAlunos = () => {
   const currentAlunos = alunos.slice(indexOfFirstItem, indexOfLastItem)
 
   const navigate = useNavigate()
+  const { getHeaders } = useUseful()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
-      const response = await axios.post("http://localhost:3000/usuarios", { 
-        nome,
-        email,
-        tipoUsuario,
-        turmaId: turma 
-      })
+      const response = await axios.post(
+        "http://localhost:3000/usuarios", 
+        { 
+          nome,
+          email,
+          tipoUsuario,
+          turmaId: turma 
+        }, 
+        { headers: getHeaders() }
+      )
 
       setFormMessage({ 
         type: "success", 
@@ -89,7 +95,7 @@ const GerenciarAlunos = () => {
       return
     } 
 
-    await axios.delete(`http://localhost:3000/usuarios/${id}`)
+    await axios.delete(`http://localhost:3000/usuarios/${id}`, { headers: getHeaders() })
     await getAlunos()
     navigate("/admin/gerenciar-alunos")
   }

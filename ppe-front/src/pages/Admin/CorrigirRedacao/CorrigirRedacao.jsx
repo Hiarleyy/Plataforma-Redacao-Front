@@ -13,7 +13,7 @@ import axios from "axios"
 const CorrigirRedacao = () => {
   const { redacao_id } = useParams()
   const [redacao, setRedacao] = useState([])
-  const { brasilFormatData } = useUseful()
+  const { brasilFormatData, getHeaders } = useUseful()
   const [isLoading, setIsLoading] = useState(false)
   const [formMessage, setFormMessage] = useState(null)
 
@@ -59,11 +59,7 @@ const CorrigirRedacao = () => {
       await axios.post(
         `http://localhost:3000/correcoes/${userID}/upload`,
         formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+        { headers: getHeaders() }
       );
 
       setFormMessage({
