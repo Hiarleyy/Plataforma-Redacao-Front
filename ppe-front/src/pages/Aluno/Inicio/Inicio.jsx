@@ -193,8 +193,9 @@ const Inicio = () => {
               </>
             }
           />
-        </div>        <div className={styles.simulados_container}>    
-            <h3>Simulados Recentes</h3>
+        </div>        
+        <div className={styles.simulados_container}>    
+          <h3>Simulados Recentes</h3>
           <div className={styles.cards_container}>
             {simulado.slice(-4).map((simulado) => (
               <div key={simulado.id} onClick={() => handleSimuladoClick(simulado)} className={styles.card_clickable}>

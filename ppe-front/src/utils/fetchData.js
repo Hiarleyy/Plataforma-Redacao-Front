@@ -115,19 +115,25 @@ const fetchData = () => {
     if (id) {
       const response = await axios.get(`http://localhost:3000/redacoes/?usuarioId=${id}`)
       return response.data.data
-    }
-    // Retorna todas as redações se nenhum ID de usuário for fornecido
+    }    // Retorna todas as redações se nenhum ID de usuário for fornecido
     const response = await axios.get(`http://localhost:3000/redacoes`)
     return response.data.data
   }
-   const getCorrecoes= async () => {
+   
+  const getCorrecoes= async () => {
     const response = await axios.get(`http://localhost:3000/correcoes`)
     return response.data.data
   }
+  
   const getNotaSimulados = async () => {
     const response = await axios.get(`http://localhost:3000/notaSimulado`)
     return response.data.data
   } 
+  const getNotasByUsuarioId = async (usuarioId) => {
+      const response = await axios.get(`http://localhost:3000/notaSimulado/usuarioId/${usuarioId}`)
+      return response.data.data
+    } 
+  
   const getSimuladoById = async (id) => {
     const response = await axios.get(`http://localhost:3000/simulados/${id}`)
     return response.data.data
@@ -143,7 +149,6 @@ const fetchData = () => {
     const response = await axios.get(`http://localhost:3000/redacoes?corrigidas=true`)
     return response.data.data
   }
-
   return { 
     getTurmas, 
     getTurmaById, 
@@ -163,7 +168,8 @@ const fetchData = () => {
     getNotasbySimuladoId,
     getSimuladoByIdTurma,
     getCorrecoes,
-    getNotaSimulados
+    getNotaSimulados,
+    getNotasByUsuarioId
   }
 }
 

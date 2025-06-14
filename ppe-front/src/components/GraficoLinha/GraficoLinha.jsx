@@ -17,7 +17,8 @@ const options = {
       padding: {
         top: 10,
         bottom: 30
-      }
+      },
+      
     },
     legend: {
       display: false
@@ -40,7 +41,7 @@ const options = {
     y: {
       beginAtZero: true,
       min: 0,
-      max: 1000,
+      max: 1050,
       ticks: {
         stepSize: 100,
         color: '#d1d5db',

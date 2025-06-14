@@ -6,18 +6,24 @@ import Button from '../Button/Button';
 const SimuladoModal = ({ simulado, isOpen, onClose, brasilFormatData }) => {
   const [turmaInfo, setTurmaInfo] = useState(null);
   const [notasSimulado, setNotasSimulado] = useState([]);
+  const [notaAluno, setNotaAluno] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const getAlunoId = () => {
+    const aluno = localStorage.getItem('user_access_data')
+    const { id } = JSON.parse(aluno)
+    return id
+  }
 
   useEffect(() => {
     if (isOpen && simulado) {
       fetchSimuladoDetails();
     }
-  }, [isOpen, simulado]);
-
-  const fetchSimuladoDetails = async () => {
+  }, [isOpen, simulado]);  const fetchSimuladoDetails = async () => {
     try {
       setLoading(true);
-      const { getTurmaById, getNotasbySimuladoId } = fetchData();
+      const { getTurmaById, getNotasbySimuladoId,getNotasByUsuarioId } = fetchData();
+      const alunoId = getAlunoId();
       
       // Buscar informações da turma
       if (simulado.turmaId) {
@@ -25,13 +31,21 @@ const SimuladoModal = ({ simulado, isOpen, onClose, brasilFormatData }) => {
         setTurmaInfo(turmaData);
       }
 
-      // Buscar notas do simulado (se existirem)
+      // Buscar todas as notas do simulado
       try {
         const notas = await getNotasbySimuladoId(simulado.id);
         setNotasSimulado(notas);
       } catch (error) {
-        // Se não houver notas, define como array vazio
         setNotasSimulado([]);
+      }
+
+      // Buscar nota específica do aluno
+      try {
+        const notasAluno = await getNotasByUsuarioId(alunoId);
+        const notaDoSimulado = notasAluno.find(nota => nota.simuladoId === simulado.id);
+        setNotaAluno(notaDoSimulado || null);
+      } catch (error) {
+        setNotaAluno(null);
       }
     } catch (error) {
       console.error('Erro ao buscar detalhes do simulado:', error);
@@ -87,11 +101,10 @@ const SimuladoModal = ({ simulado, isOpen, onClose, brasilFormatData }) => {
                   <div className={styles.info_item}>
                     <span className={styles.label}>📅 Data:</span>
                     <span className={styles.value}>{brasilFormatData(simulado.data)}</span>
-                  </div>
-                  <div className={styles.info_item}>
+                  </div>                  <div className={styles.info_item}>
                     <span className={styles.label}>📝 Status:</span>
                     <span className={styles.value}>
-                      {notasSimulado.length > 0 ? 'Avaliado' : 'Pendente'}
+                      {notaAluno ? 'Realizado' : 'Não Realizado'}
                     </span>
                   </div>
                 </div>
@@ -112,26 +125,28 @@ const SimuladoModal = ({ simulado, isOpen, onClose, brasilFormatData }) => {
                     <span className={styles.stat_number}>{estatisticas.maiorNota}</span>
                     <span className={styles.stat_label}>Maior Nota</span>
                   </div>                  
-                  
-                  <div className={styles.stat_card}>
-                    <span className={styles.stat_number}>{estatisticas.mediaGeral}</span>
-                    <span className={styles.stat_label}>NotaFinal</span>
+                    <div className={styles.stat_card}>
+                    <span className={styles.stat_number}>{notaAluno ? notaAluno.notaGeral : 'N/A'}</span>
+                    <span className={styles.stat_label}>Sua Nota</span>
                   </div>
                 </div>
-              </div>
-                <div className={styles.nota_container}>
-                <h3>Desempenho do Simulado</h3>
+              </div>                <div className={styles.nota_container}>
+                <h3>Seu Desempenho no Simulado</h3>
                     <div className={styles.nota_info}>
-                <>
+                {notaAluno ? (
                     <div className={styles.competencias}>
-                    <p>Competência 1: {simulado.competencia01}</p>
-                    <p>Competência 2: {simulado.competencia02}</p>
-                    <p>Competência 3: {simulado.competencia03}</p>
-                    <p>Competência 4: {simulado.competencia04}</p>
-                    <p>Competência 5: {simulado.competencia05}</p>
-                    <h4>Nota Final: {simulado.notaGeral}</h4>
+                    <p>Competência 1: {notaAluno.competencia01}</p>
+                    <p>Competência 2: {notaAluno.competencia02}</p>
+                    <p>Competência 3: {notaAluno.competencia03}</p>
+                    <p>Competência 4: {notaAluno.competencia04}</p>
+                    <p>Competência 5: {notaAluno.competencia05}</p>
+                    <h4>Nota Final: {notaAluno.notaGeral}</h4>
                   </div>
-                </>
+                ) : (
+                  <div className={styles.sem_nota}>
+                    <p>Você ainda não realizou este simulado.</p>
+                  </div>
+                )}
               </div>
 
                 </div>

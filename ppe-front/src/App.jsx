@@ -128,6 +128,7 @@ const router = createBrowserRouter([
       { path: "correcao", element: <Correcao /> },
       { path: "correcao/:redacao_id", element: <CorrigirRedacao /> },
       { path: "pagamentos", element: <Pagamentos />},
+      { path: "configuracoes", element: <Configuracoes /> },
       { path: "Simulados", element:<Simulados />},
       { path: "Simulados/:simulado_id", element: <NotasSimulados />},
     ],

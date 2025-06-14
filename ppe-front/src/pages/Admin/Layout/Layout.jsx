@@ -16,8 +16,8 @@ const links = [
   { name: "Gerenciar cursos", icon: "fa-solid fa-tv", path: "gerenciar-cursos" },
   { name: "Ranking", icon: "fa-solid fa-ranking-star", path: "ranking" },
   { name: "Cursos", icon: "fa-solid fa-tv", path: "cursos" },
-  { name: "Configuracoes", icon: "fa-solid fa-gear", path: "configuracoes" },
   { name: "Simulados", icon: "fa-solid fa-bullseye", path: "Simulados" },
+  { name: "Configuracoes", icon: "fa-solid fa-gear", path: "configuracoes" },
 ]
 
 const AdminLayout = () => {

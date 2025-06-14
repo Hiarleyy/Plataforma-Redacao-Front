@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import useUseful from '../../../utils/useUseful';
 import styles from "./styles.module.css";
 import Title from "../../../components/Title/Title";
@@ -10,7 +9,6 @@ import Pagination from '../../../components/Pagination/Pagination';
 import InfoCard from '../../../components/InfoCardRedacao/InfoCardRedacao';
 import GraficoRedacoes from '../../../components/GraficoRedacoes/GraficoRedacoes';
 import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg';
-import Button from '../../../components/Button/Button';
 import RedacaoModal from '../../../components/RedacaoModal/RedacaoModal';
 
 const Perfil = () => {

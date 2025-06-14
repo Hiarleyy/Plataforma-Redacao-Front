@@ -16,12 +16,10 @@ import { useNavigate } from "react-router-dom";
 import RedacaoModal from "../../../components/RedacaoModal/RedacaoModal";
 import useUseful from "../../../utils/useUseful";
 
-const Novaredacao = () => {
-  const [fileName, setFilesName] = useState("Nenhum arquivo enviado");
+const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum arquivo enviado");
   const [tema, setTema] = useState("");
   const [formMessage, setFormMessage] = useState(null);
   const [fileBlob, setFileBlob] = useState(null); 
-  const [search, setSearch] = useState("")  
   const [redacao, setRedacao] = useState([])
   const navigate = useNavigate()
   const itemsPerPage = 5
@@ -259,19 +257,10 @@ const Novaredacao = () => {
         <>
           <Title title="Nova Redação" />
           <div className={styles.main_content}>
-            <div className={styles.bg_left}>
-              {redacao.length === 0 ? <div className={styles.loading}><Loading /></div> :
+            <div className={styles.bg_left}>              {redacao.length === 0 ? <div className={styles.loading}><Loading /></div> :
                 <> 
                   <p className={styles.form_title}>Redações enviadas</p>
-                  <Input
-                    type="text"
-                    placeholder="Pesquise por redacao"
-                    color="#1A1A1A" 
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  >
-                    <i className="fa-solid fa-magnifying-glass"></i>
-                  </Input>                   <div className={styles.redacao_container}>
+                  <div className={styles.redacao_container}>
                     {currentredacaos.map((redacao) => (
                       <div key={redacao.id} className={styles.card_wrapper}>
                         <InfoCard
