@@ -30,6 +30,7 @@ import CorrigirRedacao from "./pages/Admin/CorrigirRedacao/CorrigirRedacao"
 import Pagamentos from "./pages/Admin/Pagamentos/pagamentos"
 import Simulados from "./pages/Admin/Simulados/Simulados"
 import NotasSimulados from "./pages/Admin/NotasSimulados/NotasSimulados"
+import GerenciaPagamentos from "./pages/Admin/GerenciaPagamentos/GerenciaPagamentos"
 
 const isAuthenticated = () => {
   return localStorage.getItem("user_access_data") !== null
@@ -106,6 +107,7 @@ const router = createBrowserRouter([
       { path: "correcao", element: <Correcao /> },
       { path: "correcao/:redacao_id", element: <CorrigirRedacao /> },
       { path: "pagamentos", element: <Pagamentos />},
+      { path: "gerenciar-pagamentos", element: <GerenciaPagamentos /> },
       { path: "Simulados", element:<Simulados />},
       { path: "Simulados/:simulado_id", element: <NotasSimulados />},
     ],

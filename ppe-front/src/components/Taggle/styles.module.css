@@ -1,13 +1,14 @@
 .toggle_container {
   display: flex;
   padding: 4px;
-  border-radius: 8px;
-  width: fit-content;
+  border-radius: 1px;
+  width: 100%; /* <- ocupa todo o espaço do pai */
   font-family: sans-serif;
-
+  gap: 0px; /* opcional: espaço entre os botões */
 }
 
 .toggle_button {
+  flex: 1; /* <- permite que cada botão ocupe o mesmo espaço */
   padding: 8px 16px;
   background: transparent;
   cursor: pointer;
@@ -16,8 +17,8 @@
   color: #fdfdfd;
   border: 0.5px solid #5d5a5a;
   transition: all 0.5s ease;
-
 }
+
 
 .active {
   background-color: #DA9E00;

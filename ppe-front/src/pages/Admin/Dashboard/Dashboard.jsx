@@ -2,7 +2,6 @@ import styles from "../Dashboard/styles.module.css";
 import Title from "../../../components/Title/Title";
 import BarrasEmpilhadas from "../../../components/GraficoBarrasEmpilhadas/BarrasEmpilhadas";
 import GraficoPizza from "../../../components/GraficoPizza/GraficoPizza";
-import Button from "../../../components/Button/Button";
 import { useState, useEffect } from "react";
 import fetchData from "../../../utils/fetchData";
 import GraficoBarras from "../../../components/GraficoBarras/Barra";
@@ -172,6 +171,7 @@ const Dashboard = () => {
     }
   }, [IdTurma, taggle]);
 
+    console.log(taggle)
   return (
     <div className={styles.container}>
       <Title title="Dashboard" />

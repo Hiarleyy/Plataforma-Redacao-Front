@@ -137,6 +137,14 @@ const fetchData = () => {
     return response.data.data
   }
 
+  const getPagamentos = async () => {
+    const response = await axios.get(`http://localhost:3000/pagamentos`)
+    return response.data.data
+  }
+
+
+
+
   return { 
     getTurmas, 
     getTurmaById, 
@@ -157,7 +165,10 @@ const fetchData = () => {
     getSimuladoById,
     getSimulados,
     getNotasbySimuladoId,
-    getSimuladoByIdTurma
+    getSimuladoByIdTurma,
+    getNotaSimulados,
+    getCorrecoes,
+    getPagamentos
   }
 }
 
