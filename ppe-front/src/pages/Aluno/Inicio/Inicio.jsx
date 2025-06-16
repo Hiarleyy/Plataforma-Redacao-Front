@@ -21,13 +21,12 @@ const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
   const { brasilFormatData } = useUseful()
 
 
-
   const getAlunoId = () => {
     const aluno = localStorage.getItem('user_access_data')
     const { id } = JSON.parse(aluno)
     return id
   }
-  const [isDownloading, setIsDownloading] = useState(false);
+  
   const handleRedacaoClick = (redacao) => {
     // Navegar para a página de detalhes da redação
     window.location.href = `/aluno/redacao/${redacao.id}`;
@@ -41,36 +40,6 @@ const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedSimulado(null);
-  };
-  const handleDownloadProposta = async () => {
-    try {
-      setIsDownloading(true);
-      const response = await fetch('http://localhost:3000/propostas/download', {
-        method: 'GET',
-        headers: {
-          Accept: 'application/pdf',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Falha no download');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'proposta-da-semana.pdf');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-      setIsDownloading(false);
-    } catch (error) {
-      console.error("Erro ao baixar proposta:", error);
-      alert("Houve um erro ao baixar a proposta. Por favor, tente novamente mais tarde.");
-      setIsDownloading(false);
-    }
   };
 
 
@@ -169,27 +138,26 @@ const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
           <Card
             title="Proposta da semana"
             content="Escreva uma redação dissertativa-argumentativa sobre o tema:"
-            variant="default"
-            actions={
+            variant="default"            actions={
               <>
                 <div className={styles.button}>
-                  <BTN
-                    bg_color="#FFF5CC"
-                    text_size={{ default: "20px", mobile: "20px" }}
-                    text_color="#DA9E00"
-                    padding_sz={{ default: "10px", mobile: "8px" }}
-                    onClick={handleDownloadProposta}
-                    className={styles.responsive_button}
-                    isLoading={isDownloading}
+                  <a 
+                    href="http://localhost:3000/propostas/download" 
+                    download="proposta-da-semana.pdf"
+                    style={{ textDecoration: 'none' }}
                   >
-                    {!isDownloading && (
-                      <>
-                        <span className={styles.button_text} style={{ color: "#DA9E00" }}>Baixar detalhes da Proposta <i class="fa-solid fa-download"></i></span>
-
-                      </>
-                    )}
-                  </BTN>
-
+                    <BTN
+                      bg_color="#FFF5CC"
+                      text_size={{ default: "20px", mobile: "20px" }}
+                      text_color="#DA9E00"
+                      padding_sz={{ default: "10px", mobile: "8px" }}
+                      className={styles.responsive_button}
+                    >
+                      <span className={styles.button_text} style={{ color: "#DA9E00" }}>
+                        Baixar detalhes da Proposta <i className="fa-solid fa-download"></i>
+                      </span>
+                    </BTN>
+                  </a>
                 </div>
               </>
             }

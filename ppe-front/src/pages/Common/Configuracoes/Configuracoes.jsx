@@ -6,6 +6,7 @@ import Input from "../../../components/Input/Input";
 import Button from "../../../components/Button/Button";
 import Message from "../../../components/Message/Message";
 import defaultProfilePicture from "../../../images/Defalult_profile_picture.jpg";
+import useUseful from "../../../utils/useUseful";
 
 function configuracoes() {
   const [usuario, setUsuario] = useState({});
@@ -22,6 +23,7 @@ function configuracoes() {
     nova: false,
     confirmar: false,
   });
+  const { getHeaders } = useUseful();
 
   const getAlunoId = () => {
     const aluno = localStorage.getItem("user_access_data");
@@ -36,7 +38,6 @@ function configuracoes() {
         setUsuario(response);
 
         if (response.caminho) {
-          // Set the initial profile image URL
           setProfileImageUrl(
             `http://localhost:3000/usuarios/${
               response.id
@@ -92,8 +93,9 @@ function configuracoes() {
         `http://localhost:3000/usuarios/${usuario.id}`,
         {
           method: "POST",
+          headers: getHeaders(),
           body: formData,
-        }
+        },
       );
 
       if (!response.ok) {
@@ -150,9 +152,7 @@ function configuracoes() {
         `http://localhost:3000/usuarios/${usuario.id}/trocar-senha`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: getHeaders(),
           body: JSON.stringify({
             senhaAtual,
             novaSenha,

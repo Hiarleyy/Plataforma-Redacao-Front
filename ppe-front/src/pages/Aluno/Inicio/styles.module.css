@@ -74,10 +74,10 @@
   }
 .responsive_button {
   display: flex;
-  justify-content: flex-start; 
+  justify-content: center; 
   align-items: center;
   gap: 10px;
-  width: 200px; 
+  width: 100%; 
 }
 
 .button_icon {

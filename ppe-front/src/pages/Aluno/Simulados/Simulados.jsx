@@ -39,16 +39,14 @@ const Simulados = () => {
     const { id } = JSON.parse(aluno)
     return id
   }
-
   // Filtro dos simulados com base na busca
   const simuladosFiltrados = TotalSimulados.filter((item) => {
     if (!search.trim()) return true; // Se não há busca, mostra todos
     
     const searchTerm = search.toLowerCase().trim();
     const titulo = (item.titulo || '').toLowerCase();
-    const nomeTurma = (item.nomeTurma || '').toLowerCase();
     
-    return titulo.includes(searchTerm) || nomeTurma.includes(searchTerm);
+    return titulo.includes(searchTerm);
   });
   // Atualiza a página para 1 sempre que houver nova busca ou mudança no items per page
   useEffect(() => {
@@ -63,14 +61,13 @@ const Simulados = () => {
 
   const handleResultados = (simuladoId) => {
     if (!simuladoId) {
-      console.error("ID do simulado está indefinido!");
       return;
     }
     navigate(`/admin/Simulados/${simuladoId}`);
   };  const getDataSimulados = async () => {
     try {
       setLoading(true);
-      const { getSimulados, getTurmaById, getNotasByUsuarioId, getNotasbySimuladoId } = fetchData();
+      const { getSimulados, getNotasByUsuarioId, getNotasbySimuladoId } = fetchData();
       const alunoId = getAlunoId();
       
       const simulados = await getSimulados();
@@ -79,11 +76,10 @@ const Simulados = () => {
       const notasAluno = await getNotasByUsuarioId(alunoId);
       setNotasSimulados(notasAluno);
       
-      // Buscar informações das turmas para cada simulado
-      const simuladosComTurma = await Promise.all(
+      // Processar simulados
+      const simuladosProcessados = await Promise.all(
         simulados.map(async (simulado) => {
           try {
-            const turma = await getTurmaById(simulado.turmaId);
             // Verificar se o aluno tem nota para este simulado
             const notaSimulado = notasAluno.find(nota => nota.simuladoId === simulado.id);
             
@@ -100,19 +96,16 @@ const Simulados = () => {
               id: simulado.id,
               titulo: simulado.titulo,
               data: simulado.data,
-              turmaId: simulado.turmaId,
-              nomeTurma: turma?.nome || "Sem nome",
               totalAlunos: totalNotasCadastradas,
               notaAluno: notaSimulado?.notaGeral || null,
               realizou: !!notaSimulado,
             };
-          } catch (error) {            console.error(`Erro ao buscar turma ${simulado.turmaId}:`, error);
+          } catch (error) {
+            console.error(`Erro ao processar simulado ${simulado.id}:`, error);
             return {
               id: simulado.id,
               titulo: simulado.titulo,
               data: simulado.data,
-              turmaId: simulado.turmaId,
-              nomeTurma: "Sem nome",
               totalAlunos: 0,
               notaAluno: null,
               realizou: false,
@@ -121,7 +114,7 @@ const Simulados = () => {
         })
       );
 
-      const simuladosOrdenados = simuladosComTurma.sort(
+      const simuladosOrdenados = simuladosProcessados.sort(
         (a, b) => new Date(b.data) - new Date(a.data)
       );
 
@@ -217,13 +210,15 @@ const Simulados = () => {
         )}        {/* Campo de busca */}
         <div className={styles.search_container}>
           <label className={styles.search_label}>Buscar simulados:</label>
+          
           <Input
             type="text"
-            placeholder="Digite o nome do simulado ou turma..."
+            icon={<i className="fas fa-search"></i>}
+            placeholder="Digite o nome do simulado..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-        </div>        {/* Lista de simulados */}
+        </div>{/* Lista de simulados */}
         <div className={styles.simulados_list}>
           {loading ? (
             <div className={styles.loading_container}>
@@ -271,7 +266,7 @@ const Simulados = () => {
             />
           </div>
         )}
-
+  
         {/* Modal de detalhes do simulado */}
         <SimuladoModal
           simulado={selectedSimulado}
