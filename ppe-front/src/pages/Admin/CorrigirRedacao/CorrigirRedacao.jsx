@@ -4,6 +4,7 @@ import Title from "../../../components/Title/Title"
 import DetailsCard from "../../../components/DetailsCard/DetailsCard"
 import Button from "../../../components/Button/Button"
 import Message from "../../../components/Message/Message"
+import Loading from "../../../components/Loading/Loading"
 import InputSelect from "../../../components/InputSelect/InputSelect"
 import fetchData from "../../../utils/fetchData"
 import useUseful from "../../../utils/useUseful"
@@ -15,6 +16,7 @@ const CorrigirRedacao = () => {
   const [redacao, setRedacao] = useState([])
   const { brasilFormatData, getHeaders } = useUseful()
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingData, setIsLoadingData] = useState(false);
   const [formMessage, setFormMessage] = useState(null)
 
   const [file, setFile] = useState(null)
@@ -25,18 +27,21 @@ const CorrigirRedacao = () => {
   const [comp05, setComp05] = useState("")
   const [feedback, setFeedback] = useState("")
 
+  const getData = async () => {
+    const { getRedacaoById } = fetchData()
+    const response = await getRedacaoById(redacao_id)
+    setRedacao(response)
+  }
+
   useEffect(() => {
-    const getData = async () => {
-      const { getRedacaoById } = fetchData()
-      const response = await getRedacaoById(redacao_id)
-      setRedacao(response)
+    setIsLoadingData(true)
+    try {
+      getData()
+    } catch (error) {
+      console.error("Erro ao buscar os dados:", error)
+    } finally {
+      setIsLoadingData(false)
     }
-
-    getData()
-  }, [])
-
-  useEffect(() => {
-    console.log(redacao)
   }, [])
 
   const handleSubmit = async (e) => {
@@ -82,44 +87,52 @@ const CorrigirRedacao = () => {
       <Title title="Correção" />
       <div className={styles.main_content}>
         <div className={styles.bg_left}>
-          <p className={styles.title}>Detalhes da redação</p>
+          {isLoadingData ? (
+            <div className={styles.loading}>
+              <Loading />
+            </div>
+          ) : (
+            <>
+              <p className={styles.title}>Detalhes da redação</p>
 
-          <DetailsCard  
-            title="Título"
-            content={redacao.titulo && redacao.titulo}
-            bg_color="#1F1F1F"
-            text_size="16px"
-          />
+              <DetailsCard  
+                title="Título"
+                content={redacao.titulo && redacao.titulo}
+                bg_color="#1F1F1F"
+                text_size="16px"
+              />
 
-          <DetailsCard  
-            title="Enviado em"
-            content={redacao.data && brasilFormatData(redacao.data)}
-            bg_color="#1F1F1F"
-            text_size="16px"
-          />
+              <DetailsCard  
+                title="Enviado em"
+                content={redacao.data && brasilFormatData(redacao.data)}
+                bg_color="#1F1F1F"
+                text_size="16px"
+              />
 
-          <DetailsCard  
-            title="Status"
-            content={redacao.status && redacao.status}
-            bg_color="#1F1F1F"
-            text_size="16px"
-          />
+              <DetailsCard  
+                title="Status"
+                content={redacao.status && redacao.status}
+                bg_color="#1F1F1F"
+                text_size="16px"
+              />
 
-          <DetailsCard  
-            title="Autor"
-            content={redacao.usuario?.nome && redacao.usuario?.nome}
-            bg_color="#1F1F1F"
-            text_size="16px"
-          />
+              <DetailsCard  
+                title="Autor"
+                content={redacao.usuario?.nome && redacao.usuario?.nome}
+                bg_color="#1F1F1F"
+                text_size="16px"
+              />
 
-          <Link to={`http://localhost:3000/redacoes/download/${redacao_id}`}>
-            <Button 
-              text_size="20px" 
-              text_color="#E0E0E0" 
-              padding_sz="10px" 
-              bg_color="#DA9E00"
-            ><i class="fa-solid fa-download"></i> BAIXAR ESSA REDAÇÃO</Button>
-          </Link>
+              <Link to={`http://localhost:3000/redacoes/download/${redacao_id}`}>
+                <Button 
+                  text_size="20px" 
+                  text_color="#E0E0E0" 
+                  padding_sz="10px" 
+                  bg_color="#DA9E00"
+                ><i class="fa-solid fa-download"></i> BAIXAR ESSA REDAÇÃO</Button>
+              </Link>
+            </>
+          )}
         </div>
         
         <form className={styles.bg_right} onSubmit={handleSubmit}>

@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import Pagination from "../../../components/Pagination/Pagination";
 import Message from "../../../components/Message/Message";
 import Loading from "../../../components/Loading/Loading";
+import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 
 const GerenciarCursos = () => {
   const [formMessage, setFormMessage] = useState(null);
@@ -21,6 +22,8 @@ const GerenciarCursos = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(false);
+  const [modalIsClicked, setModalIsClicked] = useState(false);
+  const [currentCursoId, setCurrentCursoId] = useState("")
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -78,15 +81,8 @@ const GerenciarCursos = () => {
   };
 
   const deleteModulo = async (id) => {
-    const confirmation = confirm("Você tem certeza que deseja excluir esse curso?");
-    if (!confirmation) return;
-
-    try {
-      await axios.delete(`http://localhost:3000/modulos/${id}`, { headers: getHeaders() });
-      await getData();
-    } catch (error) {
-      console.error("Erro ao excluir curso:", error);
-    }
+    await axios.delete(`http://localhost:3000/modulos/${id}`, { headers: getHeaders() });
+    await getData();
   };
 
   useEffect(() => {
@@ -95,6 +91,16 @@ const GerenciarCursos = () => {
 
   return (
     <div className={styles.container}>
+      <DeleteModal
+        message="Você tem certeza que deseja excluir esse(a) aluno(a)?"
+        modalIsClicked={modalIsClicked}
+        deleteOnClick={() => {
+          deleteModulo(currentAlunoId)
+          setModalIsClicked(false)
+        }} 
+        cancelOnClick={() => setModalIsClicked(false)} 
+      />
+
       <Title title="Gerenciar cursos" />
 
       <div className={styles.main_content}>
@@ -119,7 +125,10 @@ const GerenciarCursos = () => {
                     key={modulo.id}
                     title={modulo.nome}
                     subtitle={brasilFormatData(modulo.dataCriacao)}
-                    onClick={() => deleteModulo(modulo.id)}
+                    onClick={() => {
+                      setCurrentCursoId(modulo.id)
+                      setModalIsClicked(true)
+                    }}
                   />
                 ))}
               </div>

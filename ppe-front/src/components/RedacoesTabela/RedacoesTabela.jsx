@@ -1,11 +1,9 @@
 import styles from './styles.module.css'
 import useUseful from '../../utils/useUseful';
 import Button from '../Button/Button';
-import { useNavigate } from 'react-router-dom';
 
-const RedacoesTabela = ({ redacoes }) => {
+const RedacoesTabela = ({ redacoes, onClick, setModalData }) => {
   const { brasilFormatData } = useUseful()
-  const navigate = useNavigate()
 
   const tableDefault = [
     {
@@ -99,6 +97,10 @@ const RedacoesTabela = ({ redacoes }) => {
                   width_size="40px"
                   height_size="30px"
                   radius="6px"
+                  onClick={() => {
+                    onClick()
+                    setModalData(redacao)
+                  }}
                 ><i class="fa-solid fa-eye"></i></Button>
               </td>
             </tr>

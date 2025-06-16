@@ -7,19 +7,20 @@ import axios from "axios"
 import fetchData from "../../../utils/fetchData"
 import useUseful from "../../../utils/useUseful"
 import { useState, useEffect } from "react"
-import { useNavigate } from 'react-router-dom'
 import Pagination from "../../../components/Pagination/Pagination"
 import Message from "../../../components/Message/Message"
 import Loading from "../../../components/Loading/Loading"
+import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 
 const GerenciarTurmas = () => {
   const [formMessage, setFormMessage] = useState(null)
   const [turma, setTurma] = useState("")
   const [turmas, setTurmas] = useState([])
   const { brasilFormatData, getHeaders } = useUseful()
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingData, setIsLoadingData] = useState(true)
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingData, setIsLoadingData] = useState(false)
+  const [modalIsClicked, setModalIsClicked] = useState(false)
+  const [currentTurmaId, setCurrentTurmaId] = useState("")
 
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5;
@@ -52,33 +53,27 @@ const GerenciarTurmas = () => {
         text: error.response.data.error
       });
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   };
 
   const getData = async () => {
-    setIsLoadingData(true);
+    setIsLoadingData(true)
     try {
-      const { getTurmas } = fetchData();
-      const response = await getTurmas();
-      setTurmas(response);
+      const { getTurmas } = fetchData()
+      const response = await getTurmas()
+      setTurmas(response)
     } catch (error) {
-      console.error("Erro ao carregar as turmas:", error);
+      console.error("Erro ao carregar as turmas:", error)
     } finally {
-      setIsLoadingData(false);
+      setIsLoadingData(false)
     }
   };
 
   const deleteTurma = async (id) => {
-    const confirmation = confirm("Você tem certeza que deseja excluir essa turma?");
-    if (!confirmation) {
-      navigate("/admin/gerenciar-turmas");
-      return;
-    }
-
-    await axios.delete(`http://localhost:3000/turmas/${id}`, { headers: getHeaders() });
-    await getData();
-  };
+    await axios.delete(`http://localhost:3000/turmas/${id}`, { headers: getHeaders() })
+    await getData()
+  }
 
   useEffect(() => {
     getData();
@@ -86,6 +81,16 @@ const GerenciarTurmas = () => {
 
   return (
     <div className={styles.container}>
+      <DeleteModal
+        message="Você tem certeza que deseja excluir essa turma?"
+        modalIsClicked={modalIsClicked}
+        deleteOnClick={() => {
+          deleteTurma(currentTurmaId)
+          setModalIsClicked(false)
+        }} 
+        cancelOnClick={() => setModalIsClicked(false)} 
+      />
+
       <Title title="Gerenciar turmas" />
 
       <div className={styles.main_content}>
@@ -111,7 +116,10 @@ const GerenciarTurmas = () => {
                         title={turma.nome}
                         subtitle={brasilFormatData(turma.dataCriacao)}
                         link={turma.id}
-                        onClick={() => deleteTurma(turma.id)}
+                        onClick={() => {
+                          setCurrentTurmaId(turma.id)
+                          setModalIsClicked(true)
+                        }}
                       />
                     ))}
                   </div>
@@ -165,4 +173,4 @@ const GerenciarTurmas = () => {
   );
 };
 
-export default GerenciarTurmas;
+export default GerenciarTurmas

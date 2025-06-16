@@ -11,6 +11,7 @@ import fetchData from "../../../utils/fetchData";
 import AlunosTabela from "../../../components/AlunosTabela/AlunosTabela"
 import DetailsCard from "../../../components/DetailsCard/DetailsCard"
 import Loading from "../../../components/Loading/Loading"
+import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 
 const DetalhesTurma = () => {
   const { turma_id } = useParams()
@@ -20,6 +21,7 @@ const DetalhesTurma = () => {
   const { brasilFormatData, getHeaders } = useUseful()
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingData, setIsLoadingData] = useState(false)
+  const [modalIsClicked, setModalIsClicked] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -48,9 +50,6 @@ const DetalhesTurma = () => {
   }
 
   const deleteTurma = async () => {
-    const confirmation = confirm("Você tem certeza que deseja excluir essa turma?")
-    if (!confirmation) return
-
     await axios.delete(`http://localhost:3000/turmas/${turma_id}`, { headers: getHeaders() })
     navigate("/admin/gerenciar-turmas")
   }
@@ -74,6 +73,16 @@ const DetalhesTurma = () => {
 
   return (
     <div className={styles.container}>
+      <DeleteModal
+        message="Você tem certeza que deseja excluir essa turma?"
+        modalIsClicked={modalIsClicked}
+        deleteOnClick={() => {
+          deleteTurma(turma_id)
+          setModalIsClicked(false)
+        }} 
+        cancelOnClick={() => setModalIsClicked(false)} 
+      />
+
       <Title title={`Gerenciar turmas - ${turmaData.nome && turmaData.nome}`} />
 
       <div className={styles.main_content}>
@@ -110,7 +119,9 @@ const DetalhesTurma = () => {
                   text_color="#E0E0E0" 
                   padding_sz="20px" 
                   bg_color="#B2433F" 
-                  onClick={deleteTurma}
+                  onClick={() => {
+                    setModalIsClicked(true)
+                  }}
                 ><i className="fa-solid fa-trash"></i> EXCLUIR TURMA</Button>
               </div>
             </>
