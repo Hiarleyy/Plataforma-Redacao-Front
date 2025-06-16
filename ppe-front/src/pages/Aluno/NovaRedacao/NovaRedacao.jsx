@@ -7,19 +7,19 @@ import { PDFDocument } from "pdf-lib";
 import imageCompression from "browser-image-compression";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
-import InfoCard from "../../../components/InfoCard/InfoCard";
+import InfoCard from "../../../components/infoCardRedacao/InfoCardRedacao";
 import Pagination from "../../../components/Pagination/Pagination";
 import Loading from "../../../components/Loading/Loading";
 import Message from "../../../components/Message/Message";
 import fetchData from "../../../utils/fetchData";
 import { useNavigate } from "react-router-dom";
+import RedacaoModal from "../../../components/RedacaoModal/RedacaoModal";
+import useUseful from "../../../utils/useUseful";
 
-const Novaredacao = () => {
-  const [fileName, setFilesName] = useState("Nenhum arquivo enviado");
+const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum arquivo enviado");
   const [tema, setTema] = useState("");
   const [formMessage, setFormMessage] = useState(null);
   const [fileBlob, setFileBlob] = useState(null); 
-  const [search, setSearch] = useState("")  
   const [redacao, setRedacao] = useState([])
   const navigate = useNavigate()
   const itemsPerPage = 5
@@ -29,6 +29,10 @@ const Novaredacao = () => {
   const currentredacaos = redacao.slice(indexOfFirstItem, indexOfLastItem)
   const [usuario, setUsuario] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
+  // Estado para o modal de redação
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedRedacao, setSelectedRedacao] = useState(null);
+  const { brasilFormatData } = useUseful();
 
   const getAlunoId = () => {
       const aluno = localStorage.getItem('user_access_data')
@@ -157,34 +161,48 @@ const Novaredacao = () => {
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-  useEffect(()=>{
+  };  useEffect(()=>{
     const getData = async() =>{
       try {        
         const alunoId = getAlunoId();
         const { getRedacoesUser } = fetchData();
-        const redacoesResponse = await axios.get(`http://localhost:3000/redacoes/?${alunoId}`);
-        if (redacoesResponse.data && redacoesResponse.data.data) {
-          const options = redacoesResponse.data.data.map(item =>({
-            id: item.id,
-            titulo: item.titulo,
-            status: item.status,
-            data: item.data,
-            usuarioId: item.usuarioId
-          })).sort((a, b) => new Date(b.data) - new Date(a.data)); // Ordena por data decrescente
-          setRedacao(options);
+        const redacoesData = await getRedacoesUser(alunoId);
+        if (redacoesData) {
+          // Buscar as correções para cada redação
+          const options = await Promise.all(
+            redacoesData.map(async item => {
+              let correcao = null;
+              try {
+                // Verificar se a redação já tem correção
+                const correcaoResponse = await axios.get(`http://localhost:3000/correcoes/redacao/${item.id}`);
+                if (correcaoResponse.data && correcaoResponse.data.data) {
+                  correcao = correcaoResponse.data.data;
+                }
+              } catch (error) {
+                // Sem correção disponível
+                console.log("Redação sem correção:", item.id);
+              }
+              return {
+                id: item.id,
+                titulo: item.titulo,
+                status: item.status,
+                data: item.data,
+                usuarioId: item.usuarioId,
+                correcao: correcao
+              };
+            })
+          ).then(result => result.sort((a, b) => new Date(b.data) - new Date(a.data))); // Ordena por data decrescente
+            setRedacao(options);
         } else {
-          console.error('Formato de resposta inesperado:', redacoesResponse);
+          console.error('Nenhuma redação encontrada');
           setRedacao([]);
-        }
-      } catch (error) {
-        console.error('Erro ao buscar redações:', error);
+        }      } catch (error) {
+        console.error('Erro ao buscar redações:', error.message);
         setRedacao([]);
       }
     }
     getData()
   }, [formMessage]) // Atualizar quando enviar uma nova redação
-
   useEffect(() => {
     const getData  = async () => {
       const {getAlunoById} = fetchData()
@@ -195,6 +213,7 @@ const Novaredacao = () => {
     getData()
   },[])
 
+  /*
   const deleteRedacao = async (id) => {
     const confirmation = confirm("Tem certeza que deseja excluir essa redacao?")
     if (!confirmation) {
@@ -205,6 +224,19 @@ const Novaredacao = () => {
     await axios.delete(`http://localhost:3000/redacoes/${id}?userId=${alunoId}`)
     navigate("/admin/nova-redacao")
   }
+  */
+
+  // Função para abrir o modal com a redação selecionada
+  const handleRedacaoClick = (redacao) => {
+    setSelectedRedacao(redacao);
+    setModalOpen(true);
+  };
+
+  // Função para fechar o modal
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedRedacao(null);
+  };
 
   // Função para verificar se a tela é mobile
   const checkIfMobile = useCallback(() => {
@@ -225,29 +257,24 @@ const Novaredacao = () => {
         <>
           <Title title="Nova Redação" />
           <div className={styles.main_content}>
-            <div className={styles.bg_left}>
-              {redacao.length === 0 ? <div className={styles.loading}><Loading /></div> :
+            <div className={styles.bg_left}>              {redacao.length === 0 ? <div className={styles.loading}><Loading /></div> :
                 <> 
                   <p className={styles.form_title}>Redações enviadas</p>
-                  <Input
-                    type="text"
-                    placeholder="Pesquise por redacao"
-                    color="#1A1A1A" 
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  >
-                    <i className="fa-solid fa-magnifying-glass"></i>
-                  </Input>
                   <div className={styles.redacao_container}>
                     {currentredacaos.map((redacao) => (
-                      <InfoCard
-                        key={redacao.id}
-                        img="https://static.vecteezy.com/system/resources/previews/028/049/250/non_2x/terms-icon-design-vector.jpg"
-                        title={redacao.titulo}
-                        subtitle={formatarData(redacao.data)}
-                        link={redacao.id}
-                        onClick={() => deleteRedacao(redacao.id)}
-                      />
+                      <div key={redacao.id} className={styles.card_wrapper}>
+                        <InfoCard
+                          img="https://static.vecteezy.com/system/resources/previews/028/049/250/non_2x/terms-icon-design-vector.jpg"
+                          title={redacao.titulo}
+                          subtitle={formatarData(redacao.data)}
+                          link="#"
+                          button={false}
+                          infoCardOnClick={(e) => {
+                            e.preventDefault();
+                            handleRedacaoClick(redacao);
+                          }}
+                        />
+                      </div>
                     ))}
                   </div>
                   <div className={styles.pagination}>
@@ -403,6 +430,15 @@ const Novaredacao = () => {
           </div>
         </div>
       )}
+
+      {/* Modal para visualização da redação */}
+      <RedacaoModal 
+        redacao={selectedRedacao}
+        isOpen={modalOpen}
+        onClose={closeModal}
+        activeTab="minhas"
+        brasilFormatData={formatarData}
+      />
     </div>
   );
 }

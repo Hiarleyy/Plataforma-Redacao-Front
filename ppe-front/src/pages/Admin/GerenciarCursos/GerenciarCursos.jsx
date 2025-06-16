@@ -1,74 +1,121 @@
-import styles from "./styles.module.css"
-import Title from "../../../components/Title/Title"
-import InfoCard from "../../../components/InfoCard/InfoCard"
-import Input from "../../../components/Input/Input"
-import Button from "../../../components/Button/Button"
-import axios from "axios"
-import fetchData from "../../../utils/fetchData"
-import useUseful from "../../../utils/useUseful"
-import { useState, useEffect } from "react"
-import Pagination from "../../../components/Pagination/Pagination"
-import Message from "../../../components/Message/Message"
-import Loading from "../../../components/Loading/Loading"
+import styles from "./styles.module.css";
+import Title from "../../../components/Title/Title";
+import InfoCard from "../../../components/InfoCard/InfoCard";
+import Input from "../../../components/Input/Input";
+import Button from "../../../components/Button/Button";
+import axios from "axios";
+import fetchData from "../../../utils/fetchData";
+import useUseful from "../../../utils/useUseful";
+import { useState, useEffect } from "react";
+import Pagination from "../../../components/Pagination/Pagination";
+import Message from "../../../components/Message/Message";
+import Loading from "../../../components/Loading/Loading";
+import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 
 const GerenciarCursos = () => {
-  const [formMessage, setFormMessage] = useState(null)
-  const [modulos, setModulos] = useState([])
-  const [nome, setNome] = useState("")
-  const [descricao, setDescricao] = useState("")
-  const [playlistUrl, setPlaylistUrl] = useState("")
-  const { brasilFormatData } = useUseful()
-  const [isLoading, setIsLoading] = useState(false)
+  const [formMessage, setFormMessage] = useState(null);
+  const [modulos, setModulos] = useState([]);
+  const [nome, setNome] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [playlistUrl, setPlaylistUrl] = useState("");
+  const { brasilFormatData, getHeaders } = useUseful();
 
-  const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 5
-  
-  const indexOfLastItem = currentPage * itemsPerPage
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentModulos = modulos.slice(indexOfFirstItem, indexOfLastItem)
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(false);
+  const [modalIsClicked, setModalIsClicked] = useState(false);
+  const [currentCursoId, setCurrentCursoId] = useState("")
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentModulos = modulos.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:3000/modulos", { 
-        "nome": nome,
-        "descricao": descricao,
-        "playlistUrl": playlistUrl
-      })
+      const response = await axios.post(
+        "http://localhost:3000/modulos", 
+        {
+          nome,
+          descricao,
+          playlistUrl,
+        },
+        { headers: getHeaders() }
+      );
 
-      setFormMessage({ 
-        type: "success", 
-        text: `Curso ${response.data.data.nome} criado com sucesso.` 
-      })
+      setFormMessage({
+        type: "success",
+        text: `Curso ${response.data.data.nome} criado com sucesso.`,
+      });
+
+      setNome("");
+      setDescricao("");
+      setPlaylistUrl("");
+
+      await getData();
     } catch (error) {
       setFormMessage({
         type: "error",
-        text: error.response.data.error
+        text: error.response?.data?.error || "Erro ao criar curso.",
       });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
+
+  const getData = async () => {
+    setIsLoadingData(true);
+    try {
+      const { getModulos } = fetchData();
+      const response = await getModulos();
+      setModulos(response);
+    } catch (error) {
+      console.error("Erro ao buscar cursos:", error);
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
+
+  const deleteModulo = async (id) => {
+    await axios.delete(`http://localhost:3000/modulos/${id}`, { headers: getHeaders() });
+    await getData();
+  };
 
   useEffect(() => {
-    const getData = async () => {
-      const { getModulos } = fetchData() 
-      const response = await getModulos()
-      setModulos(response)
-    }
-  
-    getData()
-  }, [])
+    getData();
+  }, []);
 
   return (
     <div className={styles.container}>
+      <DeleteModal
+        message="Você tem certeza que deseja excluir esse(a) aluno(a)?"
+        modalIsClicked={modalIsClicked}
+        deleteOnClick={() => {
+          deleteModulo(currentAlunoId)
+          setModalIsClicked(false)
+        }} 
+        cancelOnClick={() => setModalIsClicked(false)} 
+      />
+
       <Title title="Gerenciar cursos" />
 
       <div className={styles.main_content}>
         <div className={styles.bg_left}>
-          {modulos.length === 0 ? <div className={styles.loading}><Loading /></div> :
+          {isLoadingData ? (
+            <div className={styles.loading}>
+              <Loading />
+            </div>
+          ) : modulos.length === 0 ? (
+            <Message 
+              text="Nenhum curso cadastrado." 
+              text_color="#E0E0E0"
+              marginTop="30px"
+            />
+          ) : (
             <>
               <p className={styles.title}>Seus cursos</p>
 
@@ -78,7 +125,10 @@ const GerenciarCursos = () => {
                     key={modulo.id}
                     title={modulo.nome}
                     subtitle={brasilFormatData(modulo.dataCriacao)}
-                    link={modulo.id}
+                    onClick={() => {
+                      setCurrentCursoId(modulo.id)
+                      setModalIsClicked(true)
+                    }}
                   />
                 ))}
               </div>
@@ -92,7 +142,7 @@ const GerenciarCursos = () => {
                 />
               </div>
             </>
-          }
+          )}
         </div>
 
         <div className={styles.bg_right}>
@@ -126,26 +176,28 @@ const GerenciarCursos = () => {
               value={playlistUrl}
               onChange={(e) => setPlaylistUrl(e.target.value)}
             >
-              <i class="fa-solid fa-link"></i>
+              <i className="fa-solid fa-link"></i>
             </Input>
 
-            <Message 
-              text={formMessage ? formMessage.text : ""} 
-              type={formMessage ? formMessage.type : ""} 
+            <Message
+              text={formMessage ? formMessage.text : ""}
+              type={formMessage ? formMessage.type : ""}
             />
 
-            <Button 
-              text_size="20px" 
-              text_color="#E0E0E0" 
-              padding_sz="10px" 
+            <Button
+              text_size="20px"
+              text_color="#E0E0E0"
+              padding_sz="10px"
               bg_color="#DA9E00"
               isLoading={isLoading}
-            >CADASTRAR</Button>
+            >
+              CADASTRAR
+            </Button>
           </form>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default GerenciarCursos
+export default GerenciarCursos;

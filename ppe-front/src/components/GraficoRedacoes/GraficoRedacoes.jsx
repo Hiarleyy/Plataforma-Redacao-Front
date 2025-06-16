@@ -9,7 +9,7 @@ const GraficoRedacoes = ({
   title = 'Evolução das notas do aluno',
   height_size = '300px',
   labelFormat = 'date', // 'date' or 'string'
-  yAxisMax = 1000,
+  yAxisMax = 1050,
   yAxisStep = 100,
   lineColor = '#DA9E00',
   backgroundColor = '#1a1a1a88',
@@ -24,8 +24,7 @@ const GraficoRedacoes = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
-  // Format X-axis labels based on the labelFormat
+    // Format X-axis labels based on the labelFormat
   const formatLabel = (value) => {
     if (labelFormat === 'date' && value) {
       return new Date(value).toLocaleDateString();
@@ -33,12 +32,15 @@ const GraficoRedacoes = ({
     return value;
   };
 
+  // Get only the last 4 records
+  const last4Data = data.slice(-4);
+
   const chartData = {
-    labels: data.map(item => formatLabel(item[xKey])),
+    labels: last4Data.map(item => formatLabel(item[xKey])),
     datasets: [
       {
         label: 'Nota da Redação',
-        data: data.map(item => item[yKey]),
+        data: last4Data.map(item => item[yKey]),
         borderColor: lineColor, 
         backgroundColor: backgroundColor,
         tension: 0.3,
@@ -77,9 +79,8 @@ const GraficoRedacoes = ({
         callbacks: {
           label: function(context) {
             return `${context.dataset.label}: ${context.parsed.y}`;
-          },
-          title: function(context) {
-            return formatLabel(data[context[0].dataIndex][xKey]);
+          },          title: function(context) {
+            return formatLabel(last4Data[context[0].dataIndex][xKey]);
           }
         }
       }

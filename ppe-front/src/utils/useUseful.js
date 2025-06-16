@@ -25,7 +25,15 @@ const useUseful = () => {
     return notes.reduce((soma, item) => soma + item.nota, 0) / notes.length
   }
 
-  return { brasilFormatData, countNotesOfValue1000, avgNotes }
+  const getHeaders = () => {
+    const storedUser = localStorage.getItem('user_access_data')
+    if (!storedUser) return {}
+
+    const { token } = JSON.parse(storedUser)
+    return { Authorization: `Bearer ${token}` }
+  }
+
+  return { brasilFormatData, countNotesOfValue1000, avgNotes, getHeaders }
 }
 
 export default useUseful

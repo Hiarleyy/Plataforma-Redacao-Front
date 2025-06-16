@@ -86,10 +86,20 @@
   }
 
   .main_content .bg_left {
-    height: 680px;
+    height: 600px;
   }
 
   .main_content .bg_right {
     padding: 20px;
+  }
+
+  .main_content .bg_right .form_title {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main_content .bg_left {
+    height: 550px;
   }
 }

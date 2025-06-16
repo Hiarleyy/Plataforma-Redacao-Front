@@ -1,6 +1,6 @@
 import styles from "./styles.module.css"
 
-const Message = ({ text, text_color = "#E0E0E0", type = "", margin = "0px" }) => {
+const Message = ({ text, text_color = "#E0E0E0", type = "", marginTop = "0px" }) => {
   if (!text) return null
 
   const setType = (type) => {
@@ -12,9 +12,9 @@ const Message = ({ text, text_color = "#E0E0E0", type = "", margin = "0px" }) =>
   return (
     <div 
       className={`${ setType(type) }`}
-      style={{ margin: margin }}
+      style={{ marginTop: marginTop }}
     >
-      <p style={{ color: text_color }}>{text}</p>
+      <p style={{ color: text_color }} className={styles.text_message}>{text}</p>
     </div>
   )
 }

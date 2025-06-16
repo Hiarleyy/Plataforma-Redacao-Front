@@ -98,7 +98,7 @@
   background-color: #242424;
   border-radius: 8px;
   padding: 12px;
-  height: 100%;
+  height: 75vh;
 }
 
 .tab_content p {
@@ -135,7 +135,7 @@
 
 
 .metrics_status > a{
-    color:#42464D;
+    color: #b0b0b0;;
     text-decoration: none;
 }
 
@@ -163,6 +163,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     width: 100%;
+    color: #b0b0b0;
     padding: 20px;
     background-color: #242424;
     border-radius: 20px;
@@ -183,14 +184,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-}
-
-.pagination{
-  position: absolute;
-  bottom: 20px;
-  left: 0
-
+  gap: 10px;
 }
 .metrics_status{
   display: flex;
@@ -246,6 +240,7 @@
   flex-direction: column;
   height: 100%;
   min-height: 400px;
+  gap: 10px;
   position: relative;
 }
 
@@ -255,19 +250,22 @@
   flex-direction: column;
   gap: 10px;
   overflow-y: auto;
-  margin-bottom: 60px ; /* Espaço para a paginação */
+  margin-bottom: 0; /* Remove margem inferior */
+  min-height: 0; /* Permite que o flex funcione corretamente */
 }
 
+/* Posicionamento fixo da paginação */
 .pagination_container {
-  position: absolute;
-  margin-top: 590px;
+  bottom: 0;
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
-  background-color: #242424; /* Adicionado para combinar com o fundo */
+  align-items: center;
+  background-color: #242424;
+  padding: 15px 0;
+  margin-top: auto;
 }
-
 /* Estilos para card clicável */
 .card_clickable {
   cursor: pointer;
@@ -390,7 +388,11 @@
   .main_content {
     flex-direction: column;
     padding: 20px;
+    margin-bottom: 100px;
     gap: 15px;
+  }
+  .tab_content {
+    height: auto; /* Permite que o conteúdo se ajuste */
   }
 
   .perfil,
@@ -416,15 +418,10 @@
 
   .tab_buttons {
     gap: 10px;
-  }
-
-  .pagination_container {
-    margin-top: 20px;
-    position: relative;
-  }
+  } 
 
   .cards_container {
-    margin-bottom: 20px;
+    margin-bottom: 0;
   }
 
   .modal_content {
@@ -459,10 +456,18 @@
     font-size: 12px;
     padding: 6px 8px;
   }
-  
-  .chart_container {
+    .chart_container {
     width: calc(100% - 20px);
     margin: 10px 10px;
     padding: 10px;
   }
+}
+
+.loading_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  width: 100%;
+  height: 200px;
 }

@@ -16,6 +16,7 @@ import AlunoInicio from "./pages/Aluno/Inicio/Inicio"
 import Perfil from "./pages/Aluno/Perfil/Perfil"
 import NovaRedacao from "./pages/Aluno/NovaRedacao/NovaRedacao"
 import DesenpenhoAluno from "./pages/Aluno/DesenpenhoAluno/DesenpenhoAluno"
+import SimuladosAluno from "./pages/Aluno/Simulados/Simulados"
 
 // Admin Pages
 import DashboardAdmin from "./pages/Admin/Dashboard/Dashboard"
@@ -62,7 +63,27 @@ const definePath = () => {
 }
 
 const ProtectedHomeRoutes = ({ element }) => {
-  return isAuthenticated() ? element : <Navigate to="/" replace />
+  if (!isAuthenticated()) {
+    return <Navigate to="/" replace />
+  }
+
+  if (getUserRole()?.toUpperCase() !== "STANDARD") {
+    return <Navigate to="/" replace />
+  }
+
+  return element
+}
+
+const ProtectedHomeAdminRoutes = ({ element }) => {
+  if (!isAuthenticated()) {
+    return <Navigate to="/" replace />
+  }
+
+  if (getUserRole()?.toUpperCase() !== "ADMIN") {
+    return <Navigate to="/" replace />
+  }
+
+  return element
 }
 
 const ProtectedLoginRoute = ({ element }) => {
@@ -87,12 +108,13 @@ const router = createBrowserRouter([
       { path: "cursos/:video_id", element: <VideoPage /> },
       { path: "configuracoes", element: <Configuracoes /> },
       { path: "ControleDesempenho", element:<DesenpenhoAluno />},
+      { path: "SimuladosAluno", element:<SimuladosAluno />},
     ],
   },
 
   {
     path: "/admin",
-    element: <ProtectedHomeRoutes element={<AdminLayout />} />,
+    element: <ProtectedHomeAdminRoutes element={<AdminLayout />} />,
     children: [
       { index: true, element: <DashboardAdmin /> },
       { path: "nova-proposta", element: <NovaProposta /> },
@@ -108,6 +130,7 @@ const router = createBrowserRouter([
       { path: "correcao/:redacao_id", element: <CorrigirRedacao /> },
       { path: "pagamentos", element: <Pagamentos />},
       { path: "gerenciar-pagamentos", element: <GerenciaPagamentos /> },
+      { path: "configuracoes", element: <Configuracoes /> },
       { path: "Simulados", element:<Simulados />},
       { path: "Simulados/:simulado_id", element: <NotasSimulados />},
     ],

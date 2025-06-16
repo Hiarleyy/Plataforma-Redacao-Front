@@ -12,7 +12,6 @@
   font-weight: 500;
   color: #ffffff;
   background-color: #2C3E50;
-
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
@@ -33,7 +32,7 @@
 @media (max-width: 768px) {
   .btn {
     padding: 8px 14px;
-    font-size: 9px;
+    font-size: 10px;
   }
 }
 

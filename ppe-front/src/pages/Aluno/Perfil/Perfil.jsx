@@ -6,17 +6,18 @@ import styles from "./styles.module.css";
 import Title from "../../../components/Title/Title";
 import fetchData from '../../../utils/fetchData';
 import Pagination from '../../../components/Pagination/Pagination';
-import InfoCard from '../../../components/InfoCard/InfoCard';
+import InfoCard from '../../../components/InfoCardRedacao/InfoCardRedacao';
 import GraficoRedacoes from '../../../components/GraficoRedacoes/GraficoRedacoes';
 import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg';
+import RedacaoModal from '../../../components/RedacaoModal/RedacaoModal';
+import Loading from '../../../components/Loading/Loading';
 
-const Perfil = () => {
-  const [usuario, setUsuario] = useState([]);
+const Perfil = () => {  const [usuario, setUsuario] = useState([]);
   const [activeTab, setActiveTab] = useState('minhas');
   const [redacoes, setRedacoes] = useState([]);
-  const [correcoes, setCorrecoes] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [loading, setLoading] = useState(true);
   // Estados para o modal
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRedacao, setSelectedRedacao] = useState(null);
@@ -58,108 +59,32 @@ const Perfil = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  
-  useEffect(() => {
+    useEffect(() => {
     const getData = async () => {
       const { getRedacoes, getAlunoById, getCorrecoes} = fetchData() 
       const alunoId = getAlunoId()
       
-      // Buscar todas as redações do usuário
-      const response = await getRedacoes(alunoId)
-      setRedacoes(response)
-      
-      // Buscar redações corrigidas do usuário
-      const responseCorrigidas = await getRedacoes(alunoId, true)
-      setRedacoesCorrigidas(responseCorrigidas)
+      try {
+        // Buscar todas as redações do usuário pendentes
+        const response = await getRedacoes(alunoId,false,true)
+        setRedacoes(response)
+        
+        // Buscar redações corrigidas do usuário
+        const responseCorrigidas = await getRedacoes(alunoId, true)
+        setRedacoesCorrigidas(responseCorrigidas)
 
-      
-      // Buscar dados do aluno
-      const responseAluno = await getAlunoById(alunoId)
-      setUsuario(responseAluno)
+        
+        // Buscar dados do aluno
+        const responseAluno = await getAlunoById(alunoId)
+        setUsuario(responseAluno)
+      } finally {
+        setLoading(false)
+      }
     }
 
     getData()
   }, [])
 
-  // Componente do Modal
-  const RedacaoModal = ({ redacao, isOpen, onClose }) => {
-    const [correcao, setCorrecao] = useState(null);
-    const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-      const getCorrecao = async () => {
-        if (!correcao) return;
-        
-        try {
-          setLoading(true);
-          const { getCorrecoes } = fetchData();
-          // Buscar correção específica para esta redação
-          const correcaoData = await getCorrecoes(correcao.id);
-          setCorrecao(correcaoData);
-        } catch (error) {
-          console.error("Erro ao buscar correção:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      if (isOpen && redacao) {
-        getCorrecao();
-      }
-    }, [redacao, isOpen]);
-
-    if (!isOpen || !redacao) return null;
-
-    return (
-      <div className={styles.modal_overlay} onClick={onClose}>
-        <div className={styles.modal_content} onClick={(e) => e.stopPropagation()}>
-          <div className={styles.modal_header}>
-            <h2>{redacao.titulo}</h2>
-            <button className={styles.close_button} onClick={onClose}>×</button>
-          </div>
-          <div className={styles.modal_body}>
-            <div className={styles.redacao_info}>
-              <p><strong>Data:</strong> {brasilFormatData(redacao.data)}</p>
-              <p><strong>Tema:</strong> {redacao.tema}</p>
-              {activeTab === 'avaliadas' && redacao.correcao && (
-                <div className={styles.correcao_info}>
-                  <h3>Correção</h3>
-                  {loading ? (
-                    <p>Carregando dados da correção...</p>
-                  ) : correcao ? (
-                    <>
-                      <p><strong>Nota final:</strong> {correcao.nota}</p>
-                      <div className={styles.competencias}>
-                        <p><strong>Competência 1:</strong> {correcao.competencia1}</p>
-                        <p><strong>Competência 2:</strong> {correcao.competencia2}</p>
-                        <p><strong>Competência 3:</strong> {correcao.competencia3}</p>
-                        <p><strong>Competência 4:</strong> {correcao.competencia4}</p>
-                        <p><strong>Competência 5:</strong> {correcao.competencia5}</p>
-                      </div>
-                      {correcao.comentario && (
-                        <div className={styles.comentario}>
-                          <h4>Comentário do corretor:</h4>
-                          <p>{correcao.comentario}</p>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <p>Nenhuma correção disponível</p>
-                  )}
-                </div>
-              )}
-            </div>
-            <div className={styles.texto_redacao}>
-              <h3>Texto</h3>
-              <div className={styles.texto_container}>
-                <p>{redacao.texto}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className={styles.container}>
@@ -227,9 +152,12 @@ const Perfil = () => {
                 </svg>
                 Redações Avaliadas
               </button>
-            </div>
-            <div className={styles.tab_content}>
-              {activeTab === 'minhas' ? (
+            </div>            <div className={styles.tab_content}>
+              {loading ? (
+                <div className={styles.loading_container}>
+                  <Loading size="50px"/>
+                </div>
+              ) : activeTab === 'minhas' ? (
                 <div className={styles.minhas_redacoes}>
                   <div className={styles.cards_container}>
                     {currentRedacoes.map((redacao) => (
@@ -279,13 +207,13 @@ const Perfil = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Modal para exibir detalhes da redação */}
+      </div>      {/* Modal para exibir detalhes da redação */}
       <RedacaoModal 
         redacao={selectedRedacao} 
         isOpen={modalOpen} 
-        onClose={closeModal} 
+        onClose={closeModal}
+        activeTab={activeTab}
+        brasilFormatData={brasilFormatData}
       />
     </div>
   );

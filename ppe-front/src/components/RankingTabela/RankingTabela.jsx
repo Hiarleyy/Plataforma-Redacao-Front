@@ -14,7 +14,7 @@ const RankingTabela = ({ ranking }) => {
           </tr>
         </thead>
         <tbody>
-          {ranking.slice(3).map((item, index) => (
+          {ranking.slice(3,10).map((item, index) => (
             <tr key={item.id}>
               <td className={styles.celula}>{`${index + 4}º`}</td>
               <td className={styles.celula} title={item.nome}>{item.nome}</td>
