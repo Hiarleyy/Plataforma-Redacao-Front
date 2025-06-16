@@ -71,6 +71,10 @@
   gap: 10px;
 }
 
+.modal_details_bg .modal_details .infos p {
+  color: #B0B0B0;
+}
+
 .modal_details_bg .modal_details .notes_box {
   display: flex;
   flex-direction: column;
@@ -87,11 +91,16 @@
   gap: 10px;
 }
 
+.modal_details_bg .modal_details .notes_box .notes p {
+  color: #B0B0B0;
+}
+
 .modal_details_bg .modal_details .final_note {
   background-color: #1A1A1A;
   padding: 15px;
   border-radius: 8px;
   font-size: 14px;
+  color: #B0B0B0;
 }
 
 .modal_details_bg .modal_details .feedback {
@@ -105,6 +114,10 @@
   padding: 15px;
   border-radius: 8px;
   font-size: 14px;
+}
+
+.modal_details_bg .modal_details .feedback .feedback_content p {
+  color: #B0B0B0;
 }
 
 .modal_details_bg .modal_details .buttons {

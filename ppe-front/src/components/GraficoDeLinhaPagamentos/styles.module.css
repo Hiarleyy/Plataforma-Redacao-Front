@@ -1,0 +1,17 @@
+.chartContainer {
+  background: #242424;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  margin-top: 10px;
+  color: #ffffff; /* cinza escuro */
+}

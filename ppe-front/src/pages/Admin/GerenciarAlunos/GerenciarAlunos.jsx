@@ -13,6 +13,7 @@ import InfoCard from "../../../components/InfoCard/InfoCard"
 import Loading from "../../../components/Loading/Loading"
 import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg';
 import useUseful from "../../../utils/useUseful"
+import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 
 const GerenciarAlunos = () => {
   const [formMessage, setFormMessage] = useState(null)
@@ -26,6 +27,8 @@ const GerenciarAlunos = () => {
 
   const [isLoading, setIsLoading] = useState(false)            
   const [isLoadingData, setIsLoadingData] = useState(false)    
+  const [modalIsClicked, setModalIsClicked] = useState(false)
+  const [currentAlunoId, setCurrentAlunoId] = useState("")
 
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
@@ -88,16 +91,9 @@ const GerenciarAlunos = () => {
     }
   }
 
-  const deleteAluno = async (nome, id) => {
-    const confirmation = confirm(`Você tem certeza que deseja excluir o(a) aluno(a) ${nome}?`)
-    if (!confirmation) {
-      navigate("/admin/gerenciar-alunos")
-      return
-    } 
-
+  const deleteAluno = async (id) => {
     await axios.delete(`http://localhost:3000/usuarios/${id}`, { headers: getHeaders() })
     await getAlunos()
-    navigate("/admin/gerenciar-alunos")
   }
 
   useEffect(() => { 
@@ -132,6 +128,16 @@ const GerenciarAlunos = () => {
 
   return (
     <div className={styles.container}>
+      <DeleteModal
+        message="Você tem certeza que deseja excluir esse(a) aluno(a)?"
+        modalIsClicked={modalIsClicked}
+        deleteOnClick={() => {
+          deleteAluno(currentAlunoId)
+          setModalIsClicked(false)
+        }} 
+        cancelOnClick={() => setModalIsClicked(false)} 
+      />
+
       <Title title="Gerenciar alunos" />
 
       <div className={styles.main_content}>
@@ -166,7 +172,10 @@ const GerenciarAlunos = () => {
                         title={aluno.nome} 
                         subtitle={aluno.email} 
                         link={aluno.id}
-                        onClick={() => deleteAluno(aluno.nome, aluno.id)}
+                        onClick={() => {
+                          setCurrentAlunoId(aluno.id)
+                          setModalIsClicked(true)
+                        }}
                       />
                     ))}
                   </div>

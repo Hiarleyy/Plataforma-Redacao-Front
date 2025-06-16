@@ -89,6 +89,13 @@
   scrollbar-width: none;
 }
 
+.main_content .bg_right .aulas .loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .main_content .bg_right .aulas::-webkit-scrollbar {
   width: 0;
   height: 0;

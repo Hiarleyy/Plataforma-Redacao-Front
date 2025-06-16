@@ -6,13 +6,15 @@ import Message from "../../../components/Message/Message"
 import InputSelect from "../../../components/InputSelect/InputSelect"
 import DetailsCard from "../../../components/DetailsCard/DetailsCard"
 import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, Link } from "react-router-dom"
 import axios from "axios"
 import fetchData from "../../../utils/fetchData"
 import useUseful from "../../../utils/useUseful"
 import GraficoNotas from "../../../components/GraficoLinha/GraficoLinha"
 import RedacoesTabela from "../../../components/RedacoesTabela/RedacoesTabela"
 import Loading from "../../../components/Loading/Loading"
+import DeleteModal from "../../../components/DeleteModal/DeleteModal"
+import CorrecaoModal from "../../../components/CorrecaoModal/CorrecaoModal"
 
 const DetalhesAluno = () => {
   const { aluno_id } = useParams()
@@ -27,6 +29,9 @@ const DetalhesAluno = () => {
   const [turmas, setTurmas] = useState([])
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
+  const [modalIsClicked, setModalIsClicked] = useState(false)
+  const [modalRedacaoIsClicked, setModalRedacaoIsClicked] = useState(false)
+  const [modalData, setModalData] = useState({})
 
   const { brasilFormatData, avgNotes, getHeaders } = useUseful()
   const navigate = useNavigate()
@@ -62,9 +67,6 @@ const DetalhesAluno = () => {
   };
 
   const deleteAluno = async () => {
-    const confirmation = confirm(`Você tem certeza que deseja excluir o(a) aluno(a) ${alunoData.nome}?`)
-    if (!confirmation) return;
-
     await axios.delete(`http://localhost:3000/usuarios/${aluno_id}`, { headers: getHeaders() })
     navigate("/admin/gerenciar-alunos")
   };
@@ -126,6 +128,22 @@ const DetalhesAluno = () => {
 
   return (
     <div className={styles.container}>
+      <CorrecaoModal 
+        modalData={modalData}
+        modalIsClicked={modalRedacaoIsClicked} 
+        setModalIsClicked={setModalRedacaoIsClicked}
+      />
+
+      <DeleteModal
+        message="Você tem certeza que deseja excluir esse(a) aluno(a)?"
+        modalIsClicked={modalIsClicked}
+        deleteOnClick={() => {
+          deleteAluno(aluno_id)
+          setModalIsClicked(false)
+        }} 
+        cancelOnClick={() => setModalIsClicked(false)} 
+      />
+
       <Title title={`Gerenciar alunos - ${alunoData && alunoData.nome ? alunoData.nome : ""}`} />
 
       <div className={styles.main_content}>
@@ -168,7 +186,15 @@ const DetalhesAluno = () => {
                 />
               </div>
 
-              <RedacoesTabela redacoes={redacoes} />
+              <RedacoesTabela 
+                redacoes={redacoes} 
+                onClick={() => {
+                  console.log("aqui")
+                  setModalRedacaoIsClicked(true)
+                }}
+                setModalData={setModalData}
+              />
+
               <GraficoNotas array={notasRedacoes} height_size="300px" />
 
               <Button 
@@ -176,7 +202,9 @@ const DetalhesAluno = () => {
                 text_color="#E0E0E0" 
                 padding_sz="10px" 
                 bg_color="#B2433F" 
-                onClick={deleteAluno}
+                onClick={() => {
+                  setModalIsClicked(true)
+                }}
               >
                 <i className="fa-solid fa-trash"></i> EXCLUIR ALUNO
               </Button>

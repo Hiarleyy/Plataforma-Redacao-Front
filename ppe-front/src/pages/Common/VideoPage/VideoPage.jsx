@@ -11,6 +11,7 @@ const VideoPage = () => {
   const [video, setVideo] = useState({})
   const [moduloVideos, setModuloVideos] = useState([])
   const [isVideoLoading, setIsVideoLoading] = useState(true)
+  const [isModuloLoading, setIsModuloLoading] = useState(true)
   const navigate = useNavigate()
 
   const getEmbedUrl = (url) => {
@@ -56,15 +57,22 @@ const VideoPage = () => {
   }, [video_id])
 
   useEffect(() => {
-    const getData = async () => {
-      const { getModuloById } = fetchData() 
-      const moduloId = video.modulo?.id
-      if (!moduloId) return
-      const response = await getModuloById(moduloId)
-      setModuloVideos(response.videos)
-    }
+    setIsModuloLoading(true)
+    try {
+      const getData = async () => {
+        const { getModuloById } = fetchData() 
+        const moduloId = video.modulo?.id
+        if (!moduloId) return
+        const response = await getModuloById(moduloId)
+        setModuloVideos(response.videos)
+      }
   
-    getData()
+      getData()
+    } catch (error) {
+      console.error("Erro ao buscar os dados:", error)
+    } finally {
+      setIsModuloLoading(false)
+    }
   }, [video])
 
   return (
@@ -117,16 +125,22 @@ const VideoPage = () => {
           <p className={styles.title}>Conteúdo do curso</p>
           <div className={styles.divider}></div>
           <div className={styles.aulas}>
-            {moduloVideos.map((video) => (
-              <Link
-                className={styles.aula_card}
-                key={video.id}
-                to={`../cursos/${video.id}`}
-              >
-                <i class="fa-solid fa-video"></i>
-                <p>{video.titulo}</p>
-              </Link>
-            ))}
+            {isModuloLoading ? (
+              <div className={styles.loading}>
+                <Loading />
+              </div>
+            ) : (
+              moduloVideos.map((video) => (
+                <Link
+                  className={styles.aula_card}
+                  key={video.id}
+                  to={`../cursos/${video.id}`}
+                >
+                  <i class="fa-solid fa-video"></i>
+                  <p>{video.titulo}</p>
+                </Link>
+              ))
+            )}
           </div>
         </div>
         

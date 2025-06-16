@@ -12,17 +12,19 @@ const InfoCard = ({
   infoCardOnClick = undefined
 }) => {
   return (
-    <Link className={styles.container} to={link} onClick={infoCardOnClick}>
-      {img && <img src={img} alt="foto do aluno" />}
+    <div className={styles.container}>
+      <Link className={styles.bg_left} to={link} onClick={infoCardOnClick}>
+        {img && <img src={img} alt="foto do aluno" />}
 
-      <div className={styles.infos}>
-        <p className={styles.title}>{title}</p>
-        {subtitle === undefined ? null : <p className={styles.subtitle}>{subtitle}</p>}
-      </div>
+        <div className={styles.infos}>
+          <p className={styles.title}>{title}</p>
+          {subtitle === undefined ? null : <p className={styles.subtitle}>{subtitle}</p>}
+        </div>
+      </Link>
 
       {button === true ? <button className={styles.btn} onClick={onClick} >EXCLUIR</button> : null}
       {button_registrar === true ? <button className={styles.btn} onClick={onClick} >REGISTRAR NOTA</button> : null}
-    </Link>
+    </div>
   )
 }
 

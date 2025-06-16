@@ -143,9 +143,18 @@ const fetchData = () => {
       return response.data.data
     }
     // Busca todas as redações corrigidas se não houver ID específico
-    const response = await axios.get(`http://localhost:3000/redacoes?corrigidas=true`, { headers: getHeaders() })
+    const response = await axios.get(`http://localhost:3000/redacoes?corrigidas=true`)
     return response.data.data
   }
+
+  const getPagamentos = async () => {
+    const response = await axios.get(`http://localhost:3000/pagamentos`)
+    return response.data.data
+  }
+
+
+
+
   return { 
     getTurmas, 
     getTurmaById, 
@@ -164,9 +173,9 @@ const fetchData = () => {
     getSimulados,
     getNotasbySimuladoId,
     getSimuladoByIdTurma,
-    getCorrecoes,
     getNotaSimulados,
-    getNotasByUsuarioId
+    getCorrecoes,
+    getPagamentos
   }
 }
 
