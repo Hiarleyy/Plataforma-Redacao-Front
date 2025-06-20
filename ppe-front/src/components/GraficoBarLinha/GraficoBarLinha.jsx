@@ -8,7 +8,7 @@ const GraficoBarLinha = ({ data }) => {
 
   return (
     <div className={styles.container}>
-      <h3 className={styles.title}>Distribuição de Despesas</h3>
+      <h3 className={styles.title}>Distribuição de Saída dos Recursos:</h3>
       {data.map((item, index) => {
         const percentual = ((item.valor / total) * 100).toFixed(0);
         return (

@@ -118,7 +118,7 @@ const fetchData = () => {
   }
    
   const getCorrecoes= async () => {
-    const response = await axios.get(`http://localhost:3000/correcoes`)
+    const response = await axios.get(`http://localhost:3000/correcoes`,{ headers: getHeaders() })
     return response.data.data
   }
   
@@ -148,7 +148,7 @@ const fetchData = () => {
   }
 
   const getPagamentos = async () => {
-    const response = await axios.get(`http://localhost:3000/pagamentos`)
+    const response = await axios.get(`http://localhost:3000/pagamentos`,  { headers: getHeaders() })
     return response.data.data
   }
 

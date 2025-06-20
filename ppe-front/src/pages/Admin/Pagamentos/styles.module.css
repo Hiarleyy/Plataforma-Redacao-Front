@@ -30,21 +30,52 @@
   color: hsl(0, 0%, 65%);
   margin-bottom: 20px;
 }
+
 .container_pag .CardDashs_container {
   display: flex;
   gap: 20px;
 }
 
-.container_pag .container_search{ 
+.container_pag .container_search { 
   display: flex;
   margin-top: 20px;
   justify-content: space-between;
   height: 53px;
   gap: 8px;
-
 }
 
-.container_pag .container_table{
+.container_pag .container_table {
   margin-top: 15px;
   height: 60%;
+}
+
+@media (max-width: 768px) {
+  .container {
+    height: fit-content;
+
+  }
+  
+  .main_content {
+    flex-direction: column;
+    gap: 40px;
+    padding: 20px;
+    padding-bottom: 100px;
+  }
+  
+  .main_content .container_pag {
+    padding: 15px;
+    gap: 40px;
+  }
+  
+  .container_pag .CardDashs_container {
+    flex-direction: column;
+  }
+  .container_pag .container_search {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .container_pag .container_table{
+    height: fit-content;
+    margin-top: 120px;
+  }
 }

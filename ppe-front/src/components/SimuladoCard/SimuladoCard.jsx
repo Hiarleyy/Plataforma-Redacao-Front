@@ -36,8 +36,8 @@ const SimuladoCard = ({
             <p className={styles.value}>{participantes}</p>
           </div>
           <div className={styles.infoCard}>
-            <p className={styles.label}>📚 Turma</p>
-            <p className={styles.value}>
+            <p className={styles.label_turma}>📚 Turma</p>
+            <p className={styles.value_turma}>
               {
                 Array.isArray(turmas)
                   ? turmas.join(', ')

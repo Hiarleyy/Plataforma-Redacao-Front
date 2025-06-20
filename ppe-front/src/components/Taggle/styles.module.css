@@ -2,13 +2,13 @@
   display: flex;
   padding: 4px;
   border-radius: 1px;
-  width: 100%; /* <- ocupa todo o espaço do pai */
+  width: 100%; 
   font-family: sans-serif;
-  gap: 0px; /* opcional: espaço entre os botões */
+  gap: 0px; 
 }
 
 .toggle_button {
-  flex: 1; /* <- permite que cada botão ocupe o mesmo espaço */
+  flex: 1;
   padding: 8px 16px;
   background: transparent;
   cursor: pointer;
@@ -26,4 +26,18 @@
   height: 50px;
   font-weight: bold;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .toggle_container{
+    height: 60px;
+    width: 450px;
+  }
+  .active{
+    height: 53px;
+  }
+
+  .toggle_button {
+    font-size: 18px;
+  }
 }

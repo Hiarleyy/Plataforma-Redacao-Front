@@ -12,7 +12,7 @@ const GraficoBarLinha = ({ data }) => {
 
   return (
     <div className={styles.chartContainer}>
-      <h3 className={styles.title}>📈 Evolução do Fluxo de Caixa</h3>
+
       
       {/* Legenda do gráfico */}
       <div className={styles.legend}>

@@ -40,7 +40,6 @@
   height: 35%;
   left: 55px;
   position: relative;
-
 }
 
 .container_desenpenho .select_turma select {
@@ -49,7 +48,7 @@
   font-size: 16px;
   color: #ffffff;
   border-radius: 6px;
-  background-color: #DA9E00;
+  background-color: #da9e00;
   transition: all 0.5s ease;
   outline: none;
   appearance: none;
@@ -62,7 +61,6 @@
   font-size: 18px;
   background-color: #000000;
   color: #ffffff;
-  
 }
 
 .container_desenpenho .container_graficos {
@@ -72,6 +70,7 @@
   height: 100%;
   margin-top: 10px;
 }
+
 .container_graficos .left h2 {
   position: relative;
   left: 200px;
@@ -84,11 +83,11 @@
   height: 100%;
   padding: 20px;
   border-radius: 10px;
-  border: 1px solid #DA9E00;
+  border: 1px solid #da9e00;
 }
 
 .container_desenpenho .container_graficos .right {
-  border: 1px solid #DA9E00;
+  border: 1px solid #da9e00;
   padding: 20px;
   border-radius: 10px;
 }
@@ -96,4 +95,54 @@
 .container_desenpenho .container_graficos .right .grafico_pizza {
   width: 500px;
   height: 200px;
+}
+
+/* RESPONSIVO MOBILE */
+@media (max-width: 768px) {
+  .container_desenpenho {
+    padding: 10px;
+  }
+
+  .container_desenpenho .CardDashs_container {
+    flex-direction: column;
+  }
+
+  .container_desenpenho .selects {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .container_desenpenho .select_turma {
+    width: 100%;
+    left: 0;
+    margin-top: 20px;
+  }
+
+  .container_desenpenho .select_turma select {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .container_desenpenho .container_graficos {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .container_desenpenho .container_graficos .left {
+    width: 100%;
+  }
+
+  .container_desenpenho .container_graficos .right {
+    width: 100%;
+  }
+
+  .container_graficos .left h2 {
+    left: 0;
+    text-align: center;
+  }
+
+  .container_desenpenho .container_graficos .right .grafico_pizza {
+    width: 100%;
+    height: auto;
+  }
 }

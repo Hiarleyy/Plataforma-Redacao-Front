@@ -5,8 +5,16 @@ import DetailsCard from "../../components/DetailsCard/DetailsCard";
 import ModalFailure from "../../components/modal/modalFailure/modalFailure";
 import SuccessModal from "../../components/modal/modalSucess/modalSucess";
 import axios from "axios";
+import useUseful from "../../utils/useUseful";
+import Message from "../../components/Message/Message";
 
-const ModalRegistrarNotas = ({ isOpen, onClose, aluno, nameSimulado, simuladoId }) => {
+const ModalRegistrarNotas = ({
+  isOpen,
+  onClose,
+  aluno,
+  nameSimulado,
+  simuladoId,
+}) => {
   const [notas, setNotas] = useState({
     comp1: null,
     comp2: null,
@@ -15,8 +23,11 @@ const ModalRegistrarNotas = ({ isOpen, onClose, aluno, nameSimulado, simuladoId 
     comp5: null,
   });
 
+  const { getHeaders } = useUseful();
   const [showFailureModal, setShowFailureModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formMessage, setFormMessage] = useState(null);
 
   const handleNotaChange = (e, competencia) => {
     const valor = parseFloat(e.target.value) || 0;
@@ -37,28 +48,45 @@ const ModalRegistrarNotas = ({ isOpen, onClose, aluno, nameSimulado, simuladoId 
       comp4: null,
       comp5: null,
     });
+    setFormMessage(null);
   };
 
   const handleSalvar = async () => {
+    setIsLoading(true);
     try {
-      await axios.post("http://localhost:3000/notaSimulado", {
-        simuladoId: simuladoId,
-        usuarioId: aluno?.id,
-        competencia01: notas.comp1,
-        competencia02: notas.comp2,
-        competencia03: notas.comp3,
-        competencia04: notas.comp4,
-        competencia05: notas.comp5,
-        notaGeral: notaFinal,
+      await axios.post(
+        "http://localhost:3000/notaSimulado",
+        {
+          simuladoId: simuladoId,
+          usuarioId: aluno?.id,
+          competencia01: notas.comp1,
+          competencia02: notas.comp2,
+          competencia03: notas.comp3,
+          competencia04: notas.comp4,
+          competencia05: notas.comp5,
+          notaGeral: notaFinal,
+        },
+        { headers: getHeaders() }
+      );
+
+      setFormMessage({
+        type: "success",
+        text: `Notas registradas com sucesso.`,
       });
 
-      setShowSuccessModal(true); // só mostra o modal de sucesso após a resposta da API
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        limparCampos();
+        onClose();
+      }, 2000);
     } catch (error) {
-      console.error(error);
-      setShowFailureModal(true);
+      setFormMessage({
+        type: "error",
+        text: error.response?.data?.error || "Erro ao registrar notas.",
+      });
+    } finally {
+      setIsLoading(false);
     }
-
-    limparCampos();
   };
 
   const handleCancelar = () => {
@@ -86,6 +114,7 @@ const ModalRegistrarNotas = ({ isOpen, onClose, aluno, nameSimulado, simuladoId 
             title="Nome do Simulado"
             content={nameSimulado}
             bg_color="#ca7e0b"
+            text_color="#ffffff"
             text_size="14px"
           />
         </div>
@@ -131,8 +160,8 @@ const ModalRegistrarNotas = ({ isOpen, onClose, aluno, nameSimulado, simuladoId 
         />
 
         <div className={styles.actions}>
-          <button className={styles.saveButton} onClick={handleSalvar}>
-            Salvar Notas
+          <button className={styles.saveButton} onClick={handleSalvar} disabled={isLoading}>
+            {isLoading ? "Salvando..." : "Salvar Notas"}
           </button>
           <button className={styles.cancelButton} onClick={handleCancelar}>
             Cancelar
@@ -144,7 +173,7 @@ const ModalRegistrarNotas = ({ isOpen, onClose, aluno, nameSimulado, simuladoId 
           <SuccessModal
             onClose={() => {
               setShowSuccessModal(false);
-              onClose(); // Só fecha o modal principal aqui
+              onClose();
             }}
           />
         )}
@@ -152,11 +181,14 @@ const ModalRegistrarNotas = ({ isOpen, onClose, aluno, nameSimulado, simuladoId 
         {/* Modal de Falha */}
         {showFailureModal && (
           <ModalFailure
-            onClose={() => {
-              setShowFailureModal(false);
-            }}
+            onClose={() => setShowFailureModal(false)}
           />
         )}
+
+        <Message
+          text={formMessage ? formMessage.text : ""}
+          type={formMessage ? formMessage.type : ""}
+        />
       </div>
     </div>
   );

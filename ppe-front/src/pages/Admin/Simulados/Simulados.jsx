@@ -10,20 +10,23 @@ import DetailsCard from "../../../components/DetailsCard/DetailsCard";
 import Input from "../../../components/Input/Input";
 import Pagination from "../../../components/Pagination/Pagination";
 import Message from "../../../components/Message/Message";
-// ... imports
+import useUseful from "../../../utils/useUseful";
 
 const Simulados = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [turma, setTurma] = useState("");
-  const [TotalSimulados, setTotalSimulados] = useState([]);
-  const [turmas, setTurmas] = useState([]);
-  const navigate = useNavigate();
-  const [search, setSearch] = useState("");
   const [titulo, setTitulo] = useState("");
+  const [search, setSearch] = useState("");
   const [formMessage, setFormMessage] = useState(null);
 
+  const [TotalSimulados, setTotalSimulados] = useState([]);
+  const [turmasDisponiveis, setTurmasDisponiveis] = useState([]);
+  const [turmasComSimulado, setTurmasComSimulado] = useState([]);
+
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 2;
+  const { getHeaders } = useUseful();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,10 +36,14 @@ const Simulados = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/simulados", {
-        turmaId: turma,
-        titulo: titulo,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/simulados",
+        {
+          turmaId: turma,
+          titulo: titulo,
+        },
+        { headers: getHeaders() }
+      );
 
       setFormMessage({
         type: "success",
@@ -55,14 +62,12 @@ const Simulados = () => {
     }
   };
 
-  // Filtro dos simulados com base na busca
   const simuladosFiltrados = TotalSimulados.filter(
     (item) =>
       item.titulo.toLowerCase().includes(search.toLowerCase()) ||
       item.nomeTurma.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Atualiza a página para 1 sempre que houver nova busca
   useEffect(() => {
     setCurrentPage(1);
   }, [search]);
@@ -74,6 +79,7 @@ const Simulados = () => {
     indexOfLastItem
   );
 
+  // Carrega todas as turmas disponíveis (para o select)
   useEffect(() => {
     const getData = async () => {
       const { getTurmas } = fetchData();
@@ -82,7 +88,7 @@ const Simulados = () => {
         id: item.id,
         nome: item.nome,
       }));
-      setTurmas(options);
+      setTurmasDisponiveis(options);
     };
     getData();
   }, []);
@@ -121,7 +127,7 @@ const Simulados = () => {
       .sort((a, b) => new Date(b.data) - new Date(a.data));
 
     setTotalSimulados(opctions);
-    setTurmas(turmasCompletas);
+    setTurmasComSimulado(turmasCompletas); // usado só para estatísticas
   };
 
   useEffect(() => {
@@ -148,11 +154,11 @@ const Simulados = () => {
           />
           <DetailsCard
             title="TOTAL DE TURMAS"
-            content={turmas.length}
+            content={turmasComSimulado.length}
             bg_color="#1A1A1A"
           />
           <Input
-            placeholder="Pesquisar"
+            placeholder="PESQUISAR SIMULADO"
             value={search}
             color="#1A1A1A"
             onChange={(e) => setSearch(e.target.value)}
@@ -207,7 +213,7 @@ const Simulados = () => {
               onChange={(e) => setTurma(e.target.value)}
             >
               <option value="">Selecione uma turma</option>
-              {turmas.map((t) => (
+              {turmasDisponiveis.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.nome}
                 </option>

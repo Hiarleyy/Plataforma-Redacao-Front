@@ -29,7 +29,7 @@
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  height: 50%;
+  height: 65%;
 }
 .main_content .bg_left .pagination {
   width: 100%;
@@ -74,3 +74,37 @@
 }
 
 
+@media (max-width: 768px) {
+  .container {
+    height: fit-content;
+  }
+
+  .main_content {
+    flex-direction: column;
+    gap: 40px;
+    height: 100%;
+    padding: 20px;
+    padding-bottom: 100px;
+  }
+
+  .main_content .bg_left, 
+  .main_content .bg_right {
+    width: 100%;
+  }
+
+  .main_content .bg_left {
+    height: 750px;
+  }
+
+  .main_content .bg_left h2 {
+    font-size: 15px;
+  }
+
+  .main_content .bg_left .CardSimulados {
+    height: 100%;
+    font-size: 12px;
+  }
+  .main_content .bg_right h2 {
+    font-size: 15px;
+  }
+}

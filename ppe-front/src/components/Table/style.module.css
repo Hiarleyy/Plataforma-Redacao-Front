@@ -75,3 +75,16 @@
   background-color: #f8d7da;
   color: #721c24;
 }
+
+@media (max-width: 768px) {
+  .table th,
+  .table td {
+    padding: 0.5rem;
+  }
+  .status{
+    font-size: 8px;
+  }
+  .table{
+    font-size: 12px;
+  }
+}

@@ -10,7 +10,6 @@ import FinancialCard from "../../../components/FinanciaCard/FinanciaCard";
 import fetchData from "../../../utils/fetchData";
 
 const GerenciaPagamentos = () => {
-  const [alunos, setAlunos] = useState([]);
   const [taggle, setTaggle] = useState("Análise Geral");
   const [dataPagamentos, setDataPagamentos] = useState([]);
 
@@ -65,12 +64,10 @@ const GerenciaPagamentos = () => {
   const GraficoDespensas = (DadosBrutos) => {
     const categorias = {};
 
-    DadosBrutos.forEach((item) => {
-      // Usar o tipoDespensa exatamente como foi digitado
-      const categoria = item.tipoDespensa;
-      // verificar se existe tipos de categoria duplicadas
 
-      // Somar apenas SAÍDAS (despesas)
+    DadosBrutos.forEach((item) => {
+      const categoria = item.tipoDespensa;
+ 
       if (item.status === "SAÍDA" || item.status === "SAIDA") {
         if (!categorias[categoria]) {
           categorias[categoria] = 0;
@@ -78,8 +75,9 @@ const GerenciaPagamentos = () => {
         categorias[categoria] += item.valor;
       }
     });
+    console.log(categorias);
 
-    // Converter para array e ordenar por valor (maior primeiro)
+    
     const categoriasArray = Object.entries(categorias)
       .map(([categoria, valor]) => ({ categoria, valor }))
       .sort((a, b) => b.valor - a.valor);
@@ -88,8 +86,8 @@ const GerenciaPagamentos = () => {
     const cores = [
       "#ef4444",
       "#f97316",
-      "#eab308",
-      "#84cc16",
+      "#70e000",
+      "#004e98",
       "#10b981",
       "#3b82f6",
     ];

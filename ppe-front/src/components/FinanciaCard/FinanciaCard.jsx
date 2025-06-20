@@ -20,13 +20,13 @@ const Card = ({ mes, faturamento, despesas, resultado, itensDespesas }) => {
         {itensDespesas.map((item) => (
           <div className={styles.expenseItem}>
             <span className={styles.expenseLabel}>{item.tipoDespensa} </span>
-            <span className={styles.expenseValue}>{item.valor}</span>
+            <span className={styles.expenseValue}>R$ {item.valor}</span>
           </div>
         ))}
       </div>
       <div className={styles.rowResult}>
         <span className={styles.labelResult}>Resultado:</span>
-        <span className={styles.ValueResult}>{resultado}</span>
+        <span className={styles.ValueResult}> R$ {resultado}</span>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 .container {
   width: 100%;
-  min-height: 100vh; /* ← Corrigido */
+  min-height: 100vh; 
 }
 
 .main_content {
@@ -8,7 +8,7 @@
   justify-content: space-between;
   padding: 50px;
   max-width: 1500px;
-  min-height: calc(100vh - 70px); /* ← Corrigido */
+  min-height: calc(100vh - 70px); 
   margin: 0 auto;
 }
 
@@ -73,6 +73,31 @@
   gap: 20px;
   width: 100%;
   margin-top: 40px;
-  margin-left: 150px;
   justify-content: flex-start; /* ou space-between/center dependendo do efeito desejado */
 }
+
+@media (max-width: 768px) {
+  .container {
+    height: fit-content;
+  }
+
+  .main_content {
+    flex-direction: column;
+    gap: 40px;
+    height: 100%;
+    padding: 20px;
+    padding-bottom: 100px;
+  }
+  .main_content .container_pag {
+    padding: 15px;
+    gap: 40px;
+  }
+  
+  .container_pag .CardDashs_container {
+    flex-direction: column;
+  }
+  .container_pag .container_Grafico .container_GraficoGeral{
+    flex-direction: column;
+  }
+  
+  }

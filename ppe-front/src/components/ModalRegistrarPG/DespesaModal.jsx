@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import styles from "./styles.module.css";
 import axios from "axios";
 import Message from "../Message/Message";
+import useUseful from "../../utils/useUseful"
+
 
 const RegistrarDespesaModal = ({ isOpen, onClose }) => {
   const [status, setStatus] = useState("");
   const [valor, setValor] = useState("");
   const [tipoDespensa, settipoDespensa] = useState("");
   const [formMessage, setFormMessage] = useState(null);
+  const { getHeaders } = useUseful()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +29,8 @@ const RegistrarDespesaModal = ({ isOpen, onClose }) => {
     try {
       const response = await axios.post(
         "http://localhost:3000/pagamentos",
-        payload
+        payload,
+        { headers: getHeaders() }
       );
 
       setFormMessage({

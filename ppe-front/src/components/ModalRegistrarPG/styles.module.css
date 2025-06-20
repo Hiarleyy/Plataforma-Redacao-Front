@@ -20,6 +20,15 @@
   animation: fadeIn 0.3s ease-out;
 }
 
+select{
+  color: #DA9E00;
+  background-color: #1A1A1A;
+}
+input{
+  color: #DA9E00;
+  background-color: #1A1A1A;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -69,7 +78,7 @@ label {
 input,
 select {
   padding: 8px 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #3d3d3d;
   border-radius: 8px;
   margin-top: 6px;
   font-size: 14px;

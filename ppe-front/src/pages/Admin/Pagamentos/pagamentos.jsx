@@ -80,7 +80,7 @@ const Pagamentos = () => {
               }
             />
             <CardDash
-              title="Total de Despesas"
+              title="Total de Despesa"
               content={"R$" + totalDespesas.toFixed(2)}
               titleColor="#ffffff"
               contentColor="#ffffff"
@@ -131,7 +131,7 @@ const Pagamentos = () => {
               bg_color="#DA9E00"
               color="#ffffff"
               height_size="50px"
-              width_size="800px"
+              width_size="400px"
               padding_sz="10px"
               onClick={() => setIsOpen(true)}
             >
@@ -139,10 +139,10 @@ const Pagamentos = () => {
               Registrar Pagamento
             </Button>
             <Button
-              bg_color="#0e0c6d"
+              bg_color="#fb8500"
               color="#ffffff"
               height_size="50px"
-              width_size="800px"
+              width_size="400px"
               padding_sz="10px"
               onClick={handleResultados}
             >

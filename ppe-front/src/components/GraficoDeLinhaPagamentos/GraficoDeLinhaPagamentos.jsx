@@ -36,11 +36,10 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
   };
 
-
   return (
     <div className={styles.chartContainer}>
       <h3 className={styles.title}>📈 Evolução do Fluxo de Caixa</h3>
-      <LineChart width={800} height={height_size} data={data}>
+      <LineChart width={450}height={height_size} data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="mes" />
         <YAxis />

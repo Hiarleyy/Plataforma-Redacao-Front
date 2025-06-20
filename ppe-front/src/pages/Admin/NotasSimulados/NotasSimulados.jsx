@@ -28,7 +28,10 @@ function NotasSimulados() {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentAlunosSemNota = alunosSemNotas.slice(indexOfFirstItem, indexOfLastItem);
+  const currentAlunosSemNota = alunosSemNotas.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const getAlunos = async (busca) => {
     const { getAlunos } = fetchData();
@@ -45,7 +48,6 @@ function NotasSimulados() {
     }
   }, [search]);
 
-  // pegar os alunos da turma do simulado
   useEffect(() => {
     const Data = async () => {
       const { getSimuladoById, getTurmaById, getNotasbySimuladoId } = fetchData();
@@ -53,18 +55,18 @@ function NotasSimulados() {
       const turma = response.map((turma) => turma.turmaId);
       const NomeSimulado = response.map((simulado) => simulado.titulo);
       const responseTurma = await getTurmaById(turma);
-
-      // verificar:
       const notasAlunosSimulado = await getNotasbySimuladoId(simulado_id);
 
       const alunosComNotas = notasAlunosSimulado.map((notas) =>
         String(notas.usuarioId)
-      ); // retorna o id dos alunos que tem notas
-      const semNotasAlunos = alunos.filter(
+      );
+
+      const todosAlunos = responseTurma.usuarios;
+      const semNotasAlunos = todosAlunos.filter(
         (aluno) => !alunosComNotas.includes(String(aluno.id))
       );
 
-      setAlunos(responseTurma.usuarios);
+      setAlunos(todosAlunos);
       setNomeSimulado(NomeSimulado);
       setNomeTurma(responseTurma.nome);
       setDataSimulado(response[0].data);
@@ -72,7 +74,7 @@ function NotasSimulados() {
     };
 
     Data();
-  }, [alunos]);
+  }, []); 
 
   function ModalNotas(alunoId, alunoNome) {
     setMostrarModal(true);
@@ -109,7 +111,7 @@ function NotasSimulados() {
         </div>
 
         <div className={styles.bg_right}>
-          <h2 className={styles.form_title}>Registrar Notas </h2>
+          <p className={styles.form_title}>Registrar Notas </p>
           {alunosSemNotas.length > 0 ? (
             <>
               <p className={styles.form_subtitle}>
