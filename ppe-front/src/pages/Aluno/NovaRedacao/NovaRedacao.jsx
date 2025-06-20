@@ -17,22 +17,30 @@ import RedacaoModal from "../../../components/RedacaoModal/RedacaoModal";
 import useUseful from "../../../utils/useUseful";
 
 const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum arquivo enviado");
+  
   const [tema, setTema] = useState("");
   const [formMessage, setFormMessage] = useState(null);
   const [fileBlob, setFileBlob] = useState(null); 
   const [redacao, setRedacao] = useState([])
+  
   const navigate = useNavigate()
+  
   const itemsPerPage = 5
   const [currentPage, setCurrentPage] = useState(1)
+  
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  
   const currentredacaos = redacao.slice(indexOfFirstItem, indexOfLastItem)
+  
   const [usuario, setUsuario] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
   // Estado para o modal de redação
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRedacao, setSelectedRedacao] = useState(null);
+  
   const { brasilFormatData } = useUseful();
+  const { getHeaders } = useUseful()
 
   const getAlunoId = () => {
       const aluno = localStorage.getItem('user_access_data')
@@ -111,17 +119,15 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     }
 
     const alunoId = getAlunoId();
-      // Criar um novo FormData a cada envio para evitar acumular dados
     const formData = new FormData();
     formData.append("titulo", tema);
     formData.append("file", fileBlob, fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`);
-    // Adicionar o ID do aluno no próprio formData para garantir que o backend o receba
-    formData.append("usuarioId", alunoId);    try { 
+    formData.append("usuarioId", alunoId);
+    
+    try { 
       const response = await axios.post(`http://localhost:3000/redacoes/${alunoId}/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });      // Limpar o formulário após o sucesso
+         headers: getHeaders(),
+      });   
       setFormMessage({
         type: "success",
         text: `Redação enviada com sucesso!`,
@@ -130,20 +136,9 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
       setFilesName("Nenhum arquivo enviado");
       setFileBlob(null);
     } catch (error) {
-      console.error(error);    // Melhorar a exibição de mensagens de erro
+      console.error(error);   
     let errorMessage = "Erro ao enviar redação.";
-    if (error.response) {
-      if (error.response.status === 400) {
-        errorMessage = error.response.data?.error || "Erro de validação: Verifique se os dados enviados estão corretos.";
-      } else if (error.response.status === 401 || error.response.status === 403) {
-        errorMessage = "Você não tem permissão para enviar esta redação.";
-      } else if (error.response.status === 500) {
-        errorMessage = "Erro no servidor. Tente novamente mais tarde.";
-      } else {
-        errorMessage = error.response.data?.error || "Erro desconhecido ao enviar a redação.";
-      }
-    }
-    
+
     setFormMessage({
       type: "error",
       text: errorMessage,
@@ -212,19 +207,6 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     }
     getData()
   },[])
-
-  /*
-  const deleteRedacao = async (id) => {
-    const confirmation = confirm("Tem certeza que deseja excluir essa redacao?")
-    if (!confirmation) {
-      navigate("/admin/nova-redacao")
-      return
-    }
-    const alunoId = getAlunoId();
-    await axios.delete(`http://localhost:3000/redacoes/${id}?userId=${alunoId}`)
-    navigate("/admin/nova-redacao")
-  }
-  */
 
   // Função para abrir o modal com a redação selecionada
   const handleRedacaoClick = (redacao) => {

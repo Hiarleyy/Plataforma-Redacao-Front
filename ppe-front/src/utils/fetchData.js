@@ -11,7 +11,7 @@ const fetchData = () => {
   }
 
   const getTurmaById = async (id) => {
-    const response = await axios.get(`http://localhost:3000/turmas/${id}`, { headers: getHeaders() })
+    const response = await axios.get(`http://localhost:3000/turmas/${id}`, {headers: getHeaders() })
     return response.data.data
   }
 
@@ -99,7 +99,7 @@ const fetchData = () => {
     return response.data.data
   }
   const getNotasbySimuladoId = async (id) => {
-    const response = await axios.get(`http://localhost:3000/notaSimulado/simuladoId/${id}`, { headers: getHeaders() })
+    const response = await axios.get(`http://localhost:3000/notaSimulado/simuladoId/${id}`,{ headers: getHeaders() })
     return response.data.data
   }
   const getSimuladoByIdTurma = async (id) => {
@@ -113,12 +113,12 @@ const fetchData = () => {
       const response = await axios.get(`http://localhost:3000/redacoes/?usuarioId=${id}`, { headers: getHeaders() })
       return response.data.data
     }    // Retorna todas as redações se nenhum ID de usuário for fornecido
-    const response = await axios.get(`http://localhost:3000/redacoes`)
+    const response = await axios.get(`http://localhost:3000/redacoes`, { headers: getHeaders() })
     return response.data.data
   }
    
   const getCorrecoes= async () => {
-    const response = await axios.get(`http://localhost:3000/correcoes`,{ headers: getHeaders() })
+    const response = await axios.get(`http://localhost:3000/correcoes`, { headers: getHeaders() })
     return response.data.data
   }
   
@@ -127,7 +127,7 @@ const fetchData = () => {
     return response.data.data
   } 
   const getNotasByUsuarioId = async (usuarioId) => {
-      const response = await axios.get(`http://localhost:3000/notaSimulado/usuarioId/${usuarioId}`)
+      const response = await axios.get(`http://localhost:3000/notaSimulado/usuarioId/${usuarioId}`, { headers: getHeaders() })
       return response.data.data
     } 
   
