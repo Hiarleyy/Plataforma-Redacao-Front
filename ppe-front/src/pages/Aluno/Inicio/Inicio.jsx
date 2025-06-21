@@ -6,7 +6,7 @@ import Card from '../../../components/Card/Card';
 import useUseful from '../../../utils/useUseful';
 import Title from '../../../components/Title/Title';
 import BTN from '../../../components/Button/Button';
-import InfoCard from '../../../components/InfoCardRedacao/InfoCardRedacao';
+import InfoCard from '../../../components/infoCardRedacao/InfoCardRedacao';
 import fetchData from "../../../utils/fetchData";
 import SimuladoModal from '../../../components/SimuladoModal/SimuladoModal';
 import Loading from '../../../components/Loading/Loading';
