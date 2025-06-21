@@ -6,7 +6,7 @@ import styles from "./styles.module.css";
 import Title from "../../../components/Title/Title";
 import fetchData from '../../../utils/fetchData';
 import Pagination from '../../../components/Pagination/Pagination';
-import InfoCard from '../../../components/InfoCardRedacao/InfoCardRedacao';
+import InfoCard from '../../../components/infoCardRedacao/InfoCardRedacao';
 import GraficoRedacoes from '../../../components/GraficoRedacoes/GraficoRedacoes';
 import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg';
 import RedacaoModal from '../../../components/RedacaoModal/RedacaoModal';
