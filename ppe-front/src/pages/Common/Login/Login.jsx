@@ -3,6 +3,7 @@ import logo from "../../../images/logo01.png"
 import Input from "../../../components/Input/Input"
 import Button from "../../../components/Button/Button"
 import Message from "../../../components/Message/Message"
+const baseURL = import.meta.env.VITE_API_BASE_URL
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import axios from "axios"
@@ -19,7 +20,7 @@ const Login = () => {
     setIsLoading(true)
 
     try {
-      const response = await axios.post("http://localhost:3000/usuarios/login", { email, password })
+      const response = await axios.post(`http://${baseURL}/usuarios/login`, { email, password })
 
       localStorage.setItem("user_access_data", JSON.stringify({
         id: response.data.data.id,

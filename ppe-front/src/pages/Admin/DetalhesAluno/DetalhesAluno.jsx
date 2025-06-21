@@ -16,6 +16,9 @@ import Loading from "../../../components/Loading/Loading"
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 import CorrecaoModal from "../../../components/CorrecaoModal/CorrecaoModal"
 
+const baseURL = process.env.VITE_API_BASE_URL;
+
+
 const DetalhesAluno = () => {
   const { aluno_id } = useParams()
   const [alunoData, setAlunoData] = useState(null)
@@ -42,7 +45,7 @@ const DetalhesAluno = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/usuarios/${aluno_id}`, 
+        `http://${baseURL}/usuarios/${aluno_id}`, 
         { 
           nome,
           email,
@@ -67,7 +70,7 @@ const DetalhesAluno = () => {
   };
 
   const deleteAluno = async () => {
-    await axios.delete(`http://localhost:3000/usuarios/${aluno_id}`, { headers: getHeaders() })
+    await axios.delete(`http://${baseURL}/usuarios/${aluno_id}`, { headers: getHeaders() })
     navigate("/admin/gerenciar-alunos")
   };
 

@@ -11,6 +11,8 @@ import fetchData from "../../../utils/fetchData";
 import SimuladoModal from '../../../components/SimuladoModal/SimuladoModal';
 import Loading from '../../../components/Loading/Loading';
 
+const baseURL = process.env.VITE_API_BASE_URL;
+
 const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
   const [usuario, setUsuario] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
@@ -142,7 +144,7 @@ const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
               <>
                 <div className={styles.button}>
                   <a 
-                    href="http://localhost:3000/propostas/download" 
+                    href={`http://${baseURL}/propostas/download`} 
                     download="proposta-da-semana.pdf"
                     style={{ textDecoration: 'none' }}
                   >

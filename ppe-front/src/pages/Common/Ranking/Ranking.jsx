@@ -5,6 +5,8 @@ import RankingTabela  from "../../../components/RankingTabela/RankingTabela"
 import fetchData from "../../../utils/fetchData"
 import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg';
 
+const baseURL = import.meta.env.VITE_API_BASE_URL
+
 
   const RankingAlunos = () => {
   const [ranking, setRanking] = useState([])
@@ -29,7 +31,7 @@ import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg'
             <h2>2º</h2>
             <img 
               className={styles.img_container} 
-              src={ranking[1] ? `http://localhost:3000/usuarios/${ranking[1].id}/profile-image` : defaultProfilePicture} 
+              src={ranking[1] ? `http://${baseURL}/usuarios/${ranking[1].id}/profile-image` : defaultProfilePicture} 
               alt="Segundo lugar" 
             />
             {ranking[1] && <h3 title={ranking[1].nome}>{ranking[1].nome}</h3>}
@@ -39,7 +41,7 @@ import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg'
             <h2>1º</h2>
             <img 
               className={styles.img_container} 
-              src={ranking[0] ? `http://localhost:3000/usuarios/${ranking[0].id}/profile-image` : defaultProfilePicture} 
+              src={ranking[0] ? `http://${baseURL}/usuarios/${ranking[0].id}/profile-image` : defaultProfilePicture} 
               alt="Primeiro lugar" 
             />
             {ranking[0] && <h3 title={ranking[0].nome}>{ranking[0].nome}</h3>}
@@ -49,7 +51,7 @@ import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg'
             <h2>3º</h2>
             <img 
               className={styles.img_container} 
-              src={ranking[2] ? `http://localhost:3000/usuarios/${ranking[2].id}/profile-image` : defaultProfilePicture} 
+              src={ranking[2] ? `http://${baseURL}/usuarios/${ranking[2].id}/profile-image` : defaultProfilePicture} 
               alt="Terceiro lugar" 
             />
             {ranking[2] && <h3 title={ranking[2].nome}>{ranking[2].nome}</h3>}

@@ -5,8 +5,11 @@ import Title from "../../../components/Title/Title";
 import Input from "../../../components/Input/Input";
 import Button from "../../../components/Button/Button";
 import Message from "../../../components/Message/Message";
+
 import defaultProfilePicture from "../../../images/Defalult_profile_picture.jpg";
 import useUseful from "../../../utils/useUseful";
+
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 function configuracoes() {
   const [usuario, setUsuario] = useState({});
@@ -39,7 +42,7 @@ function configuracoes() {
 
         if (response.caminho) {
           setProfileImageUrl(
-            `http://localhost:3000/usuarios/${
+            `http://${baseURL}/usuarios/${
               response.id
             }/profile-image?timestamp=${new Date().getTime()}`
           );
@@ -90,7 +93,7 @@ function configuracoes() {
         throw new Error("Dados do usuário não disponíveis");
       }
       const response = await fetch(
-        `http://localhost:3000/usuarios/${usuario.id}`,
+        `http://${baseURL}/usuarios/${usuario.id}`,
         {
           method: "POST",
           headers: getHeaders(),
@@ -106,7 +109,7 @@ function configuracoes() {
         text: "Imagem de perfil atualizada com sucesso!",
         type: "success",
       });
-      const newProfileImageUrl = `http://localhost:3000/usuarios/${
+      const newProfileImageUrl = `http://${baseURL}/usuarios/${
         usuario.id
       }/profile-image?timestamp=${new Date().getTime()}`;
       setProfileImageUrl(newProfileImageUrl);
@@ -149,7 +152,7 @@ function configuracoes() {
       }
       
       const response = await fetch(
-        `http://localhost:3000/usuarios/${usuario.id}/trocar-senha`,
+        `http://${baseURL}/usuarios/${usuario.id}/trocar-senha`,
         {
           method: "POST",
           headers: getHeaders(),
@@ -231,7 +234,7 @@ function configuracoes() {
                 src={
                   profileImageUrl ||
                   (usuario.caminho
-                    ? `http://localhost:3000/usuarios/${usuario.id}/profile-image`
+                    ? `http://${baseURL}/usuarios/${usuario.id}/profile-image`
                     : defaultProfilePicture)
                 }
                 alt="Foto de perfil"

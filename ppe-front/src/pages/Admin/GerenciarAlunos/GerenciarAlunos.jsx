@@ -15,6 +15,9 @@ import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg'
 import useUseful from "../../../utils/useUseful"
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 
+const baseURL = process.env.VITE_API_BASE_URL;
+
+
 const GerenciarAlunos = () => {
   const [formMessage, setFormMessage] = useState(null)
   const [nome, setNome] = useState("")
@@ -46,7 +49,7 @@ const GerenciarAlunos = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/usuarios", 
+        `http://${baseURL}/usuarios`, 
         { 
           nome,
           email,
@@ -92,7 +95,7 @@ const GerenciarAlunos = () => {
   }
 
   const deleteAluno = async (id) => {
-    await axios.delete(`http://localhost:3000/usuarios/${id}`, { headers: getHeaders() })
+    await axios.delete(`http://${baseURL}/usuarios/${id}`, { headers: getHeaders() })
     await getAlunos()
   }
 
@@ -168,7 +171,7 @@ const GerenciarAlunos = () => {
                     {currentAlunos.map((aluno) => (
                       <InfoCard 
                         key={aluno.id}
-                        img={aluno.caminho ? `http://localhost:3000/usuarios/${aluno.id}/profile-image` : defaultProfilePicture}
+                        img={aluno.caminho ? `http://${baseURL}/usuarios/${aluno.id}/profile-image` : defaultProfilePicture}
                         title={aluno.nome} 
                         subtitle={aluno.email} 
                         link={aluno.id}

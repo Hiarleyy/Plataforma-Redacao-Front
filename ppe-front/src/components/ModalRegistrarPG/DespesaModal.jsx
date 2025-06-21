@@ -4,6 +4,7 @@ import axios from "axios";
 import Message from "../Message/Message";
 import useUseful from "../../utils/useUseful"
 
+const baseURL = process.env.VITE_API_BASE_URL;
 
 const RegistrarDespesaModal = ({ isOpen, onClose }) => {
   const [status, setStatus] = useState("");
@@ -28,7 +29,7 @@ const RegistrarDespesaModal = ({ isOpen, onClose }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/pagamentos",
+        `http://${baseURL}/pagamentos`,
         payload,
         { headers: getHeaders() }
       );

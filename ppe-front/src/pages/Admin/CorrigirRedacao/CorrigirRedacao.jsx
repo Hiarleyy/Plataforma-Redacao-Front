@@ -11,6 +11,8 @@ import useUseful from "../../../utils/useUseful"
 import { useState, useEffect } from "react"
 import axios from "axios"
 
+const baseURL = process.env.VITE_API_BASE_URL;
+
 const CorrigirRedacao = () => {
   const { redacao_id } = useParams()
   const [redacao, setRedacao] = useState([])
@@ -62,7 +64,7 @@ const CorrigirRedacao = () => {
 
     try {
       await axios.post(
-        `http://localhost:3000/correcoes/${userID}/upload`,
+        `http://${baseURL}/correcoes/${userID}/upload`,
         formData,
         { headers: getHeaders() }
       );
@@ -123,7 +125,7 @@ const CorrigirRedacao = () => {
                 text_size="16px"
               />
 
-              <Link to={`http://localhost:3000/redacoes/download/${redacao_id}`}>
+              <Link to={`http://${baseURL}/redacoes/download/${redacao_id}`}>
                 <Button 
                   text_size="20px" 
                   text_color="#E0E0E0" 

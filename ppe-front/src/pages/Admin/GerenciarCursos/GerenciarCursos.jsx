@@ -32,13 +32,16 @@ const GerenciarCursos = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentModulos = modulos.slice(indexOfFirstItem, indexOfLastItem);
 
+  const baseURL = process.env.VITE_API_BASE_URL;
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/modulos", 
+        `http://${baseURL}/modulos`, 
         {
           nome,
           descricao,
@@ -81,7 +84,7 @@ const GerenciarCursos = () => {
   };
 
   const deleteModulo = async (id) => {
-    await axios.delete(`http://localhost:3000/modulos/${id}`, { headers: getHeaders() });
+    await axios.delete(`http://${baseURL}/modulos/${id}`, { headers: getHeaders() });
     await getData();
   };
 

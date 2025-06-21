@@ -8,6 +8,9 @@ import axios from "axios";
 import useUseful from "../../utils/useUseful";
 import Message from "../../components/Message/Message";
 
+const baseURL = process.env.VITE_API_BASE_URL;
+
+
 const ModalRegistrarNotas = ({
   isOpen,
   onClose,
@@ -55,7 +58,7 @@ const ModalRegistrarNotas = ({
     setIsLoading(true);
     try {
       await axios.post(
-        "http://localhost:3000/notaSimulado",
+        `http://${baseURL}/notaSimulado`,
         {
           simuladoId: simuladoId,
           usuarioId: aluno?.id,

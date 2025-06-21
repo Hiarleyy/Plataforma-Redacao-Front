@@ -17,7 +17,8 @@ import RedacaoModal from "../../../components/RedacaoModal/RedacaoModal";
 import useUseful from "../../../utils/useUseful";
 
 const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum arquivo enviado");
-  
+const baseURL = process.env.VITE_API_BASE_URL
+
   const [tema, setTema] = useState("");
   const [formMessage, setFormMessage] = useState(null);
   const [fileBlob, setFileBlob] = useState(null); 
@@ -125,7 +126,7 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     formData.append("usuarioId", alunoId);
     
     try { 
-      const response = await axios.post(`http://localhost:3000/redacoes/${alunoId}/upload`, formData, {
+      const response = await axios.post(`http://${baseURL}/redacoes/${alunoId}/upload`, formData, {
          headers: getHeaders(),
       });   
       setFormMessage({
@@ -169,7 +170,7 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
               let correcao = null;
               try {
                 // Verificar se a redação já tem correção
-                const correcaoResponse = await axios.get(`http://localhost:3000/correcoes/redacao/${item.id}`);
+                const correcaoResponse = await axios.get(`http://${baseURL}/correcoes/redacao/${item.id}`);
                 if (correcaoResponse.data && correcaoResponse.data.data) {
                   correcao = correcaoResponse.data.data;
                 }

@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../Button/Button';
-import styles from './styles.module.css';
+import styles from './styles.module.css'
+
+const baseURL = process.env.VITE_API_BASE_URL;
+
 
 const RedacaoModal = ({ redacao, isOpen, onClose, activeTab, brasilFormatData }) => {
   if (!isOpen || !redacao) return null;
@@ -54,7 +57,7 @@ const RedacaoModal = ({ redacao, isOpen, onClose, activeTab, brasilFormatData })
           </div>
           {redacao.correcao && (
             <div className={styles.Button}>
-              <Link to={`http://localhost:3000/correcoes/download/${redacao.correcao?.id}`}>
+              <Link to={`http://${baseURL}/correcoes/download/${redacao.correcao?.id}`}>
                 <Button 
                   text_size="15px" 
                   text_color="#E0E0E0" 

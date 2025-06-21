@@ -24,13 +24,16 @@ const DetalhesTurma = () => {
   const [modalIsClicked, setModalIsClicked] = useState(false)
   const navigate = useNavigate()
 
+  const baseURL = process.env.VITE_API_BASE_URL;
+
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
       const response = await axios.put(
-        `http://localhost:3000/turmas/${turma_id}`, 
+        `http://${baseURL}/turmas/${turma_id}`, 
         { "nome": turma },
         { headers: getHeaders() }
       )
@@ -50,7 +53,7 @@ const DetalhesTurma = () => {
   }
 
   const deleteTurma = async () => {
-    await axios.delete(`http://localhost:3000/turmas/${turma_id}`, { headers: getHeaders() })
+    await axios.delete(`http://${baseURL}/turmas/${turma_id}`, { headers: getHeaders() })
     navigate("/admin/gerenciar-turmas")
   }
 

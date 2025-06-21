@@ -12,6 +12,8 @@ import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg'
 import RedacaoModal from '../../../components/RedacaoModal/RedacaoModal';
 import Loading from '../../../components/Loading/Loading';
 
+const baseURL = process.env.VITE_API_BASE_URL
+
 const Perfil = () => {  const [usuario, setUsuario] = useState([]);
   const [activeTab, setActiveTab] = useState('minhas');
   const [redacoes, setRedacoes] = useState([]);
@@ -94,7 +96,7 @@ const Perfil = () => {  const [usuario, setUsuario] = useState([]);
           <div>
             <div className={styles.header_container}>
               <img className={styles.img_container} 
-              src={usuario.caminho ? `http://localhost:3000/usuarios/${usuario.id}/profile-image` : defaultProfilePicture} alt="" />
+              src={usuario.caminho ? `http://${baseURL}/usuarios/${usuario.id}/profile-image` : defaultProfilePicture} alt="" />
               <h3>{usuario.nome && usuario.nome}</h3>
               <p>Entrou em 24/04/2025</p>
             </div>
