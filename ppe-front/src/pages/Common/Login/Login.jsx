@@ -20,7 +20,7 @@ const Login = () => {
     setIsLoading(true)
 
     try {
-      const response = await axios.post(`http://${baseURL}/usuarios/login`, { email, password })
+      const response = await axios.post(`${baseURL}/usuarios/login`, { email, password })
 
       localStorage.setItem("user_access_data", JSON.stringify({
         id: response.data.data.id,
