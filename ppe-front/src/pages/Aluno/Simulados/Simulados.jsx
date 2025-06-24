@@ -82,7 +82,7 @@ const Simulados = () => {
     try {
       setLoading(true);
       
-      const { getSimulados, getNotasByUsuarioId, getNotasbySimuladoId } = fetchData();
+      const { getSimulados, getNotaSimulados, getNotasbySimuladoId } = fetchData();
       const alunoId = getAlunoId();
       
       if (!alunoId) {
@@ -92,46 +92,52 @@ const Simulados = () => {
       }
       
       const simulados = await getSimulados();
+      
+      if (!simulados || simulados.length === 0) {
+        console.log("Nenhum simulado encontrado");
+        setTotalSimulados([]);
+        setLoading(false);
+        return;
+      }
 
-      // Buscar notas do aluno
-      const notasAluno = await getNotasByUsuarioId(alunoId);
+      // Buscar todas as notas e filtrar por usuário
+      let notasAluno = [];
+      try {
+        const todasAsNotas = await getNotaSimulados();
+        if (todasAsNotas && Array.isArray(todasAsNotas)) {
+          // Filtrar apenas as notas do aluno logado
+          notasAluno = todasAsNotas.filter(nota => nota.usuarioId === alunoId);
+        }
+      } catch (error) {
+        console.log("Nenhuma nota encontrada ou endpoint não disponível");
+        notasAluno = [];
+      }
       setNotasSimulados(notasAluno);
       
-      // Processar simulados
+      // Processar simulados - versão melhorada
       const simuladosProcessados = await Promise.all(
         simulados.map(async (simulado) => {
+          // Verificar se o aluno tem nota para este simulado
+          const notaSimulado = notasAluno.find(nota => nota.simuladoId === simulado.id);
+          
+          // Buscar quantos alunos fizeram este simulado
+          let totalAlunos = 0;
           try {
-            // Verificar se o aluno tem nota para este simulado
-            const notaSimulado = notasAluno.find(nota => nota.simuladoId === simulado.id);
-            
-            // Buscar todas as notas do simulado para contar quantos alunos fizeram
-            let totalNotasCadastradas = 0;
-            try {
-              const notasDoSimulado = await getNotasbySimuladoId(simulado.id);
-              totalNotasCadastradas = notasDoSimulado.length;
-            } catch (error) {
-              totalNotasCadastradas = 0;
-            }
-            
-            return {
-              id: simulado.id,
-              titulo: simulado.titulo,
-              data: simulado.data,
-              totalAlunos: totalNotasCadastradas,
-              notaAluno: notaSimulado?.notaGeral || null,
-              realizou: !!notaSimulado,
-            };
+            const notasDoSimulado = await getNotasbySimuladoId(simulado.id);
+            totalAlunos = notasDoSimulado && Array.isArray(notasDoSimulado) ? notasDoSimulado.length : 0;
           } catch (error) {
-            console.error(`Erro ao processar simulado ${simulado.id}:`, error);
-            return {
-              id: simulado.id,
-              titulo: simulado.titulo,
-              data: simulado.data,
-              totalAlunos: 0,
-              notaAluno: null,
-              realizou: false,
-            };
+            // Se não conseguir buscar, mostra apenas se o aluno fez ou não
+            totalAlunos = notaSimulado ? 1 : 0;
           }
+          
+          return {
+            id: simulado.id,
+            titulo: simulado.titulo,
+            data: simulado.data,
+            totalAlunos: totalAlunos,
+            notaAluno: notaSimulado?.notaGeral || null,
+            realizou: !!notaSimulado,
+          };
         })
       );
 
