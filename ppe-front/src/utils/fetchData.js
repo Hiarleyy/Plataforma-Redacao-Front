@@ -169,6 +169,7 @@ const fetchData = () => {
     getSimuladoById,
     getSimulados,
     getNotasbySimuladoId,
+    getNotasByUsuarioId,
     getSimuladoByIdTurma,
     getNotaSimulados,
     getCorrecoes,

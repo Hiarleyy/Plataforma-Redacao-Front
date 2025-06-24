@@ -81,12 +81,9 @@ const Simulados = () => {
   };  const getDataSimulados = async () => {
     try {
       setLoading(true);
-      console.log("Iniciando carregamento de simulados...");
       
       const { getSimulados, getNotasByUsuarioId, getNotasbySimuladoId } = fetchData();
       const alunoId = getAlunoId();
-      
-      console.log("AlunoId:", alunoId);
       
       if (!alunoId) {
         console.error("ID do aluno não encontrado, não é possível carregar simulados");
@@ -94,18 +91,13 @@ const Simulados = () => {
         return;
       }
       
-      console.log("Buscando simulados...");
       const simulados = await getSimulados();
-      console.log("Simulados encontrados:", simulados);
 
       // Buscar notas do aluno
-      console.log("Buscando notas do aluno...");
       const notasAluno = await getNotasByUsuarioId(alunoId);
-      console.log("Notas do aluno:", notasAluno);
       setNotasSimulados(notasAluno);
       
       // Processar simulados
-      console.log("Processando simulados...");
       const simuladosProcessados = await Promise.all(
         simulados.map(async (simulado) => {
           try {
@@ -147,7 +139,6 @@ const Simulados = () => {
         (a, b) => new Date(b.data) - new Date(a.data)
       );
 
-      console.log("Simulados processados:", simuladosOrdenados);
       setTotalSimulados(simuladosOrdenados);
     } catch (error) {
       console.error("Erro ao carregar simulados:", error);
@@ -205,15 +196,6 @@ const Simulados = () => {
       percentualRealizacao: percentual.toFixed(1)
     };
   };
-
-  // Debug log para verificar estado da renderização
-  console.log("Estado atual:", {
-    loading,
-    totalSimulados: TotalSimulados.length,
-    simuladosFiltrados: simuladosFiltrados.length,
-    currentSimulados: currentSimulados.length,
-    search
-  });
 
   return (
     <div className={styles.container}>
