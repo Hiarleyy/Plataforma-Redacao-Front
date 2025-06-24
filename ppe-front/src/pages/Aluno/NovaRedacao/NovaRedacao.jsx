@@ -45,9 +45,22 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
   const { getHeaders } = useUseful()
 
   const getAlunoId = () => {
-      const aluno = localStorage.getItem('user_access_data')
-      const {id} = JSON.parse(aluno)
-      return id
+      try {
+        const aluno = localStorage.getItem('user_access_data')
+        if (!aluno) {
+          console.error('Dados do usuário não encontrados no localStorage');
+          return null;
+        }
+        const userData = JSON.parse(aluno)
+        if (!userData || !userData.id) {
+          console.error('ID do usuário não encontrado nos dados:', userData);
+          return null;
+        }
+        return userData.id;
+      } catch (error) {
+        console.error('Erro ao obter ID do aluno:', error);
+        return null;
+      }
   }
 
   const onDrop = async (acceptedFiles) => {
@@ -121,6 +134,16 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     }
 
     const alunoId = getAlunoId();
+    console.log("AlunoId:", alunoId); // Debug log
+    
+    if (!alunoId) {
+      setFormMessage({
+        type: "error",
+        text: "Erro: ID do aluno não encontrado. Faça login novamente."
+      });
+      return;
+    }
+
     const formData = new FormData();
     formData.append("titulo", tema);
     formData.append("file", fileBlob, fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`);
