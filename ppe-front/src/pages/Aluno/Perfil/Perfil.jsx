@@ -12,7 +12,7 @@ import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg'
 import RedacaoModal from '../../../components/RedacaoModal/RedacaoModal';
 import Loading from '../../../components/Loading/Loading';
 
-const baseURL = import.meta.env.VITE_BASE_URL
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const Perfil = () => {  const [usuario, setUsuario] = useState([]);
   const [activeTab, setActiveTab] = useState('minhas');
