@@ -49,7 +49,7 @@ const CorrecaoModal = ({ modalData, modalIsClicked, setModalIsClicked }) => {
         </div>
 
         <div className={styles.buttons}>
-          <Link to={`http://${baseURL}/redacoes/download/${modalData?.id}`}>
+          <Link to={`${baseURL}/redacoes/download/${modalData?.id}`}>
             <Button 
               text_size="20px" 
               text_color="#E0E0E0" 
@@ -57,7 +57,7 @@ const CorrecaoModal = ({ modalData, modalIsClicked, setModalIsClicked }) => {
               bg_color="#DA9E00"
             ><i className="fa-solid fa-download"></i> BAIXAR REDAÇÃO</Button>
           </Link>
-          <Link to={`http://${baseURL}/correcoes/download/${modalData?.correcao?.id}`}>
+          <Link to={`${baseURL}/correcoes/download/${modalData?.correcao?.id}`}>
             <Button 
               text_size="20px" 
               text_color="#E0E0E0" 
