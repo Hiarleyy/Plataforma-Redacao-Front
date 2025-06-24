@@ -58,7 +58,7 @@ const ModalRegistrarNotas = ({
     setIsLoading(true);
     try {
       await axios.post(
-        `http://${baseURL}/notaSimulado`,
+        `${baseURL}/notaSimulado`,
         {
           simuladoId: simuladoId,
           usuarioId: aluno?.id,
