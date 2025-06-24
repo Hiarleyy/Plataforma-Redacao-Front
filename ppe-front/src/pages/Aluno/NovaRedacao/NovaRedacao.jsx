@@ -15,9 +15,10 @@ import fetchData from "../../../utils/fetchData";
 import { useNavigate } from "react-router-dom";
 import RedacaoModal from "../../../components/RedacaoModal/RedacaoModal";
 import useUseful from "../../../utils/useUseful";
+const baseURL = import.meta.env.VITE_BASE_URL
 
 const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum arquivo enviado");
-const baseURL = process.env.VITE_API_BASE_URL
+
 
   const [tema, setTema] = useState("");
   const [formMessage, setFormMessage] = useState(null);

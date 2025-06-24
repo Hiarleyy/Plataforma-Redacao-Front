@@ -11,7 +11,7 @@ import fetchData from "../../../utils/fetchData";
 import SimuladoModal from '../../../components/SimuladoModal/SimuladoModal';
 import Loading from '../../../components/Loading/Loading';
 
-const baseURL = process.env.VITE_API_BASE_URL;
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
   const [usuario, setUsuario] = useState([]);
