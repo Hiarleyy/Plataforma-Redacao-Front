@@ -49,7 +49,7 @@ const GerenciarAlunos = () => {
 
     try {
       const response = await axios.post(
-        `http://${baseURL}/usuarios`, 
+        `${baseURL}/usuarios`, 
         { 
           nome,
           email,
@@ -95,7 +95,7 @@ const GerenciarAlunos = () => {
   }
 
   const deleteAluno = async (id) => {
-    await axios.delete(`http://${baseURL}/usuarios/${id}`, { headers: getHeaders() })
+    await axios.delete(`${baseURL}/usuarios/${id}`, { headers: getHeaders() })
     await getAlunos()
   }
 

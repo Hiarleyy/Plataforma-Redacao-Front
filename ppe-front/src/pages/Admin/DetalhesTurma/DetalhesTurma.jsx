@@ -33,7 +33,7 @@ const DetalhesTurma = () => {
 
     try {
       const response = await axios.put(
-        `http://${baseURL}/turmas/${turma_id}`, 
+        `${baseURL}/turmas/${turma_id}`, 
         { "nome": turma },
         { headers: getHeaders() }
       )
@@ -53,7 +53,7 @@ const DetalhesTurma = () => {
   }
 
   const deleteTurma = async () => {
-    await axios.delete(`http://${baseURL}/turmas/${turma_id}`, { headers: getHeaders() })
+    await axios.delete(`${baseURL}/turmas/${turma_id}`, { headers: getHeaders() })
     navigate("/admin/gerenciar-turmas")
   }
 

@@ -45,7 +45,7 @@ const DetalhesAluno = () => {
 
     try {
       const response = await axios.put(
-        `http://${baseURL}/usuarios/${aluno_id}`, 
+        `${baseURL}/usuarios/${aluno_id}`, 
         { 
           nome,
           email,
@@ -70,7 +70,7 @@ const DetalhesAluno = () => {
   };
 
   const deleteAluno = async () => {
-    await axios.delete(`http://${baseURL}/usuarios/${aluno_id}`, { headers: getHeaders() })
+    await axios.delete(`${baseURL}/usuarios/${aluno_id}`, { headers: getHeaders() })
     navigate("/admin/gerenciar-alunos")
   };
 

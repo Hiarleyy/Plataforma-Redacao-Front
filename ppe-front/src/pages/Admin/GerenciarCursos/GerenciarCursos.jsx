@@ -41,7 +41,7 @@ const GerenciarCursos = () => {
 
     try {
       const response = await axios.post(
-        `http://${baseURL}/modulos`, 
+        `${baseURL}/modulos`, 
         {
           nome,
           descricao,
@@ -84,7 +84,7 @@ const GerenciarCursos = () => {
   };
 
   const deleteModulo = async (id) => {
-    await axios.delete(`http://${baseURL}/modulos/${id}`, { headers: getHeaders() });
+    await axios.delete(`${baseURL}/modulos/${id}`, { headers: getHeaders() });
     await getData();
   };
 

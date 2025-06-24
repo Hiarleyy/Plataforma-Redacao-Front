@@ -38,7 +38,7 @@ const GerenciarTurmas = () => {
 
     try {
       const response = await axios.post(
-        `http://${baseURL}/turmas`, 
+        `${baseURL}/turmas`, 
         { "nome": turma }, 
         { headers: getHeaders() }
       )
@@ -74,7 +74,7 @@ const GerenciarTurmas = () => {
   };
 
   const deleteTurma = async (id) => {
-    await axios.delete(`http://${baseURL}/turmas/${id}`, { headers: getHeaders() })
+    await axios.delete(`${baseURL}/turmas/${id}`, { headers: getHeaders() })
     await getData()
   }
 
