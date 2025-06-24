@@ -96,7 +96,7 @@ const Perfil = () => {  const [usuario, setUsuario] = useState([]);
           <div>
             <div className={styles.header_container}>
               <img className={styles.img_container} 
-              src={usuario.caminho ? `http://${baseURL}/usuarios/${usuario.id}/profile-image` : defaultProfilePicture} alt="" />
+              src={usuario.caminho ? `${baseURL}/usuarios/${usuario.id}/profile-image` : defaultProfilePicture} alt="" />
               <h3>{usuario.nome && usuario.nome}</h3>
               <p>Entrou em 24/04/2025</p>
             </div>

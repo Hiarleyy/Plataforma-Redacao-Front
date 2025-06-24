@@ -10,8 +10,9 @@ import fetchData from "../../../utils/fetchData"
 import useUseful from "../../../utils/useUseful"
 import { useState, useEffect } from "react"
 import axios from "axios"
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
-const baseURL = process.env.VITE_API_BASE_URL;
+
 
 const CorrigirRedacao = () => {
   const { redacao_id } = useParams()

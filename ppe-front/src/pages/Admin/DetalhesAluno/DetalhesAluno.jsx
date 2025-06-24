@@ -45,7 +45,7 @@ const DetalhesAluno = () => {
 
     try {
       const response = await axios.put(
-        `http://${baseURL}/usuarios/${aluno_id}`, 
+        `${baseURL}/usuarios/${aluno_id}`, 
         { 
           nome,
           email,

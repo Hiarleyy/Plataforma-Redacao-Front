@@ -7,8 +7,7 @@ import fetchData from "../../../utils/fetchData";
 import GraficoBarras from "../../../components/GraficoBarras/Barra";
 import Taggle from "../../../components/Taggle/Taggle";
 import CardDash from "../../../components/CardDash/CardDash";
-
-const baseURL = process.env.VITE_API_BASE_URL;
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 
 import {

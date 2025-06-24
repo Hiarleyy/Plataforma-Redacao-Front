@@ -7,8 +7,7 @@ import Input from "../../../components/Input/Input";
 import Pagination from "../../../components/Pagination/Pagination";
 import SimuladoModal from "../../../components/SimuladoModal/SimuladoModal";
 import Loading from "../../../components/Loading/Loading";
-
-const baseURL = process.env.VITE_API_BASE_URL;
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const Simulados = () => {
   const [TotalSimulados, setTotalSimulados] = useState([]);

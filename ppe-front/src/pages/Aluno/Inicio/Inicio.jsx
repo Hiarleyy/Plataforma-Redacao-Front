@@ -144,7 +144,7 @@ const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
               <>
                 <div className={styles.button}>
                   <a 
-                    href={`http://${baseURL}/propostas/download`} 
+                    href={`${baseURL}/propostas/download`} 
                     download="proposta-da-semana.pdf"
                     style={{ textDecoration: 'none' }}
                   >

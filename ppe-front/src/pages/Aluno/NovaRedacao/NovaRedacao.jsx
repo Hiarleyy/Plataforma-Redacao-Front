@@ -126,7 +126,7 @@ const baseURL = process.env.VITE_API_BASE_URL
     formData.append("usuarioId", alunoId);
     
     try { 
-      const response = await axios.post(`http://${baseURL}/redacoes/${alunoId}/upload`, formData, {
+      const response = await axios.post(`${baseURL}/redacoes/${alunoId}/upload`, formData, {
          headers: getHeaders(),
       });   
       setFormMessage({
@@ -170,7 +170,7 @@ const baseURL = process.env.VITE_API_BASE_URL
               let correcao = null;
               try {
                 // Verificar se a redação já tem correção
-                const correcaoResponse = await axios.get(`http://${baseURL}/correcoes/redacao/${item.id}`);
+                const correcaoResponse = await axios.get(`${baseURL}/correcoes/redacao/${item.id}`);
                 if (correcaoResponse.data && correcaoResponse.data.data) {
                   correcao = correcaoResponse.data.data;
                 }
