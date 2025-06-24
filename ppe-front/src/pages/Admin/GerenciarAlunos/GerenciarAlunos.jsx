@@ -15,8 +15,7 @@ import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg'
 import useUseful from "../../../utils/useUseful"
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 
-const baseURL = process.env.VITE_API_BASE_URL;
-
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const GerenciarAlunos = () => {
   const [formMessage, setFormMessage] = useState(null)

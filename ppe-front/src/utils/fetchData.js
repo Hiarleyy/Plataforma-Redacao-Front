@@ -5,7 +5,8 @@ const { getHeaders } = useUseful()
 
 const baseURL = import.meta.env.VITE_API_BASE_URL
 
-const fetchData = () => {  const getTurmas = async () => {
+const fetchData = () => {  
+  const getTurmas = async () => {
     const response = await axios.get(`${baseURL}/turmas`, { headers: getHeaders() })
     
     return response.data.data

@@ -12,8 +12,7 @@ import Message from "../../../components/Message/Message"
 import Loading from "../../../components/Loading/Loading"
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 
-const baseURL = process.env.VITE_API_BASE_URL;
-
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const GerenciarTurmas = () => {
   const [formMessage, setFormMessage] = useState(null)

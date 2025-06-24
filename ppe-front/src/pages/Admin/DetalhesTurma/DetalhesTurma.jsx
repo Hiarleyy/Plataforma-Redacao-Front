@@ -13,6 +13,8 @@ import DetailsCard from "../../../components/DetailsCard/DetailsCard"
 import Loading from "../../../components/Loading/Loading"
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 
+const baseURL = import.meta.env.VITE_API_BASE_URL
+
 const DetalhesTurma = () => {
   const { turma_id } = useParams()
   const [formMessage, setFormMessage] = useState(null)
@@ -23,9 +25,6 @@ const DetalhesTurma = () => {
   const [isLoadingData, setIsLoadingData] = useState(false)
   const [modalIsClicked, setModalIsClicked] = useState(false)
   const navigate = useNavigate()
-
-  const baseURL = process.env.VITE_API_BASE_URL;
-
 
   const handleSubmit = async (e) => {
     e.preventDefault()

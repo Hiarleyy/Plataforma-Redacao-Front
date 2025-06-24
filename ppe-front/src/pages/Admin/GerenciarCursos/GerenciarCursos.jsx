@@ -12,6 +12,8 @@ import Message from "../../../components/Message/Message";
 import Loading from "../../../components/Loading/Loading";
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 
+const baseURL = import.meta.env.VITE_API_BASE_URL
+
 const GerenciarCursos = () => {
   const [formMessage, setFormMessage] = useState(null);
   const [modulos, setModulos] = useState([]);
@@ -31,9 +33,6 @@ const GerenciarCursos = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentModulos = modulos.slice(indexOfFirstItem, indexOfLastItem);
-
-  const baseURL = process.env.VITE_API_BASE_URL;
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -9,7 +9,7 @@ import GraficoBarrasPagamentos from "../../../components/GraficoBarraPagamentos/
 import FinancialCard from "../../../components/FinanciaCard/FinanciaCard";
 import fetchData from "../../../utils/fetchData";
 
-const baseURL = process.env.VITE_API_BASE_URL;
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const GerenciaPagamentos = () => {
   const [taggle, setTaggle] = useState("Análise Geral");
