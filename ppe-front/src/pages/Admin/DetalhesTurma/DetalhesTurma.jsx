@@ -13,6 +13,8 @@ import DetailsCard from "../../../components/DetailsCard/DetailsCard"
 import Loading from "../../../components/Loading/Loading"
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 
+const baseURL = import.meta.env.VITE_API_BASE_URL
+
 const DetalhesTurma = () => {
   const { turma_id } = useParams()
   const [formMessage, setFormMessage] = useState(null)
@@ -24,16 +26,13 @@ const DetalhesTurma = () => {
   const [modalIsClicked, setModalIsClicked] = useState(false)
   const navigate = useNavigate()
 
-  const baseURL = process.env.VITE_API_BASE_URL;
-
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
 
     try {
       const response = await axios.put(
-        `http://${baseURL}/turmas/${turma_id}`, 
+        `${baseURL}/turmas/${turma_id}`, 
         { "nome": turma },
         { headers: getHeaders() }
       )
@@ -53,7 +52,7 @@ const DetalhesTurma = () => {
   }
 
   const deleteTurma = async () => {
-    await axios.delete(`http://${baseURL}/turmas/${turma_id}`, { headers: getHeaders() })
+    await axios.delete(`${baseURL}/turmas/${turma_id}`, { headers: getHeaders() })
     navigate("/admin/gerenciar-turmas")
   }
 

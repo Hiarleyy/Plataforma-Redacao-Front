@@ -11,6 +11,7 @@ import Input from "../../../components/Input/Input";
 import Pagination from "../../../components/Pagination/Pagination";
 import Message from "../../../components/Message/Message";
 import useUseful from "../../../utils/useUseful";
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const Simulados = () => {
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -37,7 +38,7 @@ const Simulados = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/simulados",
+        `${baseURL}/simulados`,
         {
           turmaId: turma,
           titulo: titulo,

@@ -12,6 +12,8 @@ import Message from "../../../components/Message/Message";
 import Loading from "../../../components/Loading/Loading";
 import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 
+const baseURL = import.meta.env.VITE_API_BASE_URL
+
 const GerenciarCursos = () => {
   const [formMessage, setFormMessage] = useState(null);
   const [modulos, setModulos] = useState([]);
@@ -32,16 +34,13 @@ const GerenciarCursos = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentModulos = modulos.slice(indexOfFirstItem, indexOfLastItem);
 
-  const baseURL = process.env.VITE_API_BASE_URL;
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       const response = await axios.post(
-        `http://${baseURL}/modulos`, 
+        `${baseURL}/modulos`, 
         {
           nome,
           descricao,
@@ -84,7 +83,7 @@ const GerenciarCursos = () => {
   };
 
   const deleteModulo = async (id) => {
-    await axios.delete(`http://${baseURL}/modulos/${id}`, { headers: getHeaders() });
+    await axios.delete(`${baseURL}/modulos/${id}`, { headers: getHeaders() });
     await getData();
   };
 

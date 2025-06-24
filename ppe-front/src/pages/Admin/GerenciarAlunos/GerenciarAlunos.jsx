@@ -15,8 +15,7 @@ import defaultProfilePicture from '../../../images/Defalult_profile_picture.jpg'
 import useUseful from "../../../utils/useUseful"
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 
-const baseURL = process.env.VITE_API_BASE_URL;
-
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const GerenciarAlunos = () => {
   const [formMessage, setFormMessage] = useState(null)
@@ -49,7 +48,7 @@ const GerenciarAlunos = () => {
 
     try {
       const response = await axios.post(
-        `http://${baseURL}/usuarios`, 
+        `${baseURL}/usuarios`, 
         { 
           nome,
           email,
@@ -95,7 +94,7 @@ const GerenciarAlunos = () => {
   }
 
   const deleteAluno = async (id) => {
-    await axios.delete(`http://${baseURL}/usuarios/${id}`, { headers: getHeaders() })
+    await axios.delete(`${baseURL}/usuarios/${id}`, { headers: getHeaders() })
     await getAlunos()
   }
 

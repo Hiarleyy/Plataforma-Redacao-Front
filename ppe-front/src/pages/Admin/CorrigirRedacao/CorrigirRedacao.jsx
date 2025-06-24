@@ -65,7 +65,7 @@ const CorrigirRedacao = () => {
 
     try {
       await axios.post(
-        `http://${baseURL}/correcoes/${userID}/upload`,
+        `${baseURL}/correcoes/${userID}/upload`,
         formData,
         { headers: getHeaders() }
       );
@@ -126,7 +126,7 @@ const CorrigirRedacao = () => {
                 text_size="16px"
               />
 
-              <Link to={`http://${baseURL}/redacoes/download/${redacao_id}`}>
+              <Link to={`${baseURL}/redacoes/download/${redacao_id}`}>
                 <Button 
                   text_size="20px" 
                   text_color="#E0E0E0" 

@@ -12,8 +12,7 @@ import Message from "../../../components/Message/Message"
 import Loading from "../../../components/Loading/Loading"
 import DeleteModal from "../../../components/DeleteModal/DeleteModal"
 
-const baseURL = process.env.VITE_API_BASE_URL;
-
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const GerenciarTurmas = () => {
   const [formMessage, setFormMessage] = useState(null)
@@ -38,7 +37,7 @@ const GerenciarTurmas = () => {
 
     try {
       const response = await axios.post(
-        `http://${baseURL}/turmas`, 
+        `${baseURL}/turmas`, 
         { "nome": turma }, 
         { headers: getHeaders() }
       )
@@ -74,7 +73,7 @@ const GerenciarTurmas = () => {
   };
 
   const deleteTurma = async (id) => {
-    await axios.delete(`http://${baseURL}/turmas/${id}`, { headers: getHeaders() })
+    await axios.delete(`${baseURL}/turmas/${id}`, { headers: getHeaders() })
     await getData()
   }
 

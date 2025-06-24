@@ -29,7 +29,7 @@ const RegistrarDespesaModal = ({ isOpen, onClose }) => {
 
     try {
       const response = await axios.post(
-        `http://${baseURL}/pagamentos`,
+        `${baseURL}/pagamentos`,
         payload,
         { headers: getHeaders() }
       );

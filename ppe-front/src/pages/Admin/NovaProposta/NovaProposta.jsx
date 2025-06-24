@@ -15,6 +15,7 @@ import fetchData from "../../../utils/fetchData";
 import { useNavigate } from "react-router-dom";
 import RedacaoModal from "../../../components/RedacaoModal/RedacaoModal";
 import useUseful from "../../../utils/useUseful";
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum arquivo enviado");  const [tema, setTema] = useState("");
   const [formMessage, setFormMessage] = useState(null);
@@ -107,7 +108,7 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     formData.append("file", fileBlob, fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`);
 
     try { 
-      const response = await axios.post(`http://localhost:3000/propostas`, formData, {
+      const response = await axios.post(`${baseURL}/propostas`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
