@@ -15,7 +15,7 @@ import fetchData from "../../../utils/fetchData";
 import { useNavigate } from "react-router-dom";
 import RedacaoModal from "../../../components/RedacaoModal/RedacaoModal";
 import useUseful from "../../../utils/useUseful";
-const baseURL = import.meta.env.VITE_BASE_URL
+const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum arquivo enviado");
 
@@ -135,6 +135,7 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
 
     const alunoId = getAlunoId();
     console.log("AlunoId:", alunoId); // Debug log
+    console.log("BaseURL:", baseURL); // Debug log para verificar a URL base
     
     if (!alunoId) {
       setFormMessage({
@@ -144,13 +145,16 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
       return;
     }
 
+    const uploadURL = `${baseURL}/redacoes/${alunoId}/upload`;
+    console.log("URL de upload:", uploadURL); // Debug log para verificar a URL completa
+
     const formData = new FormData();
     formData.append("titulo", tema);
     formData.append("file", fileBlob, fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`);
     formData.append("usuarioId", alunoId);
     
     try { 
-      const response = await axios.post(`${baseURL}/redacoes/${alunoId}/upload`, formData, {
+      const response = await axios.post(uploadURL, formData, {
          headers: getHeaders(),
       });   
       setFormMessage({
