@@ -98,9 +98,15 @@ const GerenciarAlunos = () => {
     await getAlunos()
   }
 
-  useEffect(() => { 
+  // Debounce para a pesquisa - aguarda 500ms após parar de digitar
+  useEffect(() => {
     setCurrentPage(1)
-    getAlunos(search)
+    
+    const timeoutId = setTimeout(() => {
+      getAlunos(search)
+    }, 500) // 500ms de delay
+    
+    return () => clearTimeout(timeoutId)
   }, [search])
 
   useEffect(() => {
@@ -170,7 +176,7 @@ const GerenciarAlunos = () => {
                     {currentAlunos.map((aluno) => (
                       <InfoCard 
                         key={aluno.id}
-                        img={aluno.caminho ? `http://${baseURL}/usuarios/${aluno.id}/profile-image` : defaultProfilePicture}
+                        img={aluno.caminho ? `${baseURL}/usuarios/${aluno.id}/profile-image` : defaultProfilePicture}
                         title={aluno.nome} 
                         subtitle={aluno.email} 
                         link={aluno.id}
