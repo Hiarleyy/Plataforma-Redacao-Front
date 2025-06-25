@@ -154,7 +154,10 @@ function configuracoes() {
         `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
         {
           method: "POST",
-          headers: getHeaders(),
+          headers: {
+            ...getHeaders(),
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({
             senhaAtual,
             novaSenha,
