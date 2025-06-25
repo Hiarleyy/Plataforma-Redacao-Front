@@ -22,7 +22,7 @@ const SimuladoModal = ({ simulado, isOpen, onClose, brasilFormatData }) => {
   }, [isOpen, simulado]);  const fetchSimuladoDetails = async () => {
     try {
       setLoading(true);
-      const { getTurmaById, getNotasbySimuladoId,getNotasByUsuarioId } = fetchData();
+      const { getTurmaById, getNotasbySimuladoId, getNotaSimulados } = fetchData();
       const alunoId = getAlunoId();
       
       // Buscar informações da turma
@@ -41,10 +41,18 @@ const SimuladoModal = ({ simulado, isOpen, onClose, brasilFormatData }) => {
 
       // Buscar nota específica do aluno
       try {
-        const notasAluno = await getNotasByUsuarioId(alunoId);
-        const notaDoSimulado = notasAluno.find(nota => nota.simuladoId === simulado.id);
-        setNotaAluno(notaDoSimulado || null);
+        // Buscar todas as notas e filtrar por usuário (mesmo padrão usado em Simulados.jsx)
+        const todasAsNotas = await getNotaSimulados();
+        if (todasAsNotas && Array.isArray(todasAsNotas)) {
+          const notaDoSimulado = todasAsNotas.find(nota => 
+            nota.usuarioId === alunoId && nota.simuladoId === simulado.id
+          );
+          setNotaAluno(notaDoSimulado || null);
+        } else {
+          setNotaAluno(null);
+        }
       } catch (error) {
+        console.log('Erro ao buscar notas do aluno:', error);
         setNotaAluno(null);
       }
     } catch (error) {

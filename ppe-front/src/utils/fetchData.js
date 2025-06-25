@@ -124,11 +124,8 @@ const fetchData = () => {
     const response = await axios.get(`${baseURL}/notaSimulado`, { headers: getHeaders() })
     return response.data.data
   } 
-  const getNotasByUsuarioId = async (usuarioId) => {
-      const response = await axios.get(`${baseURL}/notaSimulado/usuarioId/${usuarioId}`, { headers: getHeaders() })
-      return response.data.data
-    }
-    const getSimuladoById = async (id) => {
+  
+  const getSimuladoById = async (id) => {
     const response = await axios.get(`${baseURL}/simulados/${id}`, { headers: getHeaders() })
     return response.data.data
   }
@@ -169,7 +166,6 @@ const fetchData = () => {
     getSimuladoById,
     getSimulados,
     getNotasbySimuladoId,
-    getNotasByUsuarioId,
     getSimuladoByIdTurma,
     getNotaSimulados,
     getCorrecoes,
