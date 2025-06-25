@@ -215,7 +215,6 @@ const GerenciarAlunos = () => {
             >
               <i className="fa-solid fa-user"></i>
             </Input>
-
             <Input
               type="email"
               placeholder="Email"
