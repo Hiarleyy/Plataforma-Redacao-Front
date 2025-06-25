@@ -177,27 +177,18 @@ function configuracoes() {
     setIsLoading(true);
 
     try {
-      // Primeiro, verificamos se o usuário existe
+      // Verifica se o usuário existe
       if (!usuario || !usuario.id) {
         throw new Error("Dados do usuário não disponíveis");
       }
       
-      // Debug: log dos dados que estão sendo enviados
-      console.log("Dados sendo enviados:", {
-        userId: usuario.id,
-        senhaAtual: senhaAtualTrimmed ? "***" : "vazio",
-        novaSenha: novaSenhaTrimmed ? "***" : "vazio",
-      });
-      
-      // Tentar primeiro com a estrutura mais simples
-      let payload = {
+      // Estrutura correta do payload conforme especificado
+      const payload = {
         senhaAtual: senhaAtualTrimmed,
         novaSenha: novaSenhaTrimmed,
       };
       
-      console.log("Tentativa 1 - Payload simples:", payload);
-      
-      let response = await fetch(
+      const response = await fetch(
         `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
         {
           method: "POST",
@@ -209,74 +200,14 @@ function configuracoes() {
         }
       );
 
-      // Se der erro 500, tentar com estrutura alternativa
-      if (response.status === 500) {
-        console.log("Tentativa 1 falhou, tentando estrutura alternativa...");
-        
-        payload = {
-          currentPassword: senhaAtualTrimmed,
-          newPassword: novaSenhaTrimmed,
-        };
-        
-        console.log("Tentativa 2 - Payload alternativo:", payload);
-        
-        response = await fetch(
-          `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
-          {
-            method: "POST",
-            headers: {
-              ...getHeaders(),
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-          }
-        );
-      }
-
-      // Se ainda der erro 500, tentar com estrutura mais complexa
-      if (response.status === 500) {
-        console.log("Tentativa 2 falhou, tentando estrutura mais complexa...");
-        
-        payload = {
-          userId: usuario.id,
-          senhaAtual: senhaAtualTrimmed,
-          novaSenha: novaSenhaTrimmed,
-          currentPassword: senhaAtualTrimmed,
-          newPassword: novaSenhaTrimmed,
-        };
-        
-        console.log("Tentativa 3 - Payload complexo:", payload);
-        
-        response = await fetch(
-          `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
-          {
-            method: "POST",
-            headers: {
-              ...getHeaders(),
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-          }
-        );
-      }
-
       // Verifica se a resposta foi bem-sucedida (status 2xx)
       if (!response.ok) {
         // Se não for 2xx, tenta obter a mensagem de erro do servidor
         const errorText = await response.text();
         let errorMessage = "Erro ao trocar a senha.";
         
-        // Debug: log da resposta de erro
-        console.error("Erro do servidor:", {
-          status: response.status,
-          statusText: response.statusText,
-          errorText: errorText,
-          url: response.url
-        });
-        
         try {
           const errorData = JSON.parse(errorText);
-          console.error("Dados do erro parseados:", errorData);
           
           // Tratamento específico para diferentes tipos de erro
           if (errorData.error === "data and hash arguments required") {
@@ -289,7 +220,6 @@ function configuracoes() {
             errorMessage = errorData.message || errorData.error || errorMessage;
           }
         } catch (parseError) {
-          console.error("Erro ao parsear resposta de erro:", parseError);
           // Se não conseguir fazer o parse, use o texto da resposta
           errorMessage = errorText || errorMessage;
         }
@@ -306,7 +236,6 @@ function configuracoes() {
         try {
           responseData = JSON.parse(responseText);
         } catch (parseError) {
-          console.error("Erro ao parsear resposta:", parseError);
           // Se não conseguir fazer o parse, apenas continue sem o dado
         }
       }
