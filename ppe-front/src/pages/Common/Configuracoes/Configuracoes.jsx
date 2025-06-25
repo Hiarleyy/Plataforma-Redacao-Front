@@ -136,6 +136,15 @@ function configuracoes() {
       });
       return;
     }
+    
+    // Validação para strings vazias ou apenas espaços
+    if (senhaAtual.trim() === '' || novaSenha.trim() === '' || confirmarSenha.trim() === '') {
+      setFormMessage({
+        text: "Os campos de senha não podem estar vazios ou conter apenas espaços.",
+        type: "error",
+      });
+      return;
+    }
     if (novaSenha !== confirmarSenha) {
       setFormMessage({
         text: "As novas senhas não coincidem.",
@@ -148,6 +157,15 @@ function configuracoes() {
     if (novaSenha.length < 6) {
       setFormMessage({
         text: "A nova senha deve ter pelo menos 6 caracteres.",
+        type: "error",
+      });
+      return;
+    }
+    
+    // Validação da senha atual
+    if (senhaAtual.length < 1) {
+      setFormMessage({
+        text: "A senha atual é obrigatória.",
         type: "error",
       });
       return;
@@ -172,8 +190,18 @@ function configuracoes() {
       console.log("Enviando requisição de troca de senha:", {
         url: `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
         userId: usuario.id,
-        hasCurrentPassword: !!senhaAtual,
-        hasNewPassword: !!novaSenha
+        senhaAtual: {
+          length: senhaAtual.length,
+          type: typeof senhaAtual,
+          isEmpty: senhaAtual === '',
+          value: senhaAtual ? '[SENHA FORNECIDA]' : '[VAZIO]'
+        },
+        novaSenha: {
+          length: novaSenha.length,
+          type: typeof novaSenha,
+          isEmpty: novaSenha === '',
+          value: novaSenha ? '[NOVA SENHA FORNECIDA]' : '[VAZIO]'
+        }
       });
       
       // Criar um controller para timeout
@@ -189,8 +217,8 @@ function configuracoes() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            senhaAtual: senhaAtual,
-            novaSenha: novaSenha,
+            senhaAtual: senhaAtual.trim(),
+            novaSenha: novaSenha.trim(),
           }),
           signal: controller.signal,
         }
@@ -215,6 +243,11 @@ function configuracoes() {
         try {
           const errorData = JSON.parse(errorText);
           errorMessage = errorData.message || errorData.error || errorMessage;
+          
+          // Tratamento específico para erro de hash/bcrypt
+          if (errorMessage.includes('data and hash arguments required')) {
+            errorMessage = "Erro interno: problema na validação da senha atual. Verifique se a senha atual está correta e tente novamente.";
+          }
         } catch (parseError) {
           console.error("Erro ao parsear resposta de erro:", parseError);
           // Se o erro for 500, mostra uma mensagem mais específica
