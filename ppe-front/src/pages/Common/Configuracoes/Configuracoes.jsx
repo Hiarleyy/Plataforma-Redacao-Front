@@ -5,7 +5,6 @@ import Title from "../../../components/Title/Title";
 import Input from "../../../components/Input/Input";
 import Button from "../../../components/Button/Button";
 import Message from "../../../components/Message/Message";
-
 import defaultProfilePicture from "../../../images/Defalult_profile_picture.jpg";
 import useUseful from "../../../utils/useUseful";
 
@@ -143,23 +142,6 @@ function configuracoes() {
       });
       return;
     }
-    
-    // Validação básica da nova senha
-    if (novaSenha.length < 6) {
-      setFormMessage({
-        text: "A nova senha deve ter pelo menos 6 caracteres.",
-        type: "error",
-      });
-      return;
-    }
-    
-    if (senhaAtual === novaSenha) {
-      setFormMessage({
-        text: "A nova senha deve ser diferente da senha atual.",
-        type: "error",
-      });
-      return;
-    }
     setIsLoading(true);
 
     try {
@@ -168,35 +150,17 @@ function configuracoes() {
         throw new Error("Dados do usuário não disponíveis");
       }
       
-      // Log da requisição para debug
-      console.log("Enviando requisição de troca de senha:", {
-        url: `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
-        userId: usuario.id,
-        hasCurrentPassword: !!senhaAtual,
-        hasNewPassword: !!novaSenha
-      });
-      
-      // Criar um controller para timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 segundos
-      
       const response = await fetch(
-        `${baseURL}/usuarios/${usuario.id}/`,
+        `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
         {
           method: "POST",
-          headers: {
-            ...getHeaders(),
-            'Content-Type': 'application/json',
-          },
+          headers: getHeaders(),
           body: JSON.stringify({
-            currentPassword: senhaAtual,
-            newPassword: novaSenha,
+            senhaAtual,
+            novaSenha,
           }),
-          signal: controller.signal,
         }
       );
-      
-      clearTimeout(timeoutId);
 
       // Verifica se a resposta foi bem-sucedida (status 2xx)
       if (!response.ok) {
@@ -204,29 +168,11 @@ function configuracoes() {
         const errorText = await response.text();
         let errorMessage = "Erro ao trocar a senha.";
         
-        // Log detalhado do erro para debug
-        console.error("Erro na resposta do servidor:", {
-          status: response.status,
-          statusText: response.statusText,
-          url: response.url,
-          errorText: errorText
-        });
-        
         try {
           const errorData = JSON.parse(errorText);
-          errorMessage = errorData.message || errorData.error || errorMessage;
+          errorMessage = errorData.message || errorMessage;
         } catch (parseError) {
           console.error("Erro ao parsear resposta de erro:", parseError);
-          // Se o erro for 500, mostra uma mensagem mais específica
-          if (response.status === 500) {
-            errorMessage = "Erro interno do servidor. Verifique se a senha atual está correta e tente novamente.";
-          } else if (response.status === 401) {
-            errorMessage = "Senha atual incorreta.";
-          } else if (response.status === 400) {
-            errorMessage = "Dados inválidos. Verifique se a nova senha atende aos critérios.";
-          } else {
-            errorMessage = `Erro ${response.status}: ${response.statusText}`;
-          }
         }
         
         throw new Error(errorMessage);
@@ -258,19 +204,8 @@ function configuracoes() {
       });
     } catch (err) {
       console.error("Erro ao trocar senha:", err);
-      
-      let errorMessage = "Erro ao trocar a senha. Por favor, tente novamente.";
-      
-      if (err.name === 'AbortError') {
-        errorMessage = "A requisição demorou muito para responder. Verifique sua conexão e tente novamente.";
-      } else if (err.message.includes('NetworkError') || err.message.includes('Failed to fetch')) {
-        errorMessage = "Erro de conexão. Verifique sua internet e tente novamente.";
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      
       setFormMessage({
-        text: errorMessage,
+        text: err.message || "Erro ao trocar a senha. Por favor, tente novamente.",
         type: "error",
       });
     } finally {
