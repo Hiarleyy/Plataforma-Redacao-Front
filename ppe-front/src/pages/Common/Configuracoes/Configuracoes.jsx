@@ -182,32 +182,60 @@ function configuracoes() {
         throw new Error("Dados do usuário não disponíveis");
       }
       
+      // Verifica se temos um token válido
+      const headers = getHeaders();
+      if (!headers.Authorization) {
+        throw new Error("Token de autenticação não encontrado. Faça login novamente.");
+      }
+      
       // Estrutura correta do payload conforme especificado
       const payload = {
         senhaAtual: senhaAtualTrimmed,
         novaSenha: novaSenhaTrimmed,
       };
       
+      // Debug: log das informações da requisição
+      console.log("=== DEBUG TROCAR SENHA ===");
+      console.log("URL:", `${baseURL}/usuarios/${usuario.id}/trocar-senha`);
+      console.log("Headers:", {
+        ...headers,
+        'Content-Type': 'application/json',
+      });
+      console.log("Payload:", {
+        senhaAtual: "***",
+        novaSenha: "***",
+        senhaAtualLength: senhaAtualTrimmed.length,
+        novaSenhaLength: novaSenhaTrimmed.length,
+      });
+      console.log("Usuario ID:", usuario.id);
+      console.log("Token presente:", !!headers.Authorization);
+      
       const response = await fetch(
         `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
         {
           method: "POST",
           headers: {
-            ...getHeaders(),
+            ...headers,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(payload),
         }
       );
+      
+      console.log("Response status:", response.status);
+      console.log("Response headers:", Object.fromEntries(response.headers.entries()));
 
       // Verifica se a resposta foi bem-sucedida (status 2xx)
       if (!response.ok) {
         // Se não for 2xx, tenta obter a mensagem de erro do servidor
         const errorText = await response.text();
+        console.log("Error response text:", errorText);
+        
         let errorMessage = "Erro ao trocar a senha.";
         
         try {
           const errorData = JSON.parse(errorText);
+          console.log("Error data parsed:", errorData);
           
           // Tratamento específico para diferentes tipos de erro
           if (errorData.error === "data and hash arguments required") {
@@ -216,12 +244,19 @@ function configuracoes() {
             errorMessage = "A senha atual informada está incorreta.";
           } else if (errorData.error === "Senha atual incorreta") {
             errorMessage = "A senha atual informada está incorreta.";
-          } else {
-            errorMessage = errorData.message || errorData.error || errorMessage;
+          } else if (errorData.message) {
+            errorMessage = errorData.message;
+          } else if (errorData.error) {
+            errorMessage = errorData.error;
           }
         } catch (parseError) {
+          console.error("Erro ao parsear resposta de erro:", parseError);
           // Se não conseguir fazer o parse, use o texto da resposta
-          errorMessage = errorText || errorMessage;
+          if (errorText.includes("Internal Server Error")) {
+            errorMessage = "Erro interno do servidor. Verifique se os dados estão corretos.";
+          } else {
+            errorMessage = errorText || errorMessage;
+          }
         }
         
         throw new Error(errorMessage);
@@ -229,13 +264,17 @@ function configuracoes() {
 
       // Processa a resposta de sucesso
       const responseText = await response.text();
+      console.log("Success response text:", responseText);
+      
       let responseData;
       
       // Tentamos fazer o parse apenas se houver conteúdo
       if (responseText) {
         try {
           responseData = JSON.parse(responseText);
+          console.log("Success response data:", responseData);
         } catch (parseError) {
+          console.log("Resposta não é JSON válido, mas operação foi bem-sucedida");
           // Se não conseguir fazer o parse, apenas continue sem o dado
         }
       }
