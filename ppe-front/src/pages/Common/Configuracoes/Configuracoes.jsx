@@ -210,7 +210,7 @@ function configuracoes() {
       console.log("Usuario ID:", usuario.id);
       console.log("Token presente:", !!headers.Authorization);
       
-      const response = await fetch(
+      let response = await fetch(
         `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
         {
           method: "POST",
@@ -222,7 +222,93 @@ function configuracoes() {
         }
       );
       
-      console.log("Response status:", response.status);
+      console.log("Tentativa 1 - Response status:", response.status);
+      
+      // Se der erro "data and hash arguments required", tentar estruturas alternativas
+      if (response.status === 500) {
+        const errorText = await response.text();
+        if (errorText.includes("data and hash arguments required")) {
+          console.log("Tentando estruturas alternativas...");
+          
+          // Tentativa 2: Estrutura com currentPassword/newPassword
+          const payload2 = {
+            currentPassword: senhaAtualTrimmed,
+            newPassword: novaSenhaTrimmed,
+          };
+          
+          console.log("Tentativa 2 - Payload:", payload2);
+          response = await fetch(
+            `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
+            {
+              method: "POST",
+              headers: {
+                ...headers,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(payload2),
+            }
+          );
+          
+          console.log("Tentativa 2 - Response status:", response.status);
+          
+          // Se ainda der erro, tentar estrutura com userId
+          if (response.status === 500) {
+            const payload3 = {
+              userId: usuario.id,
+              senhaAtual: senhaAtualTrimmed,
+              novaSenha: novaSenhaTrimmed,
+            };
+            
+            console.log("Tentativa 3 - Payload:", payload3);
+            response = await fetch(
+              `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
+              {
+                method: "POST",
+                headers: {
+                  ...headers,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload3),
+              }
+            );
+            
+            console.log("Tentativa 3 - Response status:", response.status);
+            
+            // Se ainda der erro, tentar PUT ao invés de POST
+            if (response.status === 500) {
+              console.log("Tentando método PUT...");
+              response = await fetch(
+                `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
+                {
+                  method: "PUT",
+                  headers: {
+                    ...headers,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(payload),
+                }
+              );
+              
+              console.log("Tentativa PUT - Response status:", response.status);
+            }
+          }
+        } else {
+          // Se não for o erro específico, fazer clone da response para ler novamente
+          response = await fetch(
+            `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
+            {
+              method: "POST",
+              headers: {
+                ...headers,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(payload),
+            }
+          );
+        }
+      }
+      
+      console.log("Final Response status:", response.status);
       console.log("Response headers:", Object.fromEntries(response.headers.entries()));
 
       // Verifica se a resposta foi bem-sucedida (status 2xx)
