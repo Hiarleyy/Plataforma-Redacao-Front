@@ -8,7 +8,7 @@ import axios from "axios";
 import useUseful from "../../utils/useUseful";
 import Message from "../../components/Message/Message";
 
-const baseURL = process.env.VITE_API_BASE_URL;
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 
 const ModalRegistrarNotas = ({

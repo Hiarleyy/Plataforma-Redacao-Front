@@ -4,7 +4,7 @@ import axios from "axios";
 import Message from "../Message/Message";
 import useUseful from "../../utils/useUseful"
 
-const baseURL = process.env.VITE_API_BASE_URL;
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const RegistrarDespesaModal = ({ isOpen, onClose }) => {
   const [status, setStatus] = useState("");

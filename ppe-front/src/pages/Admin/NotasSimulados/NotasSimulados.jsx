@@ -10,6 +10,8 @@ import ModalRegistrarNotas from "../../../components/ModalRegistrarNotas/ModalRe
 import DetailsCard from "../../../components/DetailsCard/DetailsCard";
 import NotasTabela from "../../../components/NotasTabela/notasTabela";
 import Pagination from "../../../components/Pagination/Pagination";
+
+
 function NotasSimulados() {
   const { simulado_id } = useParams();
   const [search, setSearch] = useState("");
@@ -74,18 +76,37 @@ function NotasSimulados() {
     };
 
     Data();
-  }, []); 
+  }, [simulado_id]); 
 
   function ModalNotas(alunoId, alunoNome) {
     setMostrarModal(true);
     const aluno = { id: alunoId, name: alunoNome };
     setAluno(aluno);
   }
-  function handleSalvarSimulado() {
-    console.log("Turma registrada:", turma);
+  const handleSalvarSimulado = async () => {
     setMostrarModal(false);
-    setTurma("");
-  }
+    // Refresh the data to update the students list
+    try {
+      const { getSimuladoById, getTurmaById, getNotasbySimuladoId } = fetchData();
+      const response = await getSimuladoById(simulado_id);
+      const turma = response.map((turma) => turma.turmaId);
+      const responseTurma = await getTurmaById(turma);
+      const notasAlunosSimulado = await getNotasbySimuladoId(simulado_id);
+
+      const alunosComNotas = notasAlunosSimulado.map((notas) =>
+        String(notas.usuarioId)
+      );
+
+      const todosAlunos = responseTurma.usuarios;
+      const semNotasAlunos = todosAlunos.filter(
+        (aluno) => !alunosComNotas.includes(String(aluno.id))
+      );
+
+      setAlunosSemNotas(semNotasAlunos);
+    } catch (error) {
+      console.error("Erro ao atualizar dados:", error);
+    }
+  };
 
   const formatarData = (data) => {
     if (!data) return "-";

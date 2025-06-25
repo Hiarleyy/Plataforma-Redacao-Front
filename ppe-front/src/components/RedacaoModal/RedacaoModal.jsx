@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Button from '../Button/Button';
 import styles from './styles.module.css'
 
-const baseURL = process.env.VITE_API_BASE_URL;
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 
 const RedacaoModal = ({ redacao, isOpen, onClose, activeTab, brasilFormatData }) => {
