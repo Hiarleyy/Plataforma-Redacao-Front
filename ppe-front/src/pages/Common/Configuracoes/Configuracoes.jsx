@@ -135,9 +135,28 @@ function configuracoes() {
       });
       return;
     }
+    
     if (novaSenha !== confirmarSenha) {
       setFormMessage({
         text: "As novas senhas não coincidem.",
+        type: "error",
+      });
+      return;
+    }
+    
+    // Validação básica da nova senha
+    if (novaSenha.length < 6) {
+      setFormMessage({
+        text: "A nova senha deve ter pelo menos 6 caracteres.",
+        type: "error",
+      });
+      return;
+    }
+    
+    // Verifica se a nova senha é diferente da atual
+    if (senhaAtual === novaSenha) {
+      setFormMessage({
+        text: "A nova senha deve ser diferente da senha atual.",
         type: "error",
       });
       return;
@@ -149,6 +168,13 @@ function configuracoes() {
       if (!usuario || !usuario.id) {
         throw new Error("Dados do usuário não disponíveis");
       }
+      
+      // Debug: log dos dados que estão sendo enviados
+      console.log("Dados sendo enviados:", {
+        userId: usuario.id,
+        senhaAtual: senhaAtual ? "***" : "vazio",
+        novaSenha: novaSenha ? "***" : "vazio",
+      });
       
       const response = await fetch(
         `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
@@ -171,11 +197,20 @@ function configuracoes() {
         const errorText = await response.text();
         let errorMessage = "Erro ao trocar a senha.";
         
+        // Debug: log da resposta de erro
+        console.error("Erro do servidor:", {
+          status: response.status,
+          statusText: response.statusText,
+          errorText: errorText
+        });
+        
         try {
           const errorData = JSON.parse(errorText);
-          errorMessage = errorData.message || errorMessage;
+          errorMessage = errorData.message || errorData.error || errorMessage;
         } catch (parseError) {
           console.error("Erro ao parsear resposta de erro:", parseError);
+          // Se não conseguir fazer o parse, use o texto da resposta
+          errorMessage = errorText || errorMessage;
         }
         
         throw new Error(errorMessage);
