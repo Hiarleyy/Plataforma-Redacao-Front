@@ -189,8 +189,8 @@ function configuracoes() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            currentPassword: senhaAtual,
-            newPassword: novaSenha,
+            senhaAtual: senhaAtual,
+            novaSenha: novaSenha,
           }),
           signal: controller.signal,
         }
