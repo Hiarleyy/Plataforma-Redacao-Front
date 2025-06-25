@@ -135,8 +135,21 @@ function configuracoes() {
       });
       return;
     }
+
+    // Remover espaços em branco e verificar novamente
+    const senhaAtualTrimmed = senhaAtual.trim();
+    const novaSenhaTrimmed = novaSenha.trim();
+    const confirmarSenhaTrimmed = confirmarSenha.trim();
+
+    if (!senhaAtualTrimmed || !novaSenhaTrimmed || !confirmarSenhaTrimmed) {
+      setFormMessage({
+        text: "Preencha todos os campos de senha (sem apenas espaços).",
+        type: "error",
+      });
+      return;
+    }
     
-    if (novaSenha !== confirmarSenha) {
+    if (novaSenhaTrimmed !== confirmarSenhaTrimmed) {
       setFormMessage({
         text: "As novas senhas não coincidem.",
         type: "error",
@@ -145,7 +158,7 @@ function configuracoes() {
     }
     
     // Validação básica da nova senha
-    if (novaSenha.length < 6) {
+    if (novaSenhaTrimmed.length < 6) {
       setFormMessage({
         text: "A nova senha deve ter pelo menos 6 caracteres.",
         type: "error",
@@ -154,7 +167,7 @@ function configuracoes() {
     }
     
     // Verifica se a nova senha é diferente da atual
-    if (senhaAtual === novaSenha) {
+    if (senhaAtualTrimmed === novaSenhaTrimmed) {
       setFormMessage({
         text: "A nova senha deve ser diferente da senha atual.",
         type: "error",
@@ -172,11 +185,19 @@ function configuracoes() {
       // Debug: log dos dados que estão sendo enviados
       console.log("Dados sendo enviados:", {
         userId: usuario.id,
-        senhaAtual: senhaAtual ? "***" : "vazio",
-        novaSenha: novaSenha ? "***" : "vazio",
+        senhaAtual: senhaAtualTrimmed ? "***" : "vazio",
+        novaSenha: novaSenhaTrimmed ? "***" : "vazio",
       });
       
-      const response = await fetch(
+      // Tentar primeiro com a estrutura mais simples
+      let payload = {
+        senhaAtual: senhaAtualTrimmed,
+        novaSenha: novaSenhaTrimmed,
+      };
+      
+      console.log("Tentativa 1 - Payload simples:", payload);
+      
+      let response = await fetch(
         `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
         {
           method: "POST",
@@ -184,12 +205,60 @@ function configuracoes() {
             ...getHeaders(),
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            senhaAtual,
-            novaSenha,
-          }),
+          body: JSON.stringify(payload),
         }
       );
+
+      // Se der erro 500, tentar com estrutura alternativa
+      if (response.status === 500) {
+        console.log("Tentativa 1 falhou, tentando estrutura alternativa...");
+        
+        payload = {
+          currentPassword: senhaAtualTrimmed,
+          newPassword: novaSenhaTrimmed,
+        };
+        
+        console.log("Tentativa 2 - Payload alternativo:", payload);
+        
+        response = await fetch(
+          `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
+          {
+            method: "POST",
+            headers: {
+              ...getHeaders(),
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+      }
+
+      // Se ainda der erro 500, tentar com estrutura mais complexa
+      if (response.status === 500) {
+        console.log("Tentativa 2 falhou, tentando estrutura mais complexa...");
+        
+        payload = {
+          userId: usuario.id,
+          senhaAtual: senhaAtualTrimmed,
+          novaSenha: novaSenhaTrimmed,
+          currentPassword: senhaAtualTrimmed,
+          newPassword: novaSenhaTrimmed,
+        };
+        
+        console.log("Tentativa 3 - Payload complexo:", payload);
+        
+        response = await fetch(
+          `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
+          {
+            method: "POST",
+            headers: {
+              ...getHeaders(),
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+      }
 
       // Verifica se a resposta foi bem-sucedida (status 2xx)
       if (!response.ok) {
@@ -201,12 +270,24 @@ function configuracoes() {
         console.error("Erro do servidor:", {
           status: response.status,
           statusText: response.statusText,
-          errorText: errorText
+          errorText: errorText,
+          url: response.url
         });
         
         try {
           const errorData = JSON.parse(errorText);
-          errorMessage = errorData.message || errorData.error || errorMessage;
+          console.error("Dados do erro parseados:", errorData);
+          
+          // Tratamento específico para diferentes tipos de erro
+          if (errorData.error === "data and hash arguments required") {
+            errorMessage = "Erro na validação da senha. Verifique se a senha atual está correta.";
+          } else if (errorData.error === "Invalid current password") {
+            errorMessage = "A senha atual informada está incorreta.";
+          } else if (errorData.error === "Senha atual incorreta") {
+            errorMessage = "A senha atual informada está incorreta.";
+          } else {
+            errorMessage = errorData.message || errorData.error || errorMessage;
+          }
         } catch (parseError) {
           console.error("Erro ao parsear resposta de erro:", parseError);
           // Se não conseguir fazer o parse, use o texto da resposta
