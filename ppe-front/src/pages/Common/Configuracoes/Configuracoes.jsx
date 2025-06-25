@@ -170,7 +170,7 @@ function configuracoes() {
       
       // Log da requisição para debug
       console.log("Enviando requisição de troca de senha:", {
-        url: `${baseURL}/usuarios/${usuario.id}/senha`,
+        url: `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
         userId: usuario.id,
         hasCurrentPassword: !!senhaAtual,
         hasNewPassword: !!novaSenha
@@ -181,9 +181,9 @@ function configuracoes() {
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 segundos
       
       const response = await fetch(
-        `${baseURL}/usuarios/${usuario.id}/senha`,
+        `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
             ...getHeaders(),
             'Content-Type': 'application/json',
