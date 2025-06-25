@@ -188,29 +188,13 @@ function configuracoes() {
         throw new Error("Token de autenticação não encontrado. Faça login novamente.");
       }
       
-      // Estrutura correta do payload conforme especificado
+      // Estrutura do payload
       const payload = {
         senhaAtual: senhaAtualTrimmed,
         novaSenha: novaSenhaTrimmed,
       };
       
-      // Debug: log das informações da requisição
-      console.log("=== DEBUG TROCAR SENHA ===");
-      console.log("URL:", `${baseURL}/usuarios/${usuario.id}/trocar-senha`);
-      console.log("Headers:", {
-        ...headers,
-        'Content-Type': 'application/json',
-      });
-      console.log("Payload:", {
-        senhaAtual: "***",
-        novaSenha: "***",
-        senhaAtualLength: senhaAtualTrimmed.length,
-        novaSenhaLength: novaSenhaTrimmed.length,
-      });
-      console.log("Usuario ID:", usuario.id);
-      console.log("Token presente:", !!headers.Authorization);
-      
-      let response = await fetch(
+      const response = await fetch(
         `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
         {
           method: "POST",
@@ -221,109 +205,16 @@ function configuracoes() {
           body: JSON.stringify(payload),
         }
       );
-      
-      console.log("Tentativa 1 - Response status:", response.status);
-      
-      // Se der erro "data and hash arguments required", tentar estruturas alternativas
-      if (response.status === 500) {
-        const errorText = await response.text();
-        if (errorText.includes("data and hash arguments required")) {
-          console.log("Tentando estruturas alternativas...");
-          
-          // Tentativa 2: Estrutura com currentPassword/newPassword
-          const payload2 = {
-            currentPassword: senhaAtualTrimmed,
-            newPassword: novaSenhaTrimmed,
-          };
-          
-          console.log("Tentativa 2 - Payload:", payload2);
-          response = await fetch(
-            `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
-            {
-              method: "POST",
-              headers: {
-                ...headers,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(payload2),
-            }
-          );
-          
-          console.log("Tentativa 2 - Response status:", response.status);
-          
-          // Se ainda der erro, tentar estrutura com userId
-          if (response.status === 500) {
-            const payload3 = {
-              userId: usuario.id,
-              senhaAtual: senhaAtualTrimmed,
-              novaSenha: novaSenhaTrimmed,
-            };
-            
-            console.log("Tentativa 3 - Payload:", payload3);
-            response = await fetch(
-              `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
-              {
-                method: "POST",
-                headers: {
-                  ...headers,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload3),
-              }
-            );
-            
-            console.log("Tentativa 3 - Response status:", response.status);
-            
-            // Se ainda der erro, tentar PUT ao invés de POST
-            if (response.status === 500) {
-              console.log("Tentando método PUT...");
-              response = await fetch(
-                `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
-                {
-                  method: "PUT",
-                  headers: {
-                    ...headers,
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(payload),
-                }
-              );
-              
-              console.log("Tentativa PUT - Response status:", response.status);
-            }
-          }
-        } else {
-          // Se não for o erro específico, fazer clone da response para ler novamente
-          response = await fetch(
-            `${baseURL}/usuarios/${usuario.id}/trocar-senha`,
-            {
-              method: "POST",
-              headers: {
-                ...headers,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(payload),
-            }
-          );
-        }
-      }
-      
-      console.log("Final Response status:", response.status);
-      console.log("Response headers:", Object.fromEntries(response.headers.entries()));
 
-      // Verifica se a resposta foi bem-sucedida (status 2xx)
+      // Verifica se a resposta foi bem-sucedida
       if (!response.ok) {
-        // Se não for 2xx, tenta obter a mensagem de erro do servidor
         const errorText = await response.text();
-        console.log("Error response text:", errorText);
         
         let errorMessage = "Erro ao trocar a senha.";
         
         try {
           const errorData = JSON.parse(errorText);
-          console.log("Error data parsed:", errorData);
           
-          // Tratamento específico para diferentes tipos de erro
           if (errorData.error === "data and hash arguments required") {
             errorMessage = "Erro na validação da senha. Verifique se a senha atual está correta.";
           } else if (errorData.error === "Invalid current password") {
@@ -336,8 +227,6 @@ function configuracoes() {
             errorMessage = errorData.error;
           }
         } catch (parseError) {
-          console.error("Erro ao parsear resposta de erro:", parseError);
-          // Se não conseguir fazer o parse, use o texto da resposta
           if (errorText.includes("Internal Server Error")) {
             errorMessage = "Erro interno do servidor. Verifique se os dados estão corretos.";
           } else {
@@ -350,18 +239,13 @@ function configuracoes() {
 
       // Processa a resposta de sucesso
       const responseText = await response.text();
-      console.log("Success response text:", responseText);
-      
       let responseData;
       
-      // Tentamos fazer o parse apenas se houver conteúdo
       if (responseText) {
         try {
           responseData = JSON.parse(responseText);
-          console.log("Success response data:", responseData);
         } catch (parseError) {
-          console.log("Resposta não é JSON válido, mas operação foi bem-sucedida");
-          // Se não conseguir fazer o parse, apenas continue sem o dado
+          // Se não conseguir fazer o parse, apenas continue
         }
       }
 
@@ -376,7 +260,6 @@ function configuracoes() {
         type: "success",
       });
     } catch (err) {
-      console.error("Erro ao trocar senha:", err);
       setFormMessage({
         text: err.message || "Erro ao trocar a senha. Por favor, tente novamente.",
         type: "error",
