@@ -7,7 +7,7 @@ import useUseful from '../../../utils/useUseful';
 import Title from '../../../components/Title/Title';
 import BTN from '../../../components/Button/Button';
 import InfoCard from '../../../components/infoCardRedacao/InfoCardRedacao';
-import SimuladoCard from '../../../components/SimuladoCard/SimuladoCard';
+
 import fetchData from "../../../utils/fetchData";
 import SimuladoModal from '../../../components/SimuladoModal/SimuladoModal';
 import Loading from '../../../components/Loading/Loading';
@@ -172,19 +172,25 @@ const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
               <Loading size="40px"/>
             </div>
           ) : (
-            <div className={styles.cards_container}>
+            <div className={styles.simulados_list}>
               {simulado.slice(-4).map((simulado) => (
-                <div key={simulado.id} onClick={() => handleSimuladoClick(simulado)} className={styles.card_clickable}>
-                  <SimuladoCard
-                    titulo={simulado.titulo}
-                    data={brasilFormatData(simulado.data)}
-                    status="Disponível"
-                    participantes={0}
-                    turmas={[]}
-                    color="#FFF5CC"
-                    gradient=""
-                    onRegistrarResultados={() => {}}
-                  />
+                <div 
+                  key={simulado.id} 
+                  className={styles.simulado_item}
+                  onClick={() => handleSimuladoClick(simulado)}
+                >
+                  <div className={styles.simulado_content}>
+                    <div className={styles.simulado_header}>
+                      <h3 className={styles.simulado_titulo}>{simulado.titulo}</h3>
+                      <span className={`${styles.simulado_status} ${styles.disponivel}`}>
+                        Disponível
+                      </span>
+                    </div>
+                    <div className={styles.simulado_info}>
+                      <p>📅 Data: {brasilFormatData(simulado.data)}</p>
+                      <p>👥 Participantes: 0</p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
