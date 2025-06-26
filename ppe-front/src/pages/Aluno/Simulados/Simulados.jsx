@@ -263,7 +263,7 @@ const Simulados = () => {
                   <div className={styles.simulado_header}>
                     <h3 className={styles.simulado_titulo}>{simulado.titulo}</h3>
                     <span className={`${styles.simulado_status} ${simulado.realizou ? styles.realizado : styles.disponivel}`}>
-                      {simulado.realizou ? "Realizado" : "Disponível"}
+                      {simulado.realizou ? "Corrigido" : "Pendente"}
                     </span>
                   </div>
                   <div className={styles.simulado_info}>
