@@ -31,29 +31,57 @@ const SimuladoModal = ({ simulado, isOpen, onClose, brasilFormatData }) => {
         setTurmaInfo(turmaData);
       }
 
-      // Buscar todas as notas do simulado
-      try {
-        const notas = await getNotasbySimuladoId(simulado.id);
-        setNotasSimulado(notas);
-      } catch (error) {
-        setNotasSimulado([]);
-      }
-
-      // Buscar nota específica do aluno
-      try {
-        // Buscar todas as notas e filtrar por usuário (mesmo padrão usado em Simulados.jsx)
-        const todasAsNotas = await getNotaSimulados();
-        if (todasAsNotas && Array.isArray(todasAsNotas)) {
-          const notaDoSimulado = todasAsNotas.find(nota => 
-            nota.usuarioId === alunoId && nota.simuladoId === simulado.id
-          );
-          setNotaAluno(notaDoSimulado || null);
+      // Se o simulado já tem informações processadas (da página Inicio), usar elas
+      if (simulado.totalAlunos !== undefined && simulado.realizou !== undefined) {
+        // Usar dados já processados
+        setNotasSimulado([]); // Array vazio já que não precisamos das notas individuais
+        
+        // Se o aluno realizou, criar objeto de nota baseado nas informações disponíveis
+        if (simulado.realizou && simulado.notaAluno) {
+          // Buscar detalhes completos da nota apenas se necessário
+          try {
+            const todasAsNotas = await getNotaSimulados();
+            if (todasAsNotas && Array.isArray(todasAsNotas)) {
+              const notaCompleta = todasAsNotas.find(nota => 
+                nota.usuarioId === alunoId && nota.simuladoId === simulado.id
+              );
+              setNotaAluno(notaCompleta || null);
+            }
+          } catch (error) {
+            // Se não conseguir buscar, criar um objeto básico com a nota
+            setNotaAluno({
+              notaGeral: simulado.notaAluno,
+              usuarioId: alunoId,
+              simuladoId: simulado.id
+            });
+          }
         } else {
           setNotaAluno(null);
         }
-      } catch (error) {
-        console.log('Erro ao buscar notas do aluno:', error);
-        setNotaAluno(null);
+      } else {
+        // Buscar todas as notas do simulado (modo original)
+        try {
+          const notas = await getNotasbySimuladoId(simulado.id);
+          setNotasSimulado(notas);
+        } catch (error) {
+          setNotasSimulado([]);
+        }
+
+        // Buscar nota específica do aluno
+        try {
+          const todasAsNotas = await getNotaSimulados();
+          if (todasAsNotas && Array.isArray(todasAsNotas)) {
+            const notaDoSimulado = todasAsNotas.find(nota => 
+              nota.usuarioId === alunoId && nota.simuladoId === simulado.id
+            );
+            setNotaAluno(notaDoSimulado || null);
+          } else {
+            setNotaAluno(null);
+          }
+        } catch (error) {
+          console.log('Erro ao buscar notas do aluno:', error);
+          setNotaAluno(null);
+        }
       }
     } catch (error) {
       console.error('Erro ao buscar detalhes do simulado:', error);
@@ -63,6 +91,36 @@ const SimuladoModal = ({ simulado, isOpen, onClose, brasilFormatData }) => {
   };
 
   const calcularEstatisticas = () => {
+    // Se o simulado já tem informações processadas (da página Inicio), usar elas
+    if (simulado.totalAlunos !== undefined) {
+      // Usar dados já disponíveis do simulado processado
+      const participantes = simulado.totalAlunos;
+      
+      // Para estatísticas mais detalhadas, usar notasSimulado se disponível
+      if (notasSimulado.length > 0) {
+        const notas = notasSimulado.map(n => n.notaGeral);
+        const mediaGeral = (notas.reduce((acc, nota) => acc + nota, 0) / participantes).toFixed(1);
+        const maiorNota = Math.max(...notas);
+        const menorNota = Math.min(...notas);
+        
+        return {
+          participantes,
+          mediaGeral,
+          maiorNota,
+          menorNota
+        };
+      } else {
+        // Se não temos notas detalhadas, retornar apenas participantes
+        return {
+          participantes,
+          mediaGeral: simulado.notaAluno || 0,
+          maiorNota: simulado.notaAluno || 0,
+          menorNota: simulado.notaAluno || 0
+        };
+      }
+    }
+    
+    // Modo original - calcular a partir das notas do simulado
     if (notasSimulado.length === 0) {
       return {
         participantes: 0,
@@ -112,7 +170,7 @@ const SimuladoModal = ({ simulado, isOpen, onClose, brasilFormatData }) => {
                   </div>                  <div className={styles.info_item}>
                     <span className={styles.label}>📝 Status:</span>
                     <span className={styles.value}>
-                      {notaAluno ? 'Realizado' : 'Não Realizado'}
+                      {(simulado.realizou !== undefined ? simulado.realizou : !!notaAluno) ? 'Realizado' : 'Não Realizado'}
                     </span>
                   </div>
                 </div>
@@ -134,21 +192,33 @@ const SimuladoModal = ({ simulado, isOpen, onClose, brasilFormatData }) => {
                     <span className={styles.stat_label}>Maior Nota</span>
                   </div>                  
                     <div className={styles.stat_card}>
-                    <span className={styles.stat_number}>{notaAluno ? notaAluno.notaGeral : 'N/A'}</span>
+                    <span className={styles.stat_number}>
+                      {notaAluno ? notaAluno.notaGeral : (simulado.notaAluno || 'N/A')}
+                    </span>
                     <span className={styles.stat_label}>Sua Nota</span>
                   </div>
                 </div>
               </div>                <div className={styles.nota_container}>
                 <h3>Seu Desempenho no Simulado</h3>
                     <div className={styles.nota_info}>
-                {notaAluno ? (
-                    <div className={styles.competencias}>
-                    <p>Competência 1: {notaAluno.competencia01}</p>
-                    <p>Competência 2: {notaAluno.competencia02}</p>
-                    <p>Competência 3: {notaAluno.competencia03}</p>
-                    <p>Competência 4: {notaAluno.competencia04}</p>
-                    <p>Competência 5: {notaAluno.competencia05}</p>
-                    <h4>Nota Final: {notaAluno.notaGeral}</h4>
+                {(notaAluno || (simulado.realizou && simulado.notaAluno)) ? (
+                  <div className={styles.competencias}>
+                    {notaAluno && notaAluno.competencia01 !== undefined ? (
+                      <>
+                        <p>Competência 1: {notaAluno.competencia01}</p>
+                        <p>Competência 2: {notaAluno.competencia02}</p>
+                        <p>Competência 3: {notaAluno.competencia03}</p>
+                        <p>Competência 4: {notaAluno.competencia04}</p>
+                        <p>Competência 5: {notaAluno.competencia05}</p>
+                        <h4>Nota Final: {notaAluno.notaGeral}</h4>
+                      </>
+                    ) : (
+                      <div className={styles.nota_basica}>
+                        <h4>✅ Simulado Realizado!</h4>
+                        <p>Sua nota final: <strong>{notaAluno?.notaGeral || simulado.notaAluno}</strong></p>
+                        <p><em>Detalhes das competências não disponíveis no momento.</em></p>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className={styles.sem_nota}>

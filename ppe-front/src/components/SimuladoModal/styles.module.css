@@ -598,41 +598,45 @@
     font-size: 0.8rem;
   }
   
-  .alunos_grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-  
-  .aluno_item,
-  .participant_item {
-    padding: 10px 12px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  .aluno_nome {
-    font-size: 0.9rem;
-  }
-  
-  .nota_badge {
-    font-size: 0.8rem;
-    padding: 3px 8px;
-  }
-  
-  .nota_info {
-    padding: 16px;
-    margin-bottom: 16px;
-  }
-  
-  .nota_info p {
-    font-size: 0.9rem;
-    padding: 8px;
-  }
+  .nota_basica {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #DA9E00;
+  text-align: center;
+}
 
-  .loading {
-    padding: 25px 15px;
-    font-size: 1rem;
-  }
+.nota_basica h4 {
+  color: #16A34A;
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+  border: none;
+  padding: 0;
+}
+
+.nota_basica p {
+  margin: 8px 0;
+  color: #e0e0e0;
+}
+
+.nota_basica strong {
+  color: #DA9E00;
+  font-size: 1.2rem;
+}
+
+.nota_basica em {
+  color: #a0a0a0;
+  font-size: 0.9rem;
+}
+
+.sem_nota {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #666;
+  text-align: center;
+  color: #a0a0a0;
+}
 }
 
 /* Responsividade - Telas pequenas */

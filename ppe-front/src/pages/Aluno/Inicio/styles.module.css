@@ -60,9 +60,32 @@
 
   .simulados_list {
     display: flex;
-    flex-direction: inline;
+    flex-direction: row;
     gap: 15px;
     width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px 0 20px 0;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .simulados_list::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .simulados_list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  .simulados_list::-webkit-scrollbar-thumb {
+    background: #DA9E00;
+    border-radius: 4px;
+  }
+
+  .simulados_list::-webkit-scrollbar-thumb:hover {
+    background: #b8820d;
   }
 
   .simulado_item {
@@ -74,6 +97,9 @@
     transition: all 0.3s ease;
     border: 1px solid #333;
     min-height: 160px;
+    min-width: 300px;
+    max-width: 300px;
+    flex: 0 0 300px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -242,13 +268,39 @@
 
   .simulados_list {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 5px 0 15px 0;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .simulados_list::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .simulados_list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+
+  .simulados_list::-webkit-scrollbar-thumb {
+    background: #DA9E00;
+    border-radius: 3px;
+  }
+
+  .simulados_list::-webkit-scrollbar-thumb:hover {
+    background: #b8820d;
   }
 
   .simulado_item {
     padding: 15px;
     min-height: auto;
+    min-width: 280px;
+    max-width: 280px;
+    flex: 0 0 280px;
     border-radius: 8px;
   }
 
