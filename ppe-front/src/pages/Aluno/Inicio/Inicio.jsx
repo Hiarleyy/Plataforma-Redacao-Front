@@ -18,6 +18,7 @@ const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
   const [usuario, setUsuario] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
   const [simulado,setSimulado] = useState([]);
+  const [notasSimulados, setNotasSimulados] = useState([]);
   const [selectedSimulado, setSelectedSimulado] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoadingSimulados, setIsLoadingSimulados] = useState(true);
@@ -48,12 +49,62 @@ const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
-      const { getRedacoes,getSimulados } = fetchData()
+      const { getRedacoes, getSimulados, getNotaSimulados, getNotasbySimuladoId } = fetchData()
       const alunoId = getAlunoId()
       const response = await getRedacoes(alunoId)
-      const responseSimulados = await getSimulados()
       const responseCorrigidas = await getRedacoes(alunoId, true)
-      setSimulado(responseSimulados)
+      
+      // Carregar simulados
+      const responseSimulados = await getSimulados()
+      
+      // Buscar todas as notas e filtrar por usuário
+      let notasAluno = [];
+      try {
+        const todasAsNotas = await getNotaSimulados();
+        if (todasAsNotas && Array.isArray(todasAsNotas)) {
+          // Filtrar apenas as notas do aluno logado
+          notasAluno = todasAsNotas.filter(nota => nota.usuarioId === alunoId);
+        }
+      } catch (error) {
+        console.log("Nenhuma nota encontrada ou endpoint não disponível");
+        notasAluno = [];
+      }
+      setNotasSimulados(notasAluno);
+      
+      // Processar simulados com informações adicionais
+      const simuladosProcessados = await Promise.all(
+        responseSimulados.map(async (simulado) => {
+          // Verificar se o aluno tem nota para este simulado
+          const notaSimulado = notasAluno.find(nota => nota.simuladoId === simulado.id);
+          
+          // Buscar quantos alunos fizeram este simulado
+          let totalAlunos = 0;
+          try {
+            const notasDoSimulado = await getNotasbySimuladoId(simulado.id);
+            totalAlunos = notasDoSimulado && Array.isArray(notasDoSimulado) ? notasDoSimulado.length : 0;
+          } catch (error) {
+            // Se não conseguir buscar, mostra apenas se o aluno fez ou não
+            totalAlunos = notaSimulado ? 1 : 0;
+          }
+          
+          return {
+            id: simulado.id,
+            titulo: simulado.titulo,
+            data: simulado.data,
+            totalAlunos: totalAlunos,
+            notaAluno: notaSimulado?.notaGeral || null,
+            realizou: !!notaSimulado,
+            // Manter todos os dados originais do simulado
+            ...simulado
+          };
+        })
+      );
+
+      const simuladosOrdenados = simuladosProcessados.sort(
+        (a, b) => new Date(b.data) - new Date(a.data)
+      );
+
+      setSimulado(simuladosOrdenados);
       setRedacoes(response)
       setRedacoesCorrigidas(responseCorrigidas)
       setIsLoadingSimulados(false)
@@ -182,13 +233,18 @@ const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
                   <div className={styles.simulado_content}>
                     <div className={styles.simulado_header}>
                       <h3 className={styles.simulado_titulo}>{simulado.titulo}</h3>
-                      <span className={`${styles.simulado_status} ${styles.disponivel}`}>
-                        Disponível
+                      <span className={`${styles.simulado_status} ${simulado.realizou ? styles.realizado : styles.disponivel}`}>
+                        {simulado.realizou ? "Corrigido" : "Pendente"}
                       </span>
                     </div>
                     <div className={styles.simulado_info}>
                       <p>📅 Data: {brasilFormatData(simulado.data)}</p>
-                      <p>👥 Participantes: 0</p>
+                      <p>👥 Participantes: {simulado.totalAlunos}</p>
+                      {simulado.realizou && simulado.notaAluno && (
+                        <p className={styles.nota_simulado}>
+                          🎯 Sua nota: <strong>{simulado.notaAluno}</strong>
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>

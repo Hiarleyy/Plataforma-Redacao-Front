@@ -60,7 +60,7 @@
 
   .simulados_list {
     display: flex;
-    flex-direction: column;
+    flex-direction: inline;
     gap: 15px;
     width: 100%;
   }
@@ -133,6 +133,24 @@
 
   .disponivel {
     background-color: #da9e00 !important;
+  }
+
+  .realizado {
+    background-color: #2e7d32 !important; /* Verde para realizado */
+  }
+
+  .nota_simulado {
+    background-color: #1e1e1e;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 3px solid #da9e00;
+    color: #e0e0e0 !important;
+    font-weight: 500;
+  }
+
+  .nota_simulado strong {
+    color: #da9e00 !important;
+    font-size: 16px;
   }
 
   .cards_container{
