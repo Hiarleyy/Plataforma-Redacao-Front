@@ -7,6 +7,7 @@ import useUseful from '../../../utils/useUseful';
 import Title from '../../../components/Title/Title';
 import BTN from '../../../components/Button/Button';
 import InfoCard from '../../../components/infoCardRedacao/InfoCardRedacao';
+import SimuladoCard from '../../../components/SimuladoCard/SimuladoCard';
 import fetchData from "../../../utils/fetchData";
 import SimuladoModal from '../../../components/SimuladoModal/SimuladoModal';
 import Loading from '../../../components/Loading/Loading';
@@ -174,11 +175,15 @@ const Inicio = () => {  const [redacoes, setRedacoes] = useState([]);
             <div className={styles.cards_container}>
               {simulado.slice(-4).map((simulado) => (
                 <div key={simulado.id} onClick={() => handleSimuladoClick(simulado)} className={styles.card_clickable}>
-                  <InfoCard
-                    text_size={{default: "14px", mobile: "14px" }}
-                    title={simulado.titulo}
-                    subtitle={brasilFormatData(simulado.data)}
-                    button={false}
+                  <SimuladoCard
+                    titulo={simulado.titulo}
+                    data={brasilFormatData(simulado.data)}
+                    status="Disponível"
+                    participantes={0}
+                    turmas={[]}
+                    color="#FFF5CC"
+                    gradient=""
+                    onRegistrarResultados={() => {}}
                   />
                 </div>
               ))}

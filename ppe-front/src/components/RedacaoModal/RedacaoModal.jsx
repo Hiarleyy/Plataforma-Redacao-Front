@@ -57,7 +57,7 @@ const RedacaoModal = ({ redacao, isOpen, onClose, activeTab, brasilFormatData })
           </div>
           {redacao.correcao && (
             <div className={styles.Button}>
-              <Link to={`http://${baseURL}/correcoes/download/${redacao.correcao?.id}`}>
+              <Link to={`${baseURL}/correcoes/download/${redacao.correcao?.id}`}>
                 <Button 
                   text_size="15px" 
                   text_color="#E0E0E0" 
