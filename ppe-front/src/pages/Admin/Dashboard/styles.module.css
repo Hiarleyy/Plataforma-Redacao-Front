@@ -99,50 +99,125 @@
 
 /* RESPONSIVO MOBILE */
 @media (max-width: 768px) {
+  .container {
+    height: auto;
+    min-height: 100vh;
+  }
+
   .container_desenpenho {
-    padding: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    gap: 20px;
   }
 
   .container_desenpenho .CardDashs_container {
     flex-direction: column;
+    gap: 15px;
   }
 
   .container_desenpenho .selects {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    gap: 20px;
+    height: auto;
+  }
+
+  .container_desenpenho .selects .taggle {
+    margin-top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
   .container_desenpenho .select_turma {
     width: 100%;
     left: 0;
-    margin-top: 20px;
+    margin-top: 0;
+    height: auto;
   }
 
   .container_desenpenho .select_turma select {
     width: 100%;
     margin-left: 0;
+    padding: 12px 16px;
+    font-size: 16px;
   }
 
   .container_desenpenho .container_graficos {
     flex-direction: column;
     gap: 20px;
+    height: auto;
   }
 
   .container_desenpenho .container_graficos .left {
     width: 100%;
+    padding: 15px;
   }
 
   .container_desenpenho .container_graficos .right {
     width: 100%;
+    padding: 15px;
   }
 
   .container_graficos .left h2 {
     left: 0;
     text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
   }
 
   .container_desenpenho .container_graficos .right .grafico_pizza {
     width: 100%;
     height: auto;
+    min-height: 300px;
+  }
+}
+
+/* Additional mobile breakpoints */
+@media (max-width: 480px) {
+  .container_desenpenho {
+    padding: 10px;
+    margin-top: 10px;
+  }
+
+  .container_desenpenho .CardDashs_container {
+    gap: 10px;
+  }
+
+  .container_desenpenho .selects {
+    gap: 15px;
+  }
+
+  .container_desenpenho .container_graficos {
+    gap: 15px;
+  }
+
+  .container_desenpenho .container_graficos .left,
+  .container_desenpenho .container_graficos .right {
+    padding: 10px;
+  }
+
+  .container_graficos .left h2 {
+    font-size: 1.1rem;
+  }
+}
+
+/* Tablet breakpoint */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container_desenpenho {
+    max-width: 95%;
+    padding: 15px;
+  }
+
+  .container_desenpenho .CardDashs_container {
+    gap: 30px;
+  }
+
+  .container_desenpenho .container_graficos .left {
+    width: 55%;
+  }
+
+  .container_desenpenho .container_graficos .right .grafico_pizza {
+    width: 400px;
   }
 }
