@@ -4,7 +4,7 @@ import Button from "../Button/Button"
 const SuporteCard = () => {
   const handleWhatsAppSupport = () => {
     // Número do WhatsApp (substitua pelo número real)
-    const phoneNumber = "5511999999999"
+    const phoneNumber = "559189653728"
     const message = "Olá! Preciso de ajuda com a Plataforma de Redação."
     
     // Redireciona para o WhatsApp
