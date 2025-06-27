@@ -17,11 +17,20 @@ const COLORS = {
 const Barras = ({ data, titulo }) => {
   return (
     <div style={{ width: "100%", height: 350 }}>
-      <h3 style={{ textAlign: "center", color: "#333", marginBottom: 10 }}>
-        {titulo}
-      </h3>
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={350}>
         <BarChart data={data} barCategoryGap="20%">
+          {/* Título */}
+          <text
+            x="50%"
+            y="5%"
+            textAnchor="middle"
+            dominantBaseline="central"
+            fontSize={16}
+            fill="#fff"
+            fontWeight="bold"
+          >
+            {titulo}
+          </text>
           <XAxis dataKey="name" />
           <YAxis domain={[0, 10]} />
           <Tooltip
