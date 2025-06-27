@@ -8,6 +8,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import styles from "./styles.module.css";
 
 const COLORS = {
   produzidos: "#4caf50",
@@ -16,21 +17,15 @@ const COLORS = {
 
 const Barras = ({ data, titulo }) => {
   return (
-    <div style={{ width: "100%", height: 350 }}>
-      <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={data} barCategoryGap="20%">
-          {/* Título */}
-          <text
-            x="50%"
-            y="5%"
-            textAnchor="middle"
-            dominantBaseline="central"
-            fontSize={16}
-            fill="#fff"
-            fontWeight="bold"
-          >
-            {titulo}
-          </text>
+    <div style={{ width: "100%" }}>
+      {titulo && (
+        <h3 className={styles.titulo} style={{ marginBottom: "20px" }}>
+          {titulo}
+        </h3>
+      )}
+      <div style={{ width: "100%", height: 300 }}>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={data} barCategoryGap="20%">
           <XAxis dataKey="name" />
           <YAxis domain={[0, 10]} />
           <Tooltip
@@ -55,6 +50,7 @@ const Barras = ({ data, titulo }) => {
           ))}
         </BarChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 };
