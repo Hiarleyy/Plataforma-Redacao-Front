@@ -61,7 +61,7 @@ const GraficoPizza = ({ data, titulo }) => {
             y="5%"
             textAnchor="middle"
             dominantBaseline="central"
-            fontSize={22}
+            fontSize={16}
             fill="#fff"
             fontWeight="bold"
           >
