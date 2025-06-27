@@ -221,7 +221,7 @@ const Dashboard = () => {
 
         <div className={styles.container_graficos}>
           <div className={styles.left}>
-            <h2>Análise de Desempenho por competências</h2>
+            <h3>Análise de Desempenho por competências</h3>
             <BarrasEmpilhadas data={dataCompetencia} />
             {dataTextos.length > 0 && (
               <GraficoBarras data={dataTextos} titulo="Análise de Textos Produzidos" />
