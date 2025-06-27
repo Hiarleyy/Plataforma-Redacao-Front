@@ -4,6 +4,7 @@
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   color: #ffffff;
+  margin-bottom: 40px;
 
   /* Variáveis personalizadas */
   --tooltip-bg: #2e2e2e;

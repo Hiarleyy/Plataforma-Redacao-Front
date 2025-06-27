@@ -74,37 +74,39 @@ const BarrasEmpilhadas = ({ data, titulo }) => {
   };
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <BarChart data={dadosTransformados} activeBar={{ fill: "transparent" }}>
-        <XAxis dataKey="competencia" className={styles.eixoX} />
-        <YAxis allowDecimals={false} className={styles.eixoY} />
-        <Tooltip
-          cursor={{ fill: "#111111" }}
-          contentStyle={{
-            backgroundColor: "#DA9E00",
-            border: "9px solid #DA9E00",
-            borderRadius: "16px",
-          }}
-          labelStyle={{ color: "var(--tooltip-label)" }}
-          itemStyle={{ color: "var(--tooltip-item)" }}
-          formatter={(value, name) => [`${value} aluno(s)`, `Nota ${name}`]}
-          labelFormatter={(label) => `Competência: ${label}`}
-        />
+    <div className={styles.graficoBarrasEmpilhadas}>
+      <ResponsiveContainer width="100%" height={400}>
+        <BarChart data={dadosTransformados} activeBar={{ fill: "transparent" }}>
+          <XAxis dataKey="competencia" className={styles.eixoX} />
+          <YAxis allowDecimals={false} className={styles.eixoY} />
+          <Tooltip
+            cursor={{ fill: "#111111" }}
+            contentStyle={{
+              backgroundColor: "#DA9E00",
+              border: "9px solid #DA9E00",
+              borderRadius: "16px",
+            }}
+            labelStyle={{ color: "var(--tooltip-label)" }}
+            itemStyle={{ color: "var(--tooltip-item)" }}
+            formatter={(value, name) => [`${value} aluno(s)`, `Nota ${name}`]}
+            labelFormatter={(label) => `Competência: ${label}`}
+          />
 
-        <Legend />
-        {NOTAS.map((nota) => (
-          <Bar
-            key={nota}
-            dataKey={nota}
-            stackId="a"
-            fill={COLORS[nota]}
-            name={`${nota}`}
-          >
-            <LabelList dataKey={nota} content={renderLabel} />
-          </Bar>
-        ))}
-      </BarChart>
-    </ResponsiveContainer>
+          <Legend />
+          {NOTAS.map((nota) => (
+            <Bar
+              key={nota}
+              dataKey={nota}
+              stackId="a"
+              fill={COLORS[nota]}
+              name={`${nota}`}
+            >
+              <LabelList dataKey={nota} content={renderLabel} />
+            </Bar>
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
