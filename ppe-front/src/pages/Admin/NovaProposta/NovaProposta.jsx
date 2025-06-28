@@ -171,7 +171,7 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
       navigate("/admin/nova-proposta")
       return
     }
-    await axios.delete(`http://localhost:3000/propostas/${id}`)
+    await axios.delete(`${baseURL}/propostas/${id}`)
     navigate("/admin/nova-proposta")
   }
 
