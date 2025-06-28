@@ -52,15 +52,16 @@
   height: 60%;
 }
 
-/* Estilos para o container de botões */
+/* Estilos para o container de botões - Desktop */
 .buttons_container {
   display: flex;
+  flex-direction: row;
   gap: 8px;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* Estilos para botões mobile */
+/* Estilos para botões desktop */
 .container_search button {
   flex: 1;
   min-width: 0;
@@ -283,7 +284,9 @@
     flex-wrap: wrap;
   }
 
+  /* Manter layout horizontal para tablets */
   .buttons_container {
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 10px;
@@ -293,6 +296,24 @@
     flex: 1;
     min-width: 120px;
     height: 50px;
+  }
+}
+
+/* Garantir layout desktop para telas maiores */
+@media (min-width: 1025px) {
+  .buttons_container {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .container_search button {
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
 
