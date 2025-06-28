@@ -1,6 +1,7 @@
 .container {
   width: 100%;
   height: 100vh;
+  overflow-x: hidden;
 }
 
 .main_content {
@@ -49,33 +50,104 @@
   height: 60%;
 }
 
+/* Estilos para botões mobile */
+.container_search button {
+  flex: 1;
+  min-width: 0;
+}
+
 @media (max-width: 768px) {
   .container {
     height: fit-content;
-
+    min-height: 100vh;
   }
   
   .main_content {
     flex-direction: column;
-    gap: 40px;
-    padding: 20px;
-    padding-bottom: 100px;
+    gap: 20px;
+    padding: 15px;
+    padding-bottom: 80px;
+    height: auto;
   }
   
   .main_content .container_pag {
     padding: 15px;
-    gap: 40px;
+    border-radius: 8px;
+  }
+
+  .main_content .container_pag h1 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+
+  .main_content .container_pag p {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
   }
   
   .container_pag .CardDashs_container {
     flex-direction: column;
+    gap: 15px;
   }
+  
   .container_pag .container_search {
     flex-direction: column;
     gap: 12px;
+    height: auto;
+    margin-top: 15px;
   }
-  .container_pag .container_table{
+
+  .container_pag .container_search button {
+    width: 100% !important;
+    max-width: none !important;
+    height: 45px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .container_pag .container_table {
     height: fit-content;
-    margin-top: 120px;
+    margin-top: 20px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .main_content {
+    padding: 10px;
+    gap: 15px;
+  }
+  
+  .main_content .container_pag {
+    padding: 12px;
+  }
+
+  .main_content .container_pag h1 {
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+  }
+
+  .main_content .container_pag p {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  
+  .container_pag .CardDashs_container {
+    gap: 12px;
+  }
+  
+  .container_pag .container_search {
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .container_pag .container_search button {
+    height: 42px !important;
+    font-size: 0.85rem !important;
+    padding: 8px 12px !important;
+  }
+  
+  .container_pag .container_table {
+    margin-top: 15px;
   }
 }
