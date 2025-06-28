@@ -127,28 +127,30 @@ const Pagamentos = () => {
             >
               <i className="fa-solid fa-magnifying-glass"></i>
             </Input>
-            <Button
-              bg_color="#DA9E00"
-              color="#ffffff"
-              height_size="50px"
-              width_size="400px"
-              padding_sz="10px"
-              onClick={() => setIsOpen(true)}
-            >
-              <i className="fa-solid fa-plus"></i>
-              Registrar Pagamento
-            </Button>
-            <Button
-              bg_color="#fb8500"
-              color="#ffffff"
-              height_size="50px"
-              width_size="400px"
-              padding_sz="10px"
-              onClick={handleResultados}
-            >
-              <i className="fa-solid fa-chart-line"></i>
-              Análise Gráfica
-            </Button>
+            <div className={styles.buttons_container}>
+              <Button
+                bg_color="#DA9E00"
+                color="#ffffff"
+                height_size="50px"
+                width_size="100%"
+                padding_sz="10px"
+                onClick={() => setIsOpen(true)}
+              >
+                <i className="fa-solid fa-plus"></i>
+                Registrar Pagamento
+              </Button>
+              <Button
+                bg_color="#fb8500"
+                color="#ffffff"
+                height_size="50px"
+                width_size="100%"
+                padding_sz="10px"
+                onClick={handleResultados}
+              >
+                <i className="fa-solid fa-chart-line"></i>
+                Análise Gráfica
+              </Button>
+            </div>
           </div>
           <div className={styles.container_table}>
             <Table dados={pagamentosFiltrados} />
