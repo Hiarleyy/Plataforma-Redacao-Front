@@ -109,9 +109,7 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
 
     try { 
       const response = await axios.post(`${baseURL}/propostas`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: getHeaders(),
       });
 
       // Limpar o formulário após o sucesso
