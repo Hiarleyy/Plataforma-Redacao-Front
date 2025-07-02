@@ -32,6 +32,7 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProposta, setSelectedProposta] = useState(null);
   const { brasilFormatData } = useUseful();
+   const { getHeaders } = useUseful()
 
   const onDrop = async (acceptedFiles) => {
     const file = acceptedFiles[0];
