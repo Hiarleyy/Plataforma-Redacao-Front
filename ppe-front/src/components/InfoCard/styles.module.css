@@ -107,6 +107,10 @@
     border-width: 3px;
   }
 
+  .container .bg_left {
+    width:70%;
+  }
+
   .container .infos .title {
     font-size: 16px;
   }
