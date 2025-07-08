@@ -29,8 +29,30 @@ const InfoCard = ({
         {subtitle === undefined ? null : <p className={styles.subtitle}>{subtitle}</p>}
       </div>
 
-      {button === true ? <button className={styles.btn} onClick={onClick} >EXCLUIR</button> : null}
-      {button_registrar === true ? <button className={styles.btn} onClick={onClick} >REGISTRAR NOTA</button> : null}
+      {button === true ? (
+        <button 
+          className={styles.btn} 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (onClick) onClick(e);
+          }}
+        >
+          EXCLUIR
+        </button>
+      ) : null}
+      {button_registrar === true ? (
+        <button 
+          className={styles.btn} 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (onClick) onClick(e);
+          }}
+        >
+          REGISTRAR NOTA
+        </button>
+      ) : null}
     </Link>
   )
 }

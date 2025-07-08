@@ -14,6 +14,7 @@ import Message from "../../../components/Message/Message";
 import fetchData from "../../../utils/fetchData";
 import { useNavigate } from "react-router-dom";
 import RedacaoModal from "../../../components/RedacaoModal/RedacaoModal";
+import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 import useUseful from "../../../utils/useUseful";
 const baseURL = import.meta.env.VITE_API_BASE_URL
 
@@ -40,6 +41,10 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
   // Estado para o modal de redação
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRedacao, setSelectedRedacao] = useState(null);
+  
+  // Estados para o modal de delete
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [redacaoToDelete, setRedacaoToDelete] = useState(null);
   
   const { brasilFormatData } = useUseful();
   const { getHeaders } = useUseful()
@@ -249,6 +254,73 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     setSelectedRedacao(null);
   };
 
+  // Função para abrir o modal de delete
+  const handleDeleteRedacao = (redacao) => {
+    setRedacaoToDelete(redacao);
+    setDeleteModalOpen(true);
+  };
+
+  // Função para confirmar o delete da redação
+  const confirmDeleteRedacao = async () => {
+    if (!redacaoToDelete) return;
+    
+    try {
+      await axios.delete(`${baseURL}/redacoes/${redacaoToDelete.id}`, {
+        headers: getHeaders()
+      });
+      
+      setFormMessage({
+        type: "success",
+        text: "Redação deletada com sucesso!"
+      });
+      
+      // Atualizar a lista de redações
+      const alunoId = getAlunoId();
+      const { getRedacoesUser } = fetchData();
+      const redacoesData = await getRedacoesUser(alunoId);
+      if (redacoesData) {
+        const options = await Promise.all(
+          redacoesData.map(async item => {
+            let correcao = null;
+            try {
+              const correcaoResponse = await axios.get(`${baseURL}/correcoes/redacao/${item.id}`);
+              if (correcaoResponse.data && correcaoResponse.data.data) {
+                correcao = correcaoResponse.data.data;
+              }
+            } catch (error) {
+              console.log("Redação sem correção:", item.id);
+            }
+            return {
+              id: item.id,
+              titulo: item.titulo,
+              status: item.status,
+              data: item.data,
+              usuarioId: item.usuarioId,
+              correcao: correcao
+            };
+          })
+        ).then(result => result.sort((a, b) => new Date(b.data) - new Date(a.data)));
+        setRedacao(options);
+      }
+      
+    } catch (error) {
+      console.error("Erro ao deletar redação:", error);
+      setFormMessage({
+        type: "error",
+        text: "Erro ao deletar redação. Tente novamente."
+      });
+    } finally {
+      setDeleteModalOpen(false);
+      setRedacaoToDelete(null);
+    }
+  };
+
+  // Função para cancelar o delete
+  const cancelDeleteRedacao = () => {
+    setDeleteModalOpen(false);
+    setRedacaoToDelete(null);
+  };
+
   // Função para verificar se a tela é mobile
   const checkIfMobile = useCallback(() => {
     setIsMobile(window.innerWidth <= 768);
@@ -279,7 +351,12 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
                           title={redacao.titulo}
                           subtitle={formatarData(redacao.data)}
                           link="#"
-                          button={false}
+                          button={true}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleDeleteRedacao(redacao);
+                          }}
                           infoCardOnClick={(e) => {
                             e.preventDefault();
                             handleRedacaoClick(redacao);
@@ -441,6 +518,14 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
           </div>
         </div>
       )}
+
+      {/* Modal para confirmação de delete */}
+      <DeleteModal 
+        message="Você tem certeza que deseja excluir esta redação?"
+        modalIsClicked={deleteModalOpen}
+        deleteOnClick={confirmDeleteRedacao}
+        cancelOnClick={cancelDeleteRedacao}
+      />
 
       {/* Modal para visualização da redação */}
       <RedacaoModal 
