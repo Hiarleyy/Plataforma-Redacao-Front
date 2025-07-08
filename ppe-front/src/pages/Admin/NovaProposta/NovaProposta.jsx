@@ -14,6 +14,7 @@ import Message from "../../../components/Message/Message";
 import fetchData from "../../../utils/fetchData";
 import { useNavigate } from "react-router-dom";
 import RedacaoModal from "../../../components/RedacaoModal/RedacaoModal";
+import DeleteModal from "../../../components/DeleteModal/DeleteModal";
 import useUseful from "../../../utils/useUseful";
 const baseURL = import.meta.env.VITE_API_BASE_URL
 
@@ -31,6 +32,9 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
   // Estado para o modal de proposta
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProposta, setSelectedProposta] = useState(null);
+  // Estados para o modal de delete
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [propostaToDelete, setPropostaToDelete] = useState(null);
   const { brasilFormatData } = useUseful();
    const { getHeaders } = useUseful()
 
@@ -174,6 +178,58 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     navigate("/admin/nova-proposta")
   }
 
+  // Função para abrir o modal de delete
+  const handleDeleteProposta = (proposta) => {
+    setPropostaToDelete(proposta);
+    setDeleteModalOpen(true);
+  };
+
+  // Função para confirmar o delete da proposta
+  const confirmDeleteProposta = async () => {
+    if (!propostaToDelete) return;
+    
+    try {
+      await axios.delete(`${baseURL}/propostas/${propostaToDelete.id}`, {
+        headers: getHeaders()
+      });
+      
+      setFormMessage({
+        type: "success",
+        text: "Proposta deletada com sucesso!"
+      });
+      
+      // Atualizar a lista de propostas
+      const { getPropostas } = fetchData();
+      const propostasResponse = await getPropostas();
+      if (propostasResponse) {
+        const options = propostasResponse.map(item =>({
+          id: item.id,
+          tema: item.tema,
+          data: item.data
+        })).sort((a, b) => new Date(b.data) - new Date(a.data));
+        setProposta(options);
+      } else {
+        setProposta([]);
+      }
+      
+    } catch (error) {
+      console.error("Erro ao deletar proposta:", error);
+      setFormMessage({
+        type: "error",
+        text: "Erro ao deletar proposta. Tente novamente."
+      });
+    } finally {
+      setDeleteModalOpen(false);
+      setPropostaToDelete(null);
+    }
+  };
+
+  // Função para cancelar o delete
+  const cancelDeleteProposta = () => {
+    setDeleteModalOpen(false);
+    setPropostaToDelete(null);
+  };
+
   // Função para abrir o modal com a proposta selecionada
   const handlePropostaClick = (proposta) => {
     setSelectedProposta(proposta);
@@ -216,7 +272,12 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
                           title={proposta.tema}
                           subtitle={formatarData(proposta.data)}
                           link="#"
-                          button={false}
+                          button={true}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleDeleteProposta(proposta);
+                          }}
                           infoCardOnClick={(e) => {
                             e.preventDefault();
                             handlePropostaClick(proposta);
@@ -374,7 +435,17 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
             </div>
           </div>
         </div>
-      )}      {/* Modal para visualização da proposta */}
+      )}
+
+      {/* Modal para confirmação de delete */}
+      <DeleteModal 
+        message="Você tem certeza que deseja excluir esta proposta?"
+        modalIsClicked={deleteModalOpen}
+        deleteOnClick={confirmDeleteProposta}
+        cancelOnClick={cancelDeleteProposta}
+      />
+
+      {/* Modal para visualização da proposta */}
       <RedacaoModal 
         redacao={selectedProposta}
         isOpen={modalOpen}
