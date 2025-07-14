@@ -28,83 +28,62 @@ const Dashboard = () => {
   const [simulados, setSimulados] = useState([]);
   const [alunos, setAlunos] = useState([]);
   const [taggle, setTaggle] = useState("Análise Mensal");
-  const [loading, setLoading] = useState(true);
-  const [loadingData, setLoadingData] = useState(false);
 
   // 🔁 Carrega dados iniciais
   useEffect(() => {
     const loadInitialData = async () => {
-      try {
-        const {
-          getTurmas,
-          getSimulados,
-          getAlunos,
-          getNotaSimulados,
-          getSimuladoByIdTurma,
-        } = fetchData();
+      const {
+        getTurmas,
+        getSimulados,
+        getAlunos,
+        getNotaSimulados,
+        getSimuladoByIdTurma,
+      } = fetchData();
 
-        const [turmasData, simuladosData, alunosData] = await Promise.all([
-          getTurmas(),
-          getSimulados(),
-          getAlunos()
-        ]);
+      const turmasData = await getTurmas();
+      const simuladosData = await getSimulados();
+      const alunosData = await getAlunos();
 
-        const turmasFormatadas = turmasData?.map((t) => ({
-          id: t.id,
-          nome: t.nome,
-        })) || [];
+      const turmasFormatadas = turmasData.map((t) => ({
+        id: t.id,
+        nome: t.nome,
+      }));
 
-        setTurmas(turmasFormatadas);
-        setSimulados(simuladosData || []);
-        setAlunos(alunosData || []);
+      setTurmas(turmasFormatadas);
+      setSimulados(simuladosData);
+      setAlunos(alunosData);
 
-        if (turmasFormatadas.length > 0) {
-          const turmaInicial = turmasFormatadas[0].id;
-          setIdTurma(turmaInicial);
+      if (turmasFormatadas.length > 0) {
+        const turmaInicial = turmasFormatadas[0].id;
+        setIdTurma(turmaInicial);
 
-          // Já carrega os dados da análise mensal
-          const inicioMes = startOfMonth(new Date());
-          const fimMes = endOfMonth(new Date());
+        // Já carrega os dados da análise mensal
+        const inicioMes = startOfMonth(new Date());
+        const fimMes = endOfMonth(new Date());
 
-          const [simuladosDaTurma, notasSimulados] = await Promise.all([
-            getSimuladoByIdTurma(turmaInicial),
-            getNotaSimulados()
-          ]);
+        const simuladosDaTurma = await getSimuladoByIdTurma(turmaInicial);
+        const notasSimulados = await getNotaSimulados();
 
-          const simuladosDoMes = (simuladosDaTurma || []).filter((simulado) => {
-            if (!simulado.data) return false;
-            try {
-              const data = parseISO(simulado.data);
-              return data >= inicioMes && data <= fimMes;
-            } catch (error) {
-              console.warn('Erro ao parsear data do simulado:', simulado.data);
-              return false;
-            }
-          });
+        const simuladosDoMes = simuladosDaTurma.filter((simulado) => {
+          const data = parseISO(simulado.data);
+          return data >= inicioMes && data <= fimMes;
+        });
 
-          const idsSimuladosMes = simuladosDoMes.map((s) => s.id);
+        const idsSimuladosMes = simuladosDoMes.map((s) => s.id);
 
-          const notas = (notasSimulados || [])
-            .filter((nota) => nota && idsSimuladosMes.includes(nota.simuladoId))
-            .map((n) => ({
-              usuarioId: n.usuarioId,
-              competencia01: n.competencia01 || 0,
-              competencia02: n.competencia02 || 0,
-              competencia03: n.competencia03 || 0,
-              competencia04: n.competencia04 || 0,
-              competencia05: n.competencia05 || 0,
-              nota: n.notaGeral || 0,
-            }));
+        const notas = notasSimulados
+          .filter((nota) => idsSimuladosMes.includes(nota.simuladoId))
+          .map((n) => ({
+            usuarioId: n.usuarioId,
+            competencia01: n.competencia01,
+            competencia02: n.competencia02,
+            competencia03: n.competencia03,
+            competencia04: n.competencia04,
+            competencia05: n.competencia05,
+            nota: n.notaGeral,
+          }));
 
-          setDataCompetencia(notas);
-          setDataTextos([]);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar dados iniciais:', error);
-        setTurmas([]);
-        setSimulados([]);
-        setAlunos([]);
-        setDataCompetencia([]);
+        setDataCompetencia(notas);
         setDataTextos([]);
       }
     };
@@ -117,132 +96,95 @@ const Dashboard = () => {
     if (!IdTurma) return;
 
     const fetchMensal = async () => {
-      try {
-        const {
-          getNotaSimulados,
-          getSimuladoByIdTurma,
-        } = fetchData();
+      const {
+        getNotaSimulados,
+        getSimuladoByIdTurma,
+      } = fetchData();
 
-        const inicioMes = startOfMonth(new Date());
-        const fimMes = endOfMonth(new Date());
+      const inicioMes = startOfMonth(new Date());
+      const fimMes = endOfMonth(new Date());
 
-        const [simuladosTurma, notasAll] = await Promise.all([
-          getSimuladoByIdTurma(IdTurma),
-          getNotaSimulados()
-        ]);
+      const simuladosTurma = await getSimuladoByIdTurma(IdTurma);
+      const notasAll = await getNotaSimulados();
 
-        const simuladosDoMes = (simuladosTurma || []).filter((simulado) => {
-          if (!simulado.data) return false;
-          try {
-            const data = parseISO(simulado.data);
-            return data >= inicioMes && data <= fimMes;
-          } catch (error) {
-            console.warn('Erro ao parsear data do simulado:', simulado.data);
-            return false;
-          }
-        });
+      const simuladosDoMes = simuladosTurma.filter((simulado) => {
+        const data = parseISO(simulado.data);
+        return data >= inicioMes && data <= fimMes;
+      });
 
-        const idsSimuladosMes = simuladosDoMes.map((s) => s.id);
+      const idsSimuladosMes = simuladosDoMes.map((s) => s.id);
 
-        const notas = (notasAll || [])
-          .filter((nota) => nota && idsSimuladosMes.includes(nota.simuladoId))
-          .map((n) => ({
-            usuarioId: n.usuarioId,
-            competencia01: n.competencia01 || 0,
-            competencia02: n.competencia02 || 0,
-            competencia03: n.competencia03 || 0,
-            competencia04: n.competencia04 || 0,
-            competencia05: n.competencia05 || 0,
-            nota: n.notaGeral || 0,
-          }));
+      const notas = notasAll
+        .filter((nota) => idsSimuladosMes.includes(nota.simuladoId))
+        .map((n) => ({
+          usuarioId: n.usuarioId,
+          competencia01: n.competencia01,
+          competencia02: n.competencia02,
+          competencia03: n.competencia03,
+          competencia04: n.competencia04,
+          competencia05: n.competencia05,
+          nota: n.notaGeral,
+        }));
 
-        setDataCompetencia(notas);
-        setDataTextos([]);
-      } catch (error) {
-        console.error('Erro ao buscar dados mensais:', error);
-        setDataCompetencia([]);
-        setDataTextos([]);
-      }
+      setDataCompetencia(notas);
+      setDataTextos([]);
     };
 
     const fetchSemanal = async () => {
-      try {
-        const {
-          getTurmaById,
-          getRedacoes,
-          getCorrecoes,
-        } = fetchData();
+      const {
+        getTurmaById,
+        getRedacoes,
+        getCorrecoes,
+      } = fetchData();
 
-        const inicioSemana = startOfWeek(new Date(), { weekStartsOn: 0 });
-        const fimSemana = endOfWeek(new Date(), { weekStartsOn: 0 });
+      const inicioSemana = startOfWeek(new Date(), { weekStartsOn: 0 });
+      const fimSemana = endOfWeek(new Date(), { weekStartsOn: 0 });
 
-        const [turma, redacoes, correcoes] = await Promise.all([
-          getTurmaById(IdTurma),
-          getRedacoes(),
-          getCorrecoes()
-        ]);
+      const turma = await getTurmaById(IdTurma);
+      const redacoes = await getRedacoes();
+      const correcoes = await getCorrecoes();
 
-        const usuariosTurmaData = turma?.usuarios || [];
-        setUsuariosTurma(usuariosTurmaData);
+      setUsuariosTurma(turma.usuarios || []);
 
-        const redacoesSemana = (redacoes || []).filter((r) => {
-          if (!r.data) return false;
-          try {
-            const data = new Date(r.data);
-            return data >= inicioSemana && data <= fimSemana;
-          } catch (error) {
-            console.warn('Erro ao parsear data da redação:', r.data);
-            return false;
-          }
-        });
+      const redacoesSemana = redacoes.filter((r) => {
+        const data = new Date(r.data);
+        return data >= inicioSemana && data <= fimSemana;
+      });
 
-        const idsEnviadas = new Set(redacoesSemana.map((r) => r.usuarioId));
-        const produzidos = usuariosTurmaData.filter((aluno) => idsEnviadas.has(aluno.id)).length;
+      const idsEnviadas = new Set(redacoesSemana.map((r) => r.usuarioId));
+      const alunosTurma = turma.usuarios || [];
+      const produzidos = alunosTurma.filter((aluno) => idsEnviadas.has(aluno.id)).length;
 
-        setDataTextos([
-          {
-            name: "Produção de Textos",
-            produzidos,
-            semProducao: usuariosTurmaData.length - produzidos,
-          },
-        ]);
+      setDataTextos([
+        {
+          name: "Produção de Textos",
+          produzidos,
+          semProducao: alunosTurma.length - produzidos,
+        },
+      ]);
 
-        const graficoCompetencia = (correcoes || [])
-          .filter((c) => {
-            if (!c.redacao?.usuario?.turma?.id || !c.redacao?.data) return false;
-            
-            const turmaOK = c.redacao.usuario.turma.id === turma?.id;
-            let dataOK = false;
-            
-            try {
-              dataOK = isWithinInterval(parseISO(c.redacao.data), {
-                start: inicioSemana,
-                end: fimSemana,
-              });
-            } catch (error) {
-              console.warn('Erro ao parsear data da correção:', c.redacao.data);
-              return false;
-            }
-            
-            return turmaOK && dataOK;
-          })
-          .map((c) => ({
-            aluno: c.redacao?.usuario?.nome || 'N/A',
-            competencia01: c.competencia01 || 0,
-            competencia02: c.competencia02 || 0,
-            competencia03: c.competencia03 || 0,
-            competencia04: c.competencia04 || 0,
-            competencia05: c.competencia05 || 0,
-            turma: c.redacao?.usuario?.turma?.nome || 'N/A',
-            nota: c.nota || 0,
-          }));
+      const graficoCompetencia = correcoes
+        .filter((c) => {
+          const turmaOK = c.redacao?.usuario?.turma?.id === turma.id;
+          const dataOK = c.redacao?.data &&
+            isWithinInterval(parseISO(c.redacao.data), {
+              start: inicioSemana,
+              end: fimSemana,
+            });
+          return turmaOK && dataOK;
+        })
+        .map((c) => ({
+          aluno: c.redacao.usuario.nome,
+          competencia01: c.competencia01,
+          competencia02: c.competencia02,
+          competencia03: c.competencia03,
+          competencia04: c.competencia04,
+          competencia05: c.competencia05,
+          turma: c.redacao.usuario.turma.nome,
+          nota: c.nota,
+        }));
 
-        setDataCompetencia(graficoCompetencia);
-      } catch (error) {
-        console.error('Erro ao buscar dados semanais:', error);
-        setDataCompetencia([]);
-        setDataTextos([]);
-      }
+      setDataCompetencia(graficoCompetencia);
     };
 
     if (taggle === "Análise Mensal") {
@@ -257,9 +199,9 @@ const Dashboard = () => {
       <Title title="Dashboard" />
       <div className={styles.container_desenpenho}>
         <div className={styles.CardDashs_container}>
-          <CardDash title="Total de alunos" content={alunos?.length || 0} color="#1A1A1A" />
-          <CardDash title="Total de turmas" content={turmas?.length || 0} color="#1A1A1A" />
-          <CardDash title="Total de simulados" content={simulados?.length || 0} color="#1A1A1A" />
+          <CardDash title="Total de alunos" content={alunos.length} color="#1A1A1A" />
+          <CardDash title="Total de turmas" content={turmas.length} color="#1A1A1A" />
+          <CardDash title="Total de simulados" content={simulados.length} color="#1A1A1A" />
         </div>
 
         <div className={styles.selects}>
@@ -268,8 +210,7 @@ const Dashboard = () => {
           </div>
           <div className={styles.select_turma}>
             <select value={IdTurma || ""} onChange={(e) => setIdTurma(e.target.value)}>
-              <option value="">Selecione uma turma</option>
-              {turmas?.map((t) => (
+              {turmas.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.nome}
                 </option>
@@ -281,26 +222,14 @@ const Dashboard = () => {
         <div className={styles.container_graficos}>
           <div className={styles.left}>
             <h3>Análise de Desempenho por competências</h3>
-            {dataCompetencia?.length > 0 ? (
-              <BarrasEmpilhadas data={dataCompetencia} />
-            ) : (
-              <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-                Nenhum dado disponível para o período selecionado
-              </div>
-            )}
-            {dataTextos?.length > 0 && (
+            <BarrasEmpilhadas data={dataCompetencia} />
+            {dataTextos.length > 0 && (
               <GraficoBarras data={dataTextos} titulo="Análise de Textos Produzidos" />
             )}
           </div>
           <div className={styles.right}>
             <div className={styles.grafico_pizza}>
-              {dataCompetencia?.length > 0 ? (
-                <GraficoPizza data={dataCompetencia} titulo="Análise de Desempenho por Notas" />
-              ) : (
-                <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-                  Nenhum dado disponível para o período selecionado
-                </div>
-              )}
+              <GraficoPizza data={dataCompetencia} titulo="Análise de Desempenho por Notas" />
             </div>
           </div>
         </div>
