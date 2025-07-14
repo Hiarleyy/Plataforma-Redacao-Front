@@ -1,12 +1,65 @@
 import styles from './styles.module.css'
-import { Link } from 'react-router-dom'
 import Button from '../Button/Button'
 import useUseful from '../../utils/useUseful'
+import { useState } from 'react'
 
 const baseURL = import.meta.env.VITE_API_BASE_URL
 
 const CorrecaoModal = ({ modalData, modalIsClicked, setModalIsClicked }) => {
   const { brasilFormatData } = useUseful()
+  const [downloading, setDownloading] = useState({ redacao: false, correcao: false })
+
+  const handleDownload = async (url, filename, type) => {
+    try {
+      setDownloading(prev => ({ ...prev, [type]: true }))
+      
+      const token = localStorage.getItem('token')
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Arquivo não encontrado')
+        } else if (response.status === 401) {
+          throw new Error('Não autorizado. Faça login novamente.')
+        } else {
+          throw new Error(`Erro no servidor: ${response.status}`)
+        }
+      }
+
+      // Obter o tipo de conteúdo do cabeçalho
+      const contentType = response.headers.get('content-type')
+      const blob = await response.blob()
+
+      // Determinar a extensão do arquivo baseada no tipo de conteúdo
+      let extension = '.pdf'
+      if (contentType) {
+        if (contentType.includes('application/pdf')) extension = '.pdf'
+        else if (contentType.includes('application/msword')) extension = '.doc'
+        else if (contentType.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document')) extension = '.docx'
+        else if (contentType.includes('text/plain')) extension = '.txt'
+      }
+
+      const downloadUrl = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = downloadUrl
+      link.download = filename + extension
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(downloadUrl)
+      
+    } catch (error) {
+      console.error('Erro no download:', error)
+      alert(`Erro ao baixar arquivo: ${error.message}`)
+    } finally {
+      setDownloading(prev => ({ ...prev, [type]: false }))
+    }
+  }
   
   return (
     <div className={`${modalIsClicked ? styles.modal_details_bg : styles.modal_details_bg_closed}`}>
@@ -48,22 +101,35 @@ const CorrecaoModal = ({ modalData, modalIsClicked, setModalIsClicked }) => {
         </div>
 
         <div className={styles.buttons}>
-          <Link to={`${baseURL}/redacoes/download/${modalData?.id}`}>
-            <Button 
-              text_size="20px" 
-              text_color="#E0E0E0" 
-              padding_sz="10px" 
-              bg_color="#DA9E00"
-            ><i className="fa-solid fa-download"></i> BAIXAR REDAÇÃO</Button>
-          </Link>
-          <Link to={`${baseURL}/correcoes/download/${modalData?.correcao?.id}`}>
-            <Button 
-              text_size="20px" 
-              text_color="#E0E0E0" 
-              padding_sz="10px" 
-              bg_color="#DA9E00"
-            ><i className="fa-solid fa-download"></i> BAIXAR CORREÇÃO</Button>
-          </Link>
+          <Button 
+            text_size="20px" 
+            text_color="#E0E0E0" 
+            padding_sz="10px" 
+            bg_color="#DA9E00"
+            isLoading={downloading.redacao}
+            onClick={() => handleDownload(
+              `${baseURL}/redacoes/download/${modalData?.id}`,
+              `redacao_${modalData?.titulo?.replace(/[^a-z0-9]/gi, '_') || modalData?.id}`,
+              'redacao'
+            )}
+          >
+            <i className="fa-solid fa-download"></i> BAIXAR REDAÇÃO
+          </Button>
+          
+          <Button 
+            text_size="20px" 
+            text_color="#E0E0E0" 
+            padding_sz="10px" 
+            bg_color="#DA9E00"
+            isLoading={downloading.correcao}
+            onClick={() => handleDownload(
+              `${baseURL}/correcoes/download/${modalData?.correcao?.id}`,
+              `correcao_${modalData?.titulo?.replace(/[^a-z0-9]/gi, '_') || modalData?.id}`,
+              'correcao'
+            )}
+          >
+            <i className="fa-solid fa-download"></i> BAIXAR CORREÇÃO
+          </Button>
         </div>
 
       </div>
