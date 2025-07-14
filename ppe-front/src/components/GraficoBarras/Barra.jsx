@@ -26,30 +26,30 @@ const Barras = ({ data, titulo }) => {
       <div style={{ width: "100%", height: 300 }}>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data} barCategoryGap="20%">
-          <XAxis dataKey="name" />
-          <YAxis domain={[0, 10]} />
-          <Tooltip
-            cursor={false}
-            contentStyle={{
-              backgroundColor: "#DA9E00",
-              border: "9px solid #DA9E00",
-              borderRadius: "16px",
-            }}
-            labelStyle={{ color: "#fff" }}
-            itemStyle={{ color: "#fff" }}
-          />
-          <Legend />
-          {Object.entries(COLORS).map(([key, color]) => (
-            <Bar
-              barSize={150}
-              key={key}
-              dataKey={key}
-              fill={color}
-              isAnimationActive={true}
+            <XAxis dataKey="name" />
+            <YAxis domain={[0, 10]} />
+            <Tooltip
+              cursor={false}
+              contentStyle={{
+                backgroundColor: "#DA9E00",
+                border: "9px solid #DA9E00",
+                borderRadius: "16px",
+              }}
+              labelStyle={{ color: "#fff" }}
+              itemStyle={{ color: "#fff" }}
             />
-          ))}
-        </BarChart>
-      </ResponsiveContainer>
+            <Legend />
+            {Object.entries(COLORS).map(([key, color]) => (
+              <Bar
+                barSize={150}
+                key={key}
+                dataKey={key}
+                fill={color}
+                isAnimationActive={true}
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
