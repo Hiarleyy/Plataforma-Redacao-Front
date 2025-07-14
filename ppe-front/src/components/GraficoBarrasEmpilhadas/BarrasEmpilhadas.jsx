@@ -32,6 +32,15 @@ const BarrasEmpilhadas = ({ data, titulo }) => {
   ];
 
   function transformarParaGraficoEmpilhado(data) {
+    // Se não há dados, retorna estrutura vazia mas válida
+    if (!data || data.length === 0) {
+      return competencias.map((comp, i) => {
+        const entrada = { competencia: `C${i + 1}` };
+        NOTAS.forEach((nota) => (entrada[nota] = 0));
+        return entrada;
+      });
+    }
+
     const resultado = competencias.map((comp, i) => {
       const entrada = { competencia: `C${i + 1}` };
       NOTAS.forEach((nota) => (entrada[nota] = 0));

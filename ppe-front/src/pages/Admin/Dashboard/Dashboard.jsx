@@ -39,6 +39,9 @@ const Dashboard = () => {
         getNotaSimulados,
         getSimuladoByIdTurma,
         getRedacoesCorrigidas,
+        getCorrecoes,
+        getTurmaById,
+        getRedacoes,
       } = fetchData();
 
       const turmasData = await getTurmas();
@@ -66,7 +69,11 @@ const Dashboard = () => {
 
         const simuladosDaTurma = await getSimuladoByIdTurma(turmaInicial);
         const notasSimulados = await getNotaSimulados();
+        const correcoes = await getCorrecoes();
+        const turmaData = await getTurmaById(turmaInicial);
+        const redacoes = await getRedacoes();
 
+        // Processar dados de simulados
         const simuladosDoMes = simuladosDaTurma.filter((simulado) => {
           const data = parseISO(simulado.data);
           return data >= inicioMes && data <= fimMes;
@@ -74,7 +81,7 @@ const Dashboard = () => {
 
         const idsSimuladosMes = simuladosDoMes.map((s) => s.id);
 
-        const notas = notasSimulados
+        const notasSimuladosFormatadas = notasSimulados
           .filter((nota) => idsSimuladosMes.includes(nota.simuladoId))
           .map((n) => ({
             usuarioId: n.usuarioId,
@@ -86,8 +93,46 @@ const Dashboard = () => {
             nota: n.notaGeral,
           }));
 
-        setDataCompetencia(notas);
-        setDataTextos([]);
+        // Processar dados de redações corrigidas
+        const redacoesCorrigidasMes = correcoes.filter((c) => {
+          const turmaOK = c.redacao?.usuario?.turma?.id === turmaData.id;
+          const dataOK = c.redacao?.data &&
+            isWithinInterval(parseISO(c.redacao.data), {
+              start: inicioMes,
+              end: fimMes,
+            });
+          return turmaOK && dataOK;
+        }).map((c) => ({
+          usuarioId: c.redacao.usuario.id,
+          competencia01: c.competencia01,
+          competencia02: c.competencia02,
+          competencia03: c.competencia03,
+          competencia04: c.competencia04,
+          competencia05: c.competencia05,
+          nota: c.nota,
+        }));
+
+        // Combinar todos os dados
+        const todosOsDados = [...notasSimuladosFormatadas, ...redacoesCorrigidasMes];
+
+        // Calcular estatísticas de produção de textos
+        const redacoesDoMes = redacoes.filter((r) => {
+          const data = new Date(r.data);
+          return data >= inicioMes && data <= fimMes;
+        });
+
+        const idsEnviadas = new Set(redacoesDoMes.map((r) => r.usuarioId));
+        const alunosTurma = turmaData.usuarios || [];
+        const produzidos = alunosTurma.filter((aluno) => idsEnviadas.has(aluno.id)).length;
+
+        setDataCompetencia(todosOsDados);
+        setDataTextos([
+          {
+            name: "Produção de Textos",
+            produzidos,
+            semProducao: alunosTurma.length - produzidos,
+          },
+        ]);
       }
     };
 
@@ -102,11 +147,15 @@ const Dashboard = () => {
       const {
         getNotaSimulados,
         getSimuladoByIdTurma,
+        getCorrecoes,
+        getTurmaById,
+        getRedacoes,
       } = fetchData();
 
       const inicioMes = startOfMonth(new Date());
       const fimMes = endOfMonth(new Date());
 
+      // Buscar dados de simulados
       const simuladosTurma = await getSimuladoByIdTurma(IdTurma);
       const notasAll = await getNotaSimulados();
 
@@ -117,7 +166,7 @@ const Dashboard = () => {
 
       const idsSimuladosMes = simuladosDoMes.map((s) => s.id);
 
-      const notas = notasAll
+      const notasSimulados = notasAll
         .filter((nota) => idsSimuladosMes.includes(nota.simuladoId))
         .map((n) => ({
           usuarioId: n.usuarioId,
@@ -129,8 +178,50 @@ const Dashboard = () => {
           nota: n.notaGeral,
         }));
 
-      setDataCompetencia(notas);
-      setDataTextos([]);
+      // Buscar dados de redações corrigidas do mês
+      const correcoes = await getCorrecoes();
+      const turma = await getTurmaById(IdTurma);
+      const redacoes = await getRedacoes();
+
+      const redacoesCorrigidasMes = correcoes.filter((c) => {
+        const turmaOK = c.redacao?.usuario?.turma?.id === turma.id;
+        const dataOK = c.redacao?.data &&
+          isWithinInterval(parseISO(c.redacao.data), {
+            start: inicioMes,
+            end: fimMes,
+          });
+        return turmaOK && dataOK;
+      }).map((c) => ({
+        usuarioId: c.redacao.usuario.id,
+        competencia01: c.competencia01,
+        competencia02: c.competencia02,
+        competencia03: c.competencia03,
+        competencia04: c.competencia04,
+        competencia05: c.competencia05,
+        nota: c.nota,
+      }));
+
+      // Combinar dados de simulados e redações corrigidas
+      const todosOsDados = [...notasSimulados, ...redacoesCorrigidasMes];
+
+      // Calcular estatísticas de produção de textos do mês
+      const redacoesDoMes = redacoes.filter((r) => {
+        const data = new Date(r.data);
+        return data >= inicioMes && data <= fimMes;
+      });
+
+      const idsEnviadas = new Set(redacoesDoMes.map((r) => r.usuarioId));
+      const alunosTurma = turma.usuarios || [];
+      const produzidos = alunosTurma.filter((aluno) => idsEnviadas.has(aluno.id)).length;
+
+      setDataCompetencia(todosOsDados);
+      setDataTextos([
+        {
+          name: "Produção de Textos",
+          produzidos,
+          semProducao: alunosTurma.length - produzidos,
+        },
+      ]);
     };
 
     const fetchSemanal = async () => {
@@ -227,9 +318,7 @@ const Dashboard = () => {
           <div className={styles.left}>
             <h3>Análise de Desempenho por competências</h3>
             <BarrasEmpilhadas data={dataCompetencia} />
-            {dataTextos.length > 0 && (
-              <GraficoBarras data={dataTextos} titulo="Análise de Textos Produzidos" />
-            )}
+            <GraficoBarras data={dataTextos} titulo="Análise de Textos Produzidos" />
           </div>
           <div className={styles.right}>
             <div className={styles.grafico_pizza}>

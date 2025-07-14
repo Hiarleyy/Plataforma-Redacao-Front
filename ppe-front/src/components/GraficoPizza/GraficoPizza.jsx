@@ -35,6 +35,13 @@ function agruparPorFaixa(data) {
     contagem[faixa.name] = 0;
   });
 
+  // Se não há dados, retorna estrutura com zeros
+  if (!data || data.length === 0) {
+    return Object.entries(contagem)
+      .map(([name, value]) => ({ name, value }))
+      .filter((item) => item.value >= 0); // mostra todas as faixas, mesmo com zero
+  }
+
   data.forEach((aluno) => {
     const nota = aluno.nota;
     const faixa = faixas.find((f) => nota >= f.min && nota <= f.max);
@@ -45,11 +52,14 @@ function agruparPorFaixa(data) {
 
   return Object.entries(contagem)
     .map(([name, value]) => ({ name, value }))
-    .filter((item) => item.value > 0); // remove faixas com zero
+    .filter((item) => item.value > 0); // remove faixas com zero apenas se há dados reais
 }
 
 const GraficoPizza = ({ data, titulo }) => {
   const dadosAgrupados = agruparPorFaixa(data);
+  
+  // Verifica se há dados reais para exibir
+  const temDados = dadosAgrupados.some(item => item.value > 0);
 
   return (
     <div style={{ width: "100%", height: 450 }}>
@@ -67,33 +77,49 @@ const GraficoPizza = ({ data, titulo }) => {
           >
             {titulo}
           </text>
-          <Pie
-            data={dadosAgrupados}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            outerRadius={120}
-            dataKey="value"
-            nameKey="name"
-            label={({ name, value }) => `${name} (${value})`}
-          >
-            {dadosAgrupados.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
+          
+          {temDados ? (
+            <>
+              <Pie
+                data={dadosAgrupados}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                outerRadius={120}
+                dataKey="value"
+                nameKey="name"
+                label={({ name, value }) => `${name} (${value})`}
+              >
+                {dadosAgrupados.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={(value, name) => [`${value} aluno(s)`, name]}
+                contentStyle={{
+                  backgroundColor: "#DA9E00",
+                  border: "9px solid #DA9E00",
+                  borderRadius: "16px",
+                }}
+                labelStyle={{ color: "#fff" }}
               />
-            ))}
-          </Pie>
-          <Tooltip
-            formatter={(value, name) => [`${value} aluno(s)`, name]}
-            contentStyle={{
-              backgroundColor: "#DA9E00",
-              border: "9px solid #DA9E00",
-              borderRadius: "16px",
-            }}
-            labelStyle={{ color: "#fff" }}
-          />
-          <Legend />
+              <Legend />
+            </>
+          ) : (
+            <text
+              x="50%"
+              y="50%"
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize={14}
+              fill="#999"
+            >
+              Nenhum dado disponível para o período selecionado
+            </text>
+          )}
         </PieChart>
       </ResponsiveContainer>
     </div>
