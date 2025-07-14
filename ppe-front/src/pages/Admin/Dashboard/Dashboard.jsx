@@ -196,7 +196,18 @@ const Dashboard = () => {
 
       const redacoesSemana = redacoes.filter((r) => {
         const data = new Date(r.data);
-        return data >= inicioSemana && data <= fimSemana;
+        const dataOK = data >= inicioSemana && data <= fimSemana;
+        const usuarioNaTurma = turma.usuarios?.some(u => u.id === r.usuarioId);
+        
+        console.log("🔍 Verificando redação:", {
+          redacaoId: r.id,
+          usuarioId: r.usuarioId,
+          data: r.data,
+          dataOK,
+          usuarioNaTurma
+        });
+        
+        return dataOK && usuarioNaTurma;
       });
 
       console.log("📝 Redações da semana:", redacoesSemana);
@@ -223,33 +234,41 @@ const Dashboard = () => {
 
       const graficoCompetencia = correcoes
         .filter((c) => {
-          console.log("🔍 Verificando correção:", {
-            redacao: c.redacao,
-            usuarioTurmaId: c.redacao?.usuario?.turma?.id,
-            turmaId: turma.id,
-            data: c.redacao?.data
-          });
+          // Verifica se o usuário da redação está na turma selecionada
+          const usuarioNaTurma = turma.usuarios?.some(u => u.id === c.redacao?.usuarioId);
           
-          const turmaOK = c.redacao?.usuario?.turma?.id === turma.id;
+          // Verifica se a data está na semana atual
           const dataOK = c.redacao?.data &&
             isWithinInterval(parseISO(c.redacao.data), {
               start: inicioSemana,
               end: fimSemana,
             });
           
-          console.log("🔍 Resultado filtro:", { turmaOK, dataOK });
-          return turmaOK && dataOK;
+          console.log("🔍 Verificando correção:", {
+            redacaoId: c.redacao?.id,
+            usuarioId: c.redacao?.usuarioId,
+            usuarioNaTurma,
+            dataOK,
+            data: c.redacao?.data
+          });
+          
+          return usuarioNaTurma && dataOK;
         })
-        .map((c) => ({
-          aluno: c.redacao.usuario.nome,
-          competencia01: c.competencia01,
-          competencia02: c.competencia02,
-          competencia03: c.competencia03,
-          competencia04: c.competencia04,
-          competencia05: c.competencia05,
-          turma: c.redacao.usuario.turma.nome,
-          nota: c.nota,
-        }));
+        .map((c) => {
+          // Busca o nome do usuário na lista de usuários da turma
+          const usuario = turma.usuarios?.find(u => u.id === c.redacao?.usuarioId);
+          
+          return {
+            aluno: usuario?.nome || 'Usuário não encontrado',
+            competencia01: c.competencia01,
+            competencia02: c.competencia02,
+            competencia03: c.competencia03,
+            competencia04: c.competencia04,
+            competencia05: c.competencia05,
+            turma: turma.nome,
+            nota: c.nota,
+          };
+        });
 
       console.log("📈 Dados competência semanal:", graficoCompetencia);
 
