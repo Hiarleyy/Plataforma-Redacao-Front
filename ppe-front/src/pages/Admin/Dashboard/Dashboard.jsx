@@ -217,14 +217,27 @@ const Dashboard = () => {
 
       setDataTextos(textoData);
 
+      // Debug: vamos ver a estrutura das correções
+      console.log("🔍 Estrutura das correções:", correcoes.slice(0, 2));
+      console.log("🔍 Turma ID para filtro:", turma.id);
+
       const graficoCompetencia = correcoes
         .filter((c) => {
+          console.log("🔍 Verificando correção:", {
+            redacao: c.redacao,
+            usuarioTurmaId: c.redacao?.usuario?.turma?.id,
+            turmaId: turma.id,
+            data: c.redacao?.data
+          });
+          
           const turmaOK = c.redacao?.usuario?.turma?.id === turma.id;
           const dataOK = c.redacao?.data &&
             isWithinInterval(parseISO(c.redacao.data), {
               start: inicioSemana,
               end: fimSemana,
             });
+          
+          console.log("🔍 Resultado filtro:", { turmaOK, dataOK });
           return turmaOK && dataOK;
         })
         .map((c) => ({
@@ -279,7 +292,16 @@ const Dashboard = () => {
           <div className={styles.left}>
             <h3>Análise de Desempenho por competências</h3>
             {console.log("🎯 Dados para BarrasEmpilhadas:", dataCompetencia)}
-            <BarrasEmpilhadas data={dataCompetencia} />
+            {dataCompetencia.length > 0 ? (
+              <BarrasEmpilhadas data={dataCompetencia} />
+            ) : (
+              <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
+                {taggle === "Análise Mensal" 
+                  ? "Não há dados de simulados para este mês" 
+                  : "Não há correções de redações para esta semana"
+                }
+              </div>
+            )}
             {dataTextos.length > 0 && (
               <>
                 {console.log("📊 Dados para GraficoBarras:", dataTextos)}
@@ -290,7 +312,16 @@ const Dashboard = () => {
           <div className={styles.right}>
             <div className={styles.grafico_pizza}>
               {console.log("🍕 Dados para GraficoPizza:", dataCompetencia)}
-              <GraficoPizza data={dataCompetencia} titulo="Análise de Desempenho por Notas" />
+              {dataCompetencia.length > 0 ? (
+                <GraficoPizza data={dataCompetencia} titulo="Análise de Desempenho por Notas" />
+              ) : (
+                <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
+                  {taggle === "Análise Mensal" 
+                    ? "Não há dados de notas para este mês" 
+                    : "Não há dados de competências para esta semana"
+                  }
+                </div>
+              )}
             </div>
           </div>
         </div>
