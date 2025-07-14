@@ -27,6 +27,7 @@ const Dashboard = () => {
   const [usuariosTurma, setUsuariosTurma] = useState([]);
   const [simulados, setSimulados] = useState([]);
   const [alunos, setAlunos] = useState([]);
+  const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
   const [taggle, setTaggle] = useState("Análise Mensal");
 
   useEffect(() => {
@@ -37,11 +38,13 @@ const Dashboard = () => {
         getAlunos,
         getNotaSimulados,
         getSimuladoByIdTurma,
+        getRedacoesCorrigidas,
       } = fetchData();
 
       const turmasData = await getTurmas();
       const simuladosData = await getSimulados();
       const alunosData = await getAlunos();
+      const redacoesCorrigidasData = await getRedacoesCorrigidas();
 
       const turmasFormatadas = turmasData.map((t) => ({
         id: t.id,
@@ -51,6 +54,7 @@ const Dashboard = () => {
       setTurmas(turmasFormatadas);
       setSimulados(simuladosData);
       setAlunos(alunosData);
+      setRedacoesCorrigidas(redacoesCorrigidasData);
 
       if (turmasFormatadas.length > 0) {
         const turmaInicial = turmasFormatadas[0].id;
@@ -201,6 +205,7 @@ const Dashboard = () => {
           <CardDash title="Total de alunos" content={alunos.length} color="#1A1A1A" />
           <CardDash title="Total de turmas" content={turmas.length} color="#1A1A1A" />
           <CardDash title="Total de simulados" content={simulados.length} color="#1A1A1A" />
+          <CardDash title="Redações corrigidas" content={redacoesCorrigidas.length} color="#1A1A1A" />
         </div>
 
         <div className={styles.selects}>
