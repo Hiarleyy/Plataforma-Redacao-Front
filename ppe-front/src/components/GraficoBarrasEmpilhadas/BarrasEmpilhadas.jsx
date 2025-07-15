@@ -63,6 +63,9 @@ const BarrasEmpilhadas = ({ data, titulo }) => {
 
   const dadosTransformados = transformarParaGraficoEmpilhado(data);
 
+  // Verificar se há dados reais para exibir
+  const temDadosReais = data && data.length > 0;
+
   // Função para exibir os valores sempre, mesmo se forem pequenos
   const renderLabel = (props) => {
     const { x, y, width, height, value } = props;
@@ -84,37 +87,58 @@ const BarrasEmpilhadas = ({ data, titulo }) => {
 
   return (
     <div className={styles.graficoBarrasEmpilhadas}>
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={dadosTransformados} activeBar={{ fill: "transparent" }}>
-          <XAxis dataKey="competencia" className={styles.eixoX} />
-          <YAxis allowDecimals={false} className={styles.eixoY} />
-          <Tooltip
-            cursor={{ fill: "#111111" }}
-            contentStyle={{
-              backgroundColor: "#DA9E00",
-              border: "9px solid #DA9E00",
-              borderRadius: "16px",
-            }}
-            labelStyle={{ color: "var(--tooltip-label)" }}
-            itemStyle={{ color: "var(--tooltip-item)" }}
-            formatter={(value, name) => [`${value} aluno(s)`, `Nota ${name}`]}
-            labelFormatter={(label) => `Competência: ${label}`}
-          />
+      {temDadosReais ? (
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={dadosTransformados} activeBar={{ fill: "transparent" }}>
+            <XAxis dataKey="competencia" className={styles.eixoX} />
+            <YAxis allowDecimals={false} className={styles.eixoY} />
+            <Tooltip
+              cursor={{ fill: "#111111" }}
+              contentStyle={{
+                backgroundColor: "#DA9E00",
+                border: "9px solid #DA9E00",
+                borderRadius: "16px",
+              }}
+              labelStyle={{ color: "var(--tooltip-label)" }}
+              itemStyle={{ color: "var(--tooltip-item)" }}
+              formatter={(value, name) => [`${value} aluno(s)`, `Nota ${name}`]}
+              labelFormatter={(label) => `Competência: ${label}`}
+            />
 
-          <Legend />
-          {NOTAS.map((nota) => (
-            <Bar
-              key={nota}
-              dataKey={nota}
-              stackId="a"
-              fill={COLORS[nota]}
-              name={`${nota}`}
-            >
-              <LabelList dataKey={nota} content={renderLabel} />
-            </Bar>
-          ))}
-        </BarChart>
-      </ResponsiveContainer>
+            <Legend />
+            {NOTAS.map((nota) => (
+              <Bar
+                key={nota}
+                dataKey={nota}
+                stackId="a"
+                fill={COLORS[nota]}
+                name={`${nota}`}
+              >
+                <LabelList dataKey={nota} content={renderLabel} />
+              </Bar>
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '400px',
+          color: '#999',
+          fontSize: '14px',
+          textAlign: 'center'
+        }}>
+          <div>
+            <p style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#cccccc' }}>
+              📊 Nenhum dado de competências disponível
+            </p>
+            <p style={{ margin: '0', fontSize: '14px', color: '#999' }}>
+              Aguardando correções para análise de desempenho
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

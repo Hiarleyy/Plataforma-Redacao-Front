@@ -479,3 +479,99 @@ body {
     height: 250px;
   }
 }
+
+/* Estilos para mensagem de sem dados */
+.sem_dados {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 400px;
+  background-color: #242424;
+  border-radius: 10px;
+  border: 1px solid #da9e00;
+  padding: 40px;
+}
+
+.mensagem_sem_dados {
+  text-align: center;
+  color: #ffffff;
+  max-width: 600px;
+}
+
+.mensagem_sem_dados h3 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #da9e00;
+  font-weight: 600;
+}
+
+.mensagem_sem_dados p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: #cccccc;
+  line-height: 1.5;
+}
+
+.sugestoes {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  padding: 20px;
+  border-left: 4px solid #da9e00;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.sugestoes p {
+  margin-bottom: 10px;
+  color: #da9e00;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.sugestoes ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sugestoes li {
+  padding: 8px 0;
+  color: #cccccc;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  position: relative;
+  padding-left: 20px;
+}
+
+.sugestoes li::before {
+  content: "•";
+  color: #da9e00;
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+/* Responsivo para sem dados */
+@media (max-width: 768px) {
+  .sem_dados {
+    min-height: 300px;
+    padding: 20px;
+  }
+
+  .mensagem_sem_dados h3 {
+    font-size: 1.5rem;
+  }
+
+  .mensagem_sem_dados p {
+    font-size: 1rem;
+  }
+
+  .sugestoes {
+    padding: 15px;
+  }
+
+  .sugestoes li {
+    font-size: 0.9rem;
+  }
+}

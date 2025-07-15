@@ -32,6 +32,7 @@ const Dashboard = () => {
   const [redacoesCorrigidasTurma, setRedacoesCorrigidasTurma] = useState(0);
   const [alunosTurma, setAlunosTurma] = useState(0);
   const [taggle, setTaggle] = useState("Análise Mensal");
+  const [temDados, setTemDados] = useState(true);
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -93,6 +94,10 @@ const Dashboard = () => {
       });
       
       setRedacoesCorrigidasTurma(correcoesDaTurmaNoMes.length);
+
+      // Verificar se há dados suficientes para exibir
+      const hasDados = correcoesDaTurmaNoMes.length > 0;
+      setTemDados(hasDados);
 
       // Análise baseada em redações corrigidas do mês
       const graficoCompetencia = correcoesDaTurmaNoMes.map((c) => ({
@@ -165,6 +170,10 @@ const Dashboard = () => {
         .slice(0, 10);
 
       setRedacoesCorrigidasTurma(ultimasCorrecoes.length);
+
+      // Verificar se há dados suficientes para exibir
+      const hasDados = ultimasCorrecoes.length > 0;
+      setTemDados(hasDados);
 
       // Análise baseada nas últimas 10 correções
       const graficoCompetencia = ultimasCorrecoes.map((c) => ({
@@ -246,6 +255,10 @@ const Dashboard = () => {
       // Contar simulados realizados (notas registradas)
       setRedacoesCorrigidasTurma(notasSimulados.length);
 
+      // Verificar se há dados suficientes para exibir
+      const hasDados = notasSimulados.length > 0;
+      setTemDados(hasDados);
+
       // Análise baseada em notas de simulados do mês
       const idsComSimulado = new Set(notasSimulados.map((n) => n.usuarioId));
       const alunosTurma = turma.usuarios || [];
@@ -318,16 +331,35 @@ const Dashboard = () => {
         </div>
 
         <div className={styles.container_graficos}>
-          <div className={styles.left}>
-            <h3>Análise de Desempenho por competências</h3>
-            <BarrasEmpilhadas data={dataCompetencia} />
-            <GraficoBarras data={dataTextos} titulo={getTituloGrafico()} />
-          </div>
-          <div className={styles.right}>
-            <div className={styles.grafico_pizza}>
-              <GraficoPizza data={dataPizza} titulo="Análise de Desempenho por Notas" />
+          {temDados ? (
+            <>
+              <div className={styles.left}>
+                <h3>Análise de Desempenho por competências</h3>
+                <BarrasEmpilhadas data={dataCompetencia} />
+                <GraficoBarras data={dataTextos} titulo={getTituloGrafico()} />
+              </div>
+              <div className={styles.right}>
+                <div className={styles.grafico_pizza}>
+                  <GraficoPizza data={dataPizza} titulo="Análise de Desempenho por Notas" />
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className={styles.sem_dados}>
+              <div className={styles.mensagem_sem_dados}>
+                <h3>📊 Nenhum dado encontrado</h3>
+                <p>Não há dados disponíveis para o período e turma selecionados.</p>
+                <div className={styles.sugestoes}>
+                  <p><strong>Sugestões:</strong></p>
+                  <ul>
+                    <li>Verifique se a turma possui redações corrigidas ou simulados realizados</li>
+                    <li>Tente selecionar uma análise diferente (Mensal, Últimas Produções ou Simulados)</li>
+                    <li>Selecione uma turma diferente</li>
+                  </ul>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
