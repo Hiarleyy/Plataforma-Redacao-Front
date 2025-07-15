@@ -10,6 +10,10 @@ const baseURL = import.meta.env.VITE_API_BASE_URL
 
   const RankingAlunos = () => {
   const [ranking, setRanking] = useState([])
+  
+  const handleImageError = (e) => {
+    e.target.src = defaultProfilePicture;
+  }
    useEffect(() => {
     const getData = async () => {
       const { getRanking } = fetchData() 
@@ -32,7 +36,8 @@ const baseURL = import.meta.env.VITE_API_BASE_URL
             <img 
               className={styles.img_container} 
               src={ranking[1] ? `${baseURL}/usuarios/${ranking[1].id}/profile-image` : defaultProfilePicture} 
-              alt="Segundo lugar" 
+              alt="Segundo lugar"
+              onError={handleImageError}
             />
             {ranking[1] && <h3 title={ranking[1].nome}>{ranking[1].nome}</h3>}
             {ranking[1] && <p title={`Média: ${ranking[1].media}`}>{ranking[1].media}</p>}
@@ -42,7 +47,8 @@ const baseURL = import.meta.env.VITE_API_BASE_URL
             <img 
               className={styles.img_container} 
               src={ranking[0] ? `${baseURL}/usuarios/${ranking[0].id}/profile-image` : defaultProfilePicture} 
-              alt="Primeiro lugar" 
+              alt="Primeiro lugar"
+              onError={handleImageError}
             />
             {ranking[0] && <h3 title={ranking[0].nome}>{ranking[0].nome}</h3>}
             {ranking[0] && <p title={`Média: ${ranking[0].media}`}>{ranking[0].media}</p>}
@@ -52,7 +58,8 @@ const baseURL = import.meta.env.VITE_API_BASE_URL
             <img 
               className={styles.img_container} 
               src={ranking[2] ? `${baseURL}/usuarios/${ranking[2].id}/profile-image` : defaultProfilePicture} 
-              alt="Terceiro lugar" 
+              alt="Terceiro lugar"
+              onError={handleImageError}
             />
             {ranking[2] && <h3 title={ranking[2].nome}>{ranking[2].nome}</h3>}
             {ranking[2] && <p title={`Média: ${ranking[2].media}`}>{ranking[2].media}</p>}
