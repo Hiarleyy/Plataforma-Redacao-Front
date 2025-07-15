@@ -95,6 +95,10 @@ const Dashboard = () => {
       console.log('Turma selecionada ID:', turma.id);
       console.log('Exemplo de redação:', redacoes[0]);
       
+      // Debug: Verificar quantas redações são da turma (sem filtro de data)
+      const redacoesDaTurma = redacoes.filter(r => r.usuario?.turma?.id === turma.id);
+      console.log('Total de redações da turma (sem filtro de data):', redacoesDaTurma.length);
+      
       // Filtrar redações da turma no mês atual
       const redacoesDoMes = redacoes.filter((r) => {
         const data = new Date(r.data);
@@ -157,15 +161,29 @@ const Dashboard = () => {
 
       console.log('Dados pizza (Análise Mensal):', dadosPizza);
 
-      // Calcular produções baseado em redações enviadas no mês (não apenas corrigidas)
+      // SOLUÇÃO DEFINITIVA: Usar sempre as correções como fonte de dados
+      // já que elas contêm a informação completa da redação + usuário + turma
+      console.log('Usando correções como fonte principal de dados');
+      
+      // Extrair redações únicas das correções (evitar duplicatas)
+      const redacoesUnicasCorrections = correcoesDaTurmaNoMes.map(c => c.redacao);
+      const redacoesUnicasMap = new Map();
+      redacoesUnicasCorrections.forEach(r => {
+        redacoesUnicasMap.set(r.id, r);
+      });
+      const redacoesUnicas = Array.from(redacoesUnicasMap.values());
+
+      // Usar sempre os dados das correções (mais confiáveis)
+      const redacoesParaAnalise = redacoesUnicas;
+
+      // Calcular produções baseado em redações enviadas no mês (via correções)
       const idsEnviadas = new Set(redacoesParaAnalise.map((r) => r.usuarioId));
       const alunosTurmaArray = turma.usuarios || [];
       const produzidos = alunosTurmaArray.filter((aluno) => idsEnviadas.has(aluno.id)).length;
 
-      console.log('Análise Mensal - Debug:');
-      console.log('- Total de redações do mês:', redacoesDoMes.length);
-      console.log('- Total de redações alternativas:', redacoesDoMesAlternativa.length);
-      console.log('- Total de redações para análise:', redacoesParaAnalise.length);
+      console.log('Análise Mensal - Debug Final:');
+      console.log('- Total de redações do mês (filtro direto):', redacoesDoMes.length);
+      console.log('- Total de redações via correções:', redacoesParaAnalise.length);
       console.log('- Total de correções do mês:', correcoesDaTurmaNoMes.length);
       console.log('- IDs que enviaram redações:', Array.from(idsEnviadas));
       console.log('- Total de alunos na turma:', alunosTurmaArray.length);
