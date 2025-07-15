@@ -24,6 +24,7 @@ const Dashboard = () => {
   const [turmas, setTurmas] = useState([]);
   const [dataCompetencia, setDataCompetencia] = useState([]);
   const [dataTextos, setDataTextos] = useState([]);
+  const [dataPizza, setDataPizza] = useState([]);
   const [usuariosTurma, setUsuariosTurma] = useState([]);
   const [simulados, setSimulados] = useState([]);
   const [alunos, setAlunos] = useState([]);
@@ -110,11 +111,17 @@ const Dashboard = () => {
         nota: c.nota || 0,
       }));
 
+      // Dados específicos para o gráfico de pizza (apenas notas)
+      const dadosPizza = correcoesDaTurmaNoMes.map((c) => ({
+        nota: c.nota || 0,
+      }));
+
       const idsEnviadas = new Set(redacoesDoMes.map((r) => r.usuarioId));
       const alunosTurma = turma.usuarios || [];
       const produzidos = alunosTurma.filter((aluno) => idsEnviadas.has(aluno.id)).length;
 
       setDataCompetencia(graficoCompetencia);
+      setDataPizza(dadosPizza);
       setDataTextos([
         {
           name: "Produção Mensal",
@@ -168,11 +175,17 @@ const Dashboard = () => {
         nota: c.nota || 0,
       }));
 
+      // Dados específicos para o gráfico de pizza (apenas notas)
+      const dadosPizza = ultimasCorrecoes.map((c) => ({
+        nota: c.nota || 0,
+      }));
+
       const idsUltimasProducoes = new Set(ultimasCorrecoes.map((c) => c.redacao.usuario.id));
       const alunosTurma = turma.usuarios || [];
       const produzidos = idsUltimasProducoes.size;
 
       setDataCompetencia(graficoCompetencia);
+      setDataPizza(dadosPizza);
       setDataTextos([
         {
           name: "Últimas Produções",
@@ -222,6 +235,11 @@ const Dashboard = () => {
           nota: n.notaGeral,
         }));
 
+      // Dados específicos para o gráfico de pizza (apenas notas)
+      const dadosPizza = notasSimulados.map((n) => ({
+        nota: n.nota || 0,
+      }));
+
       // Contar simulados realizados (notas registradas)
       setRedacoesCorrigidasTurma(notasSimulados.length);
 
@@ -231,6 +249,7 @@ const Dashboard = () => {
       const produzidos = alunosTurma.filter((aluno) => idsComSimulado.has(aluno.id)).length;
 
       setDataCompetencia(notasSimulados);
+      setDataPizza(dadosPizza);
       setDataTextos([
         {
           name: "Simulados do Mês",
@@ -306,7 +325,7 @@ const Dashboard = () => {
           </div>
           <div className={styles.right}>
             <div className={styles.grafico_pizza}>
-              <GraficoPizza data={dataCompetencia} titulo="Análise de Desempenho por Notas" />
+              <GraficoPizza data={dataPizza} titulo="Análise de Desempenho por Notas" />
             </div>
           </div>
         </div>
