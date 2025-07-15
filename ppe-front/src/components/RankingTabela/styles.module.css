@@ -1,5 +1,4 @@
 .tabela_container {
-  max-height: auto;
   overflow-y: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
