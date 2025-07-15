@@ -48,7 +48,8 @@ body {
 }
 
 .container_desenpenho .CardDashs_container {
-  display: inline;
+  display: flex;
+  flex-direction: row;
   gap: 8px;
 }
 
