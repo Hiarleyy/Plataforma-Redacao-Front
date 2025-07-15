@@ -29,6 +29,7 @@ const Dashboard = () => {
   const [alunos, setAlunos] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
   const [redacoesCorrigidasTurma, setRedacoesCorrigidasTurma] = useState(0);
+  const [alunosTurma, setAlunosTurma] = useState(0);
   const [taggle, setTaggle] = useState("Análise Mensal");
 
   useEffect(() => {
@@ -79,6 +80,9 @@ const Dashboard = () => {
       const turma = await getTurmaById(IdTurma);
       const redacoes = await getRedacoes();
       const correcoes = await getCorrecoes();
+      
+      // Atualizar o número de alunos da turma selecionada
+      setAlunosTurma(turma.usuarios?.length || 0);
       
       // Filtrar redações da turma no mês atual
       const redacoesDoMes = redacoes.filter((r) => {
@@ -133,6 +137,9 @@ const Dashboard = () => {
       const correcoes = await getCorrecoes();
 
       setUsuariosTurma(turma.usuarios || []);
+      
+      // Atualizar o número de alunos da turma selecionada
+      setAlunosTurma(turma.usuarios?.length || 0);
 
       // Buscar todas as correções da turma
       const correcoesDaTurma = correcoes.filter((c) => {
@@ -192,6 +199,9 @@ const Dashboard = () => {
       const simuladosTurma = await getSimuladoByIdTurma(IdTurma);
       const notasAll = await getNotaSimulados();
       const turma = await getTurmaById(IdTurma);
+      
+      // Atualizar o número de alunos da turma selecionada
+      setAlunosTurma(turma.usuarios?.length || 0);
 
       const simuladosDoMes = simuladosTurma.filter((simulado) => {
         const data = parseISO(simulado.data);
@@ -262,7 +272,7 @@ const Dashboard = () => {
       <Title title="Dashboard" />
       <div className={styles.container_desenpenho}>
         <div className={styles.CardDashs_container}>
-          <CardDash title="Total de alunos" content={alunos.length} color="#1A1A1A" />
+          <CardDash title="Total de alunos" content={alunosTurma} color="#1A1A1A" />
           <CardDash title="Total de turmas" content={turmas.length} color="#1A1A1A" />
           <CardDash title="Total de simulados" content={simulados.length} color="#1A1A1A" />
           <CardDash title="Redações corrigidas" content={redacoesCorrigidasTurma} color="#1A1A1A" />
