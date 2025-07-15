@@ -37,12 +37,7 @@ const Dashboard = () => {
         getTurmas,
         getSimulados,
         getAlunos,
-        getNotaSimulados,
-        getSimuladoByIdTurma,
         getRedacoesCorrigidas,
-        getCorrecoes,
-        getTurmaById,
-        getRedacoes,
       } = fetchData();
 
       const turmasData = await getTurmas();
@@ -61,68 +56,7 @@ const Dashboard = () => {
       setRedacoesCorrigidas(redacoesCorrigidasData);
 
       if (turmasFormatadas.length > 0) {
-        const turmaInicial = turmasFormatadas[0].id;
-        setIdTurma(turmaInicial);
-
-        // Já carrega os dados da análise mensal
-        const inicioMes = startOfMonth(new Date());
-        const fimMes = endOfMonth(new Date());
-
-        const simuladosDaTurma = await getSimuladoByIdTurma(turmaInicial);
-        const notasSimulados = await getNotaSimulados();
-        const correcoes = await getCorrecoes();
-        const turmaData = await getTurmaById(turmaInicial);
-        const redacoes = await getRedacoes();
-
-        // Processar dados de simulados para análise mensal
-        const simuladosDoMes = simuladosDaTurma.filter((simulado) => {
-          const data = parseISO(simulado.data);
-          return data >= inicioMes && data <= fimMes;
-        });
-
-        const idsSimuladosMes = simuladosDoMes.map((s) => s.id);
-
-        const notasSimuladosFormatadas = notasSimulados
-          .filter((nota) => idsSimuladosMes.includes(nota.simuladoId))
-          .map((n) => ({
-            usuarioId: n.usuarioId,
-            competencia01: n.competencia01,
-            competencia02: n.competencia02,
-            competencia03: n.competencia03,
-            competencia04: n.competencia04,
-            competencia05: n.competencia05,
-            nota: n.notaGeral,
-          }));
-
-        // Análise mensal baseada apenas em simulados
-        const todosOsDados = [...notasSimuladosFormatadas];
-
-        // Calcular redações corrigidas da turma inicial no mês
-        const redacoesCorrigidasDaTurma = correcoes.filter((c) => {
-          if (!c.redacao?.usuario?.turma?.id || c.redacao.usuario.turma.id !== turmaData.id) return false;
-          const data = new Date(c.redacao.data);
-          return data >= inicioMes && data <= fimMes;
-        });
-        setRedacoesCorrigidasTurma(redacoesCorrigidasDaTurma.length);
-
-        // Calcular estatísticas de produção de textos
-        const redacoesDoMes = redacoes.filter((r) => {
-          const data = new Date(r.data);
-          return data >= inicioMes && data <= fimMes && r.usuario?.turma?.id === turmaData.id;
-        });
-
-        const idsEnviadas = new Set(redacoesDoMes.map((r) => r.usuarioId));
-        const alunosTurma = turmaData.usuarios || [];
-        const produzidos = alunosTurma.filter((aluno) => idsEnviadas.has(aluno.id)).length;
-
-        setDataCompetencia(todosOsDados);
-        setDataTextos([
-          {
-            name: "Produção Mensal",
-            produzidos,
-            semProducao: alunosTurma.length - produzidos,
-          },
-        ]);
+        setIdTurma(turmasFormatadas[0].id);
       }
     };
 
@@ -132,10 +66,8 @@ const Dashboard = () => {
   useEffect(() => {
     if (!IdTurma) return;
 
-    const fetchMensal = async () => {
+    const fetchAnaliseMensal = async () => {
       const {
-        getNotaSimulados,
-        getSimuladoByIdTurma,
         getTurmaById,
         getRedacoes,
         getCorrecoes,
@@ -144,9 +76,122 @@ const Dashboard = () => {
       const inicioMes = startOfMonth(new Date());
       const fimMes = endOfMonth(new Date());
 
-      // Buscar dados de simulados para análise mensal
+      const turma = await getTurmaById(IdTurma);
+      const redacoes = await getRedacoes();
+      const correcoes = await getCorrecoes();
+      
+      // Filtrar redações da turma no mês atual
+      const redacoesDoMes = redacoes.filter((r) => {
+        const data = new Date(r.data);
+        return data >= inicioMes && data <= fimMes && r.usuario?.turma?.id === turma.id;
+      });
+
+      // Filtrar correções da turma no mês atual
+      const correcoesDaTurmaNoMes = correcoes.filter((c) => {
+        if (!c.redacao?.usuario?.turma?.id || c.redacao.usuario.turma.id !== turma.id) return false;
+        const data = new Date(c.redacao.data);
+        return data >= inicioMes && data <= fimMes;
+      });
+      
+      setRedacoesCorrigidasTurma(correcoesDaTurmaNoMes.length);
+
+      // Análise baseada em redações corrigidas do mês
+      const graficoCompetencia = correcoesDaTurmaNoMes.map((c) => ({
+        usuarioId: c.redacao.usuario.id,
+        competencia01: c.competencia01 || 0,
+        competencia02: c.competencia02 || 0,
+        competencia03: c.competencia03 || 0,
+        competencia04: c.competencia04 || 0,
+        competencia05: c.competencia05 || 0,
+        nota: c.nota || 0,
+      }));
+
+      const idsEnviadas = new Set(redacoesDoMes.map((r) => r.usuarioId));
+      const alunosTurma = turma.usuarios || [];
+      const produzidos = alunosTurma.filter((aluno) => idsEnviadas.has(aluno.id)).length;
+
+      setDataCompetencia(graficoCompetencia);
+      setDataTextos([
+        {
+          name: "Produção Mensal",
+          produzidos,
+          semProducao: alunosTurma.length - produzidos,
+        },
+      ]);
+
+      console.log('Análise Mensal - Redações corrigidas:', correcoesDaTurmaNoMes.length);
+      console.log('Análise Mensal - Alunos que produziram:', produzidos);
+    };
+
+    const fetchUltimasProducoes = async () => {
+      const {
+        getTurmaById,
+        getCorrecoes,
+      } = fetchData();
+
+      const turma = await getTurmaById(IdTurma);
+      const correcoes = await getCorrecoes();
+
+      setUsuariosTurma(turma.usuarios || []);
+
+      // Buscar todas as correções da turma
+      const correcoesDaTurma = correcoes.filter((c) => {
+        return c.redacao?.usuario?.turma?.id === turma.id;
+      });
+
+      // Ordenar por data e pegar as últimas 10 correções
+      const ultimasCorrecoes = correcoesDaTurma
+        .sort((a, b) => {
+          const dataA = new Date(a.redacao.data);
+          const dataB = new Date(b.redacao.data);
+          return dataB - dataA;
+        })
+        .slice(0, 10);
+
+      setRedacoesCorrigidasTurma(ultimasCorrecoes.length);
+
+      // Análise baseada nas últimas 10 correções
+      const graficoCompetencia = ultimasCorrecoes.map((c) => ({
+        usuarioId: c.redacao.usuario.id,
+        competencia01: c.competencia01 || 0,
+        competencia02: c.competencia02 || 0,
+        competencia03: c.competencia03 || 0,
+        competencia04: c.competencia04 || 0,
+        competencia05: c.competencia05 || 0,
+        nota: c.nota || 0,
+      }));
+
+      const idsUltimasProducoes = new Set(ultimasCorrecoes.map((c) => c.redacao.usuario.id));
+      const alunosTurma = turma.usuarios || [];
+      const produzidos = idsUltimasProducoes.size;
+
+      setDataCompetencia(graficoCompetencia);
+      setDataTextos([
+        {
+          name: "Últimas Produções",
+          produzidos,
+          semProducao: alunosTurma.length - produzidos,
+        },
+      ]);
+
+      console.log('Últimas Produções - Correções analisadas:', ultimasCorrecoes.length);
+      console.log('Últimas Produções - Alunos únicos:', produzidos);
+    };
+
+    const fetchAnaliseSimulados = async () => {
+      const {
+        getNotaSimulados,
+        getSimuladoByIdTurma,
+        getTurmaById,
+      } = fetchData();
+
+      const inicioMes = startOfMonth(new Date());
+      const fimMes = endOfMonth(new Date());
+
+      // Buscar dados de simulados do mês
       const simuladosTurma = await getSimuladoByIdTurma(IdTurma);
       const notasAll = await getNotaSimulados();
+      const turma = await getTurmaById(IdTurma);
 
       const simuladosDoMes = simuladosTurma.filter((simulado) => {
         const data = parseISO(simulado.data);
@@ -167,118 +212,50 @@ const Dashboard = () => {
           nota: n.notaGeral,
         }));
 
-      // Análise mensal baseada apenas em simulados
-      const todosOsDados = [...notasSimulados];
+      // Contar simulados realizados (notas registradas)
+      setRedacoesCorrigidasTurma(notasSimulados.length);
 
-      console.log('Dados análise mensal:', todosOsDados);
-
-      // Calcular estatísticas de produção de textos do mês
-      const turma = await getTurmaById(IdTurma);
-      const redacoes = await getRedacoes();
-      const correcoes = await getCorrecoes();
-      
-      // Filtrar redações da turma no mês
-      const redacoesDoMes = redacoes.filter((r) => {
-        const data = new Date(r.data);
-        return data >= inicioMes && data <= fimMes && r.usuario?.turma?.id === turma.id;
-      });
-
-      // Filtrar correções da turma no mês
-      const correcoesDaTurmaNoMes = correcoes.filter((c) => {
-        if (!c.redacao?.usuario?.turma?.id || c.redacao.usuario.turma.id !== turma.id) return false;
-        const data = new Date(c.redacao.data);
-        return data >= inicioMes && data <= fimMes;
-      });
-      
-      // Calcular redações corrigidas da turma no mês (não todas as correções)
-      setRedacoesCorrigidasTurma(correcoesDaTurmaNoMes.length);
-
-      const idsEnviadas = new Set(redacoesDoMes.map((r) => r.usuarioId));
+      // Análise baseada em notas de simulados do mês
+      const idsComSimulado = new Set(notasSimulados.map((n) => n.usuarioId));
       const alunosTurma = turma.usuarios || [];
-      const produzidos = alunosTurma.filter((aluno) => idsEnviadas.has(aluno.id)).length;
+      const produzidos = alunosTurma.filter((aluno) => idsComSimulado.has(aluno.id)).length;
 
-      setDataCompetencia(todosOsDados);
+      setDataCompetencia(notasSimulados);
       setDataTextos([
         {
-          name: "Produção Mensal",
-          produzidos,
-          semProducao: alunosTurma.length - produzidos,
-        },
-      ]);
-    };
-
-    const fetchSemanal = async () => {
-      const {
-        getTurmaById,
-        getRedacoes,
-        getCorrecoes,
-      } = fetchData();
-
-      const inicioSemana = startOfWeek(new Date(), { weekStartsOn: 0 });
-      const fimSemana = endOfWeek(new Date(), { weekStartsOn: 0 });
-
-      const turma = await getTurmaById(IdTurma);
-      const redacoes = await getRedacoes();
-      const correcoes = await getCorrecoes();
-
-      setUsuariosTurma(turma.usuarios || []);
-
-      // Análise baseada nas últimas produções da turma (independente de data)
-      const correcoesDaTurma = correcoes.filter((c) => {
-        // Verificar se tem os dados necessários e se é da turma selecionada
-        return c.redacao?.usuario?.turma?.id === turma.id;
-      });
-
-      console.log('Total de correções da turma:', correcoesDaTurma.length);
-
-      // Ordenar por data de criação/correção (mais recentes primeiro) e pegar as últimas 10
-      const ultimasCorrecoes = correcoesDaTurma
-        .sort((a, b) => {
-          // Ordenar pela data da redação (mais recente primeiro)
-          const dataA = new Date(a.redacao.data);
-          const dataB = new Date(b.redacao.data);
-          return dataB - dataA;
-        })
-        .slice(0, 10); // Pegar as 10 mais recentes
-
-      console.log('Últimas correções (10 mais recentes):', ultimasCorrecoes);
-
-      // Atualizar contador de redações corrigidas da turma (apenas as últimas 10)
-      setRedacoesCorrigidasTurma(ultimasCorrecoes.length);
-
-      // Calcular estatísticas de produção de textos baseadas nas últimas produções
-      const idsUltimasProducoes = new Set(ultimasCorrecoes.map((c) => c.redacao.usuario.id));
-      const alunosTurma = turma.usuarios || [];
-      const produzidos = idsUltimasProducoes.size;
-
-      setDataTextos([
-        {
-          name: "Últimas Produções",
+          name: "Simulados do Mês",
           produzidos,
           semProducao: alunosTurma.length - produzidos,
         },
       ]);
 
-      const graficoCompetencia = ultimasCorrecoes.map((c) => ({
-        usuarioId: c.redacao.usuario.id,
-        competencia01: c.competencia01 || 0,
-        competencia02: c.competencia02 || 0,
-        competencia03: c.competencia03 || 0,
-        competencia04: c.competencia04 || 0,
-        competencia05: c.competencia05 || 0,
-        nota: c.nota || 0,
-      }));
-
-      console.log('Dados análise semanal (últimas produções):', graficoCompetencia);
-      setDataCompetencia(graficoCompetencia);
+      console.log('Análise Simulados - Simulados realizados:', notasSimulados.length);
+      console.log('Análise Simulados - Alunos que fizeram simulados:', produzidos);
     };
 
+    // Executar a análise baseada no toggle selecionado
     if (taggle === "Análise Mensal") {
-      fetchMensal();
+      fetchAnaliseMensal();
     } else if (taggle === "Últimas Produções") {
-      fetchSemanal();
+      fetchUltimasProducoes();
+    } else if (taggle === "Análise de Simulados") {
+      fetchAnaliseSimulados();
     }
   }, [IdTurma, taggle]);
+
+  // Função para obter o título do gráfico baseado no toggle
+  const getTituloGrafico = () => {
+    switch (taggle) {
+      case "Análise Mensal":
+        return "Análise de Redações do Mês";
+      case "Últimas Produções":
+        return "Análise das Últimas Produções";
+      case "Análise de Simulados":
+        return "Análise de Simulados do Mês";
+      default:
+        return "Análise de Textos Produzidos";
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -293,7 +270,12 @@ const Dashboard = () => {
 
         <div className={styles.selects}>
           <div className={styles.taggle}>
-            <Taggle data1="Análise Mensal" data2="Últimas Produções" setTaggle={setTaggle} />
+            <Taggle 
+              data1="Análise Mensal" 
+              data2="Últimas Produções" 
+              data3="Análise de Simulados"
+              setTaggle={setTaggle} 
+            />
           </div>
           <div className={styles.select_turma}>
             <select value={IdTurma || ""} onChange={(e) => setIdTurma(e.target.value)}>
@@ -310,7 +292,7 @@ const Dashboard = () => {
           <div className={styles.left}>
             <h3>Análise de Desempenho por competências</h3>
             <BarrasEmpilhadas data={dataCompetencia} />
-            <GraficoBarras data={dataTextos} titulo="Análise de Textos Produzidos" />
+            <GraficoBarras data={dataTextos} titulo={getTituloGrafico()} />
           </div>
           <div className={styles.right}>
             <div className={styles.grafico_pizza}>
