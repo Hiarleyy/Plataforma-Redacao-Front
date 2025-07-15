@@ -160,6 +160,8 @@ const Dashboard = () => {
       // Análise mensal baseada apenas em simulados
       const todosOsDados = [...notasSimulados];
 
+      console.log('Dados análise mensal:', todosOsDados);
+
       // Calcular estatísticas de produção de textos do mês
       const turma = await getTurmaById(IdTurma);
       const redacoes = await getRedacoes();
@@ -217,27 +219,74 @@ const Dashboard = () => {
       ]);
 
       // Análise semanal baseada apenas em correções
-      const graficoCompetencia = correcoes
-        .filter((c) => {
-          const turmaOK = c.redacao?.usuario?.turma?.id === turma.id;
-          const dataOK = c.redacao?.data &&
-            isWithinInterval(parseISO(c.redacao.data), {
-              start: inicioSemana,
-              end: fimSemana,
-            });
-          return turmaOK && dataOK;
-        })
-        .map((c) => ({
-          usuarioId: c.redacao.usuario.id,
-          competencia01: c.competencia01,
-          competencia02: c.competencia02,
-          competencia03: c.competencia03,
-          competencia04: c.competencia04,
-          competencia05: c.competencia05,
-          nota: c.nota,
-        }));
+      const correcoesFiltradas = correcoes.filter((c) => {
+        // Verificar se tem os dados necessários
+        if (!c.redacao?.usuario?.turma?.id || !c.redacao?.data) {
+          return false;
+        }
+        
+        const turmaOK = c.redacao.usuario.turma.id === turma.id;
+        const dataCorrecao = parseISO(c.redacao.data);
+        const dataOK = isWithinInterval(dataCorrecao, {
+          start: inicioSemana,
+          end: fimSemana,
+        });
+        
+        return turmaOK && dataOK;
+      });
 
-      setDataCompetencia(graficoCompetencia);
+      console.log('Correções filtradas:', correcoesFiltradas);
+      console.log('Período da semana:', { inicioSemana, fimSemana });
+      console.log('Turma selecionada:', turma.id);
+
+      const graficoCompetencia = correcoesFiltradas.map((c) => ({
+        usuarioId: c.redacao.usuario.id,
+        competencia01: c.competencia01 || 0,
+        competencia02: c.competencia02 || 0,
+        competencia03: c.competencia03 || 0,
+        competencia04: c.competencia04 || 0,
+        competencia05: c.competencia05 || 0,
+        nota: c.nota || 0,
+      }));
+
+      console.log('Dados análise semanal:', graficoCompetencia);
+      
+      // Se não há dados da semana, buscar dados do mês como fallback
+      if (graficoCompetencia.length === 0) {
+        console.log('Sem dados da semana, buscando dados do mês como fallback');
+        const inicioMes = startOfMonth(new Date());
+        const fimMes = endOfMonth(new Date());
+        
+        const correcoesMes = correcoes.filter((c) => {
+          if (!c.redacao?.usuario?.turma?.id || !c.redacao?.data) {
+            return false;
+          }
+          
+          const turmaOK = c.redacao.usuario.turma.id === turma.id;
+          const dataCorrecao = parseISO(c.redacao.data);
+          const dataOK = isWithinInterval(dataCorrecao, {
+            start: inicioMes,
+            end: fimMes,
+          });
+          
+          return turmaOK && dataOK;
+        });
+
+        const dadosFallback = correcoesMes.map((c) => ({
+          usuarioId: c.redacao.usuario.id,
+          competencia01: c.competencia01 || 0,
+          competencia02: c.competencia02 || 0,
+          competencia03: c.competencia03 || 0,
+          competencia04: c.competencia04 || 0,
+          competencia05: c.competencia05 || 0,
+          nota: c.nota || 0,
+        }));
+        
+        console.log('Dados fallback do mês:', dadosFallback);
+        setDataCompetencia(dadosFallback);
+      } else {
+        setDataCompetencia(graficoCompetencia);
+      }
     };
 
     if (taggle === "Análise Mensal") {
