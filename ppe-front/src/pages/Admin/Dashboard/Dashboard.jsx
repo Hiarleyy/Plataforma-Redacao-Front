@@ -109,7 +109,7 @@ const Dashboard = () => {
         setDataCompetencia(todosOsDados);
         setDataTextos([
           {
-            name: "Produção de Textos",
+            name: "Produção Mensal",
             produzidos,
             semProducao: alunosTurma.length - produzidos,
           },
@@ -177,7 +177,7 @@ const Dashboard = () => {
       setDataCompetencia(todosOsDados);
       setDataTextos([
         {
-          name: "Produção de Textos",
+          name: "Produção Mensal",
           produzidos,
           semProducao: alunosTurma.length - produzidos,
         },
@@ -200,24 +200,6 @@ const Dashboard = () => {
 
       setUsuariosTurma(turma.usuarios || []);
 
-      // Calcular estatísticas de produção de textos da semana (mantém a lógica semanal)
-      const redacoesSemana = redacoes.filter((r) => {
-        const data = new Date(r.data);
-        return data >= inicioSemana && data <= fimSemana;
-      });
-
-      const idsEnviadas = new Set(redacoesSemana.map((r) => r.usuarioId));
-      const alunosTurma = turma.usuarios || [];
-      const produzidos = alunosTurma.filter((aluno) => idsEnviadas.has(aluno.id)).length;
-
-      setDataTextos([
-        {
-          name: "Produção de Textos",
-          produzidos,
-          semProducao: alunosTurma.length - produzidos,
-        },
-      ]);
-
       // Análise baseada nas últimas produções da turma (independente de data)
       const correcoesDaTurma = correcoes.filter((c) => {
         // Verificar se tem os dados necessários e se é da turma selecionada
@@ -237,6 +219,19 @@ const Dashboard = () => {
         .slice(0, 10); // Pegar as 10 mais recentes
 
       console.log('Últimas correções (10 mais recentes):', ultimasCorrecoes);
+
+      // Calcular estatísticas de produção de textos baseadas nas últimas produções
+      const idsUltimasProducoes = new Set(ultimasCorrecoes.map((c) => c.redacao.usuario.id));
+      const alunosTurma = turma.usuarios || [];
+      const produzidos = idsUltimasProducoes.size;
+
+      setDataTextos([
+        {
+          name: "Últimas Produções",
+          produzidos,
+          semProducao: alunosTurma.length - produzidos,
+        },
+      ]);
 
       const graficoCompetencia = ultimasCorrecoes.map((c) => ({
         usuarioId: c.redacao.usuario.id,
