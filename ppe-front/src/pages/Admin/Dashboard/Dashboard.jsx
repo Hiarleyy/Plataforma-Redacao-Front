@@ -111,10 +111,14 @@ const Dashboard = () => {
         nota: c.nota || 0,
       }));
 
-      // Dados específicos para o gráfico de pizza (apenas notas)
-      const dadosPizza = correcoesDaTurmaNoMes.map((c) => ({
-        nota: c.nota || 0,
-      }));
+      // Dados específicos para o gráfico de pizza (apenas notas válidas)
+      const dadosPizza = correcoesDaTurmaNoMes
+        .filter(c => c.nota && c.nota > 0) // Filtrar apenas notas válidas
+        .map((c) => ({
+          nota: parseFloat(c.nota) || 0,
+        }));
+
+      console.log('Dados pizza (Análise Mensal):', dadosPizza);
 
       const idsEnviadas = new Set(redacoesDoMes.map((r) => r.usuarioId));
       const alunosTurma = turma.usuarios || [];
@@ -175,10 +179,14 @@ const Dashboard = () => {
         nota: c.nota || 0,
       }));
 
-      // Dados específicos para o gráfico de pizza (apenas notas)
-      const dadosPizza = ultimasCorrecoes.map((c) => ({
-        nota: c.nota || 0,
-      }));
+      // Dados específicos para o gráfico de pizza (apenas notas válidas)
+      const dadosPizza = ultimasCorrecoes
+        .filter(c => c.nota && c.nota > 0) // Filtrar apenas notas válidas
+        .map((c) => ({
+          nota: parseFloat(c.nota) || 0,
+        }));
+
+      console.log('Dados pizza (Últimas Produções):', dadosPizza);
 
       const idsUltimasProducoes = new Set(ultimasCorrecoes.map((c) => c.redacao.usuario.id));
       const alunosTurma = turma.usuarios || [];
@@ -235,10 +243,14 @@ const Dashboard = () => {
           nota: n.notaGeral,
         }));
 
-      // Dados específicos para o gráfico de pizza (apenas notas)
-      const dadosPizza = notasSimulados.map((n) => ({
-        nota: n.nota || 0,
-      }));
+      // Dados específicos para o gráfico de pizza (apenas notas válidas)
+      const dadosPizza = notasSimulados
+        .filter(n => n.nota && n.nota > 0) // Filtrar apenas notas válidas
+        .map((n) => ({
+          nota: parseFloat(n.nota) || 0,
+        }));
+
+      console.log('Dados pizza (Análise Simulados):', dadosPizza);
 
       // Contar simulados realizados (notas registradas)
       setRedacoesCorrigidasTurma(notasSimulados.length);
@@ -285,6 +297,10 @@ const Dashboard = () => {
         return "Análise de Textos Produzidos";
     }
   };
+
+  // Debug: Log dos dados antes de renderizar
+  console.log('Estado atual dataPizza:', dataPizza);
+  console.log('Taggle atual:', taggle);
 
   return (
     <div className={styles.container}>

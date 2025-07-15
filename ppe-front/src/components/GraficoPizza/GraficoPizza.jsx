@@ -8,118 +8,140 @@ import {
 } from "recharts";
 
 const COLORS = [
-  "#1a659e", // 0-500
-  "#004e89", // 500-600
-  "#ef233c", // 600-700
-  "#9d4edd", // 700-800
-  "#1b4332", // 800-900
-  "#1b4332", // 900+
-  "#9ef01a", // 1000
+  "#ef233c", // 0-500 - Vermelho
+  "#ff6b35", // 500-600 - Laranja
+  "#f77f00", // 600-700 - Amarelo-alaranjado
+  "#fcbf49", // 700-800 - Amarelo
+  "#8ecae6", // 800-900 - Azul claro
+  "#219ebc", // 900-999 - Azul médio
+  "#023047", // 1000 - Azul escuro
 ];
 
 // Função para agrupar os dados por faixa de nota
 function agruparPorFaixa(data) {
+  console.log('Dados recebidos no gráfico pizza:', data);
+  
   const faixas = [
-    { name: "0-500", min: 0, max: 500 },
-    { name: "500-600", min: 500, max: 600 },
-    { name: "600-700", min: 600, max: 700 },
-    { name: "700-800", min: 700, max: 800 },
-    { name: "800-900", min: 800, max: 900 },
-    { name: "900+", min: 900, max: 999 }, // qualquer nota entre 900 e 999
+    { name: "0-500", min: 0, max: 499 },
+    { name: "500-600", min: 500, max: 599 },
+    { name: "600-700", min: 600, max: 699 },
+    { name: "700-800", min: 700, max: 799 },
+    { name: "800-900", min: 800, max: 899 },
+    { name: "900-999", min: 900, max: 999 },
     { name: "1000", min: 1000, max: 1000 },
   ];
 
   const contagem = {};
 
+  // Inicializar contagem
   faixas.forEach((faixa) => {
     contagem[faixa.name] = 0;
   });
 
-  // Se não há dados, retorna estrutura com zeros
-  if (!data || data.length === 0) {
-    return Object.entries(contagem)
-      .map(([name, value]) => ({ name, value }))
-      .filter((item) => item.value >= 0); // mostra todas as faixas, mesmo com zero
+  // Se não há dados válidos, retorna array vazio
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    console.log('Nenhum dado válido encontrado');
+    return [];
   }
 
-  data.forEach((aluno) => {
-    const nota = aluno.nota;
-    const faixa = faixas.find((f) => nota >= f.min && nota <= f.max);
-    if (faixa) {
-      contagem[faixa.name]++;
+  // Contar notas por faixa
+  data.forEach((item) => {
+    const nota = parseFloat(item.nota) || 0;
+    console.log('Processando nota:', nota);
+    
+    if (nota > 0) { // Só conta notas maiores que 0
+      const faixa = faixas.find((f) => nota >= f.min && nota <= f.max);
+      if (faixa) {
+        contagem[faixa.name]++;
+        console.log(`Nota ${nota} adicionada à faixa ${faixa.name}`);
+      }
     }
   });
 
-  return Object.entries(contagem)
+  // Retornar apenas faixas com valores > 0
+  const resultado = Object.entries(contagem)
     .map(([name, value]) => ({ name, value }))
-    .filter((item) => item.value > 0); // remove faixas com zero apenas se há dados reais
+    .filter((item) => item.value > 0);
+    
+  console.log('Dados agrupados para o gráfico:', resultado);
+  return resultado;
 }
 
 const GraficoPizza = ({ data, titulo }) => {
-  const dadosAgrupados = agruparPorFaixa(data);
+  console.log('GraficoPizza renderizado com dados:', data);
   
-  // Verifica se há dados reais para exibir
-  const temDados = dadosAgrupados.some(item => item.value > 0);
+  const dadosAgrupados = agruparPorFaixa(data);
+  const temDados = dadosAgrupados && dadosAgrupados.length > 0;
+
+  console.log('Tem dados para exibir:', temDados);
+  console.log('Dados agrupados:', dadosAgrupados);
+
+  if (!temDados) {
+    return (
+      <div style={{ 
+        width: "100%", 
+        height: 450, 
+        display: "flex", 
+        flexDirection: "column",
+        justifyContent: "center", 
+        alignItems: "center",
+        color: "#666",
+        backgroundColor: "#f8f9fa",
+        borderRadius: "8px",
+        border: "1px solid #e0e0e0"
+      }}>
+        <h3 style={{ marginBottom: "20px", color: "#333" }}>{titulo}</h3>
+        <p style={{ fontSize: "16px" }}>Nenhum dado disponível para exibir</p>
+        <p style={{ fontSize: "14px", color: "#999" }}>
+          Selecione uma turma com dados ou verifique o período
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ width: "100%", height: 450 }}>
-      <ResponsiveContainer>
+      <h3 style={{ textAlign: "center", marginBottom: "10px", color: "#333" }}>
+        {titulo}
+      </h3>
+      <ResponsiveContainer width="100%" height={400}>
         <PieChart>
-          {/* Título */}
-          <text
-            x="50%"
-            y="5%"
-            textAnchor="middle"
-            dominantBaseline="central"
-            fontSize={16}
-            fill="#fff"
-            fontWeight="bold"
+          <Pie
+            data={dadosAgrupados}
+            cx="50%"
+            cy="50%"
+            labelLine={false}
+            outerRadius={120}
+            fill="#8884d8"
+            dataKey="value"
+            label={({ name, value, percent }) => 
+              `${name}: ${value} (${(percent * 100).toFixed(1)}%)`
+            }
           >
-            {titulo}
-          </text>
-          
-          {temDados ? (
-            <>
-              <Pie
-                data={dadosAgrupados}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                outerRadius={120}
-                dataKey="value"
-                nameKey="name"
-                label={({ name, value }) => `${name} (${value})`}
-              >
-                {dadosAgrupados.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip
-                formatter={(value, name) => [`${value} aluno(s)`, name]}
-                contentStyle={{
-                  backgroundColor: "#DA9E00",
-                  border: "9px solid #DA9E00",
-                  borderRadius: "16px",
-                }}
-                labelStyle={{ color: "#fff" }}
+            {dadosAgrupados.map((entry, index) => (
+              <Cell 
+                key={`cell-${index}`} 
+                fill={COLORS[index % COLORS.length]} 
               />
-              <Legend />
-            </>
-          ) : (
-            <text
-              x="50%"
-              y="50%"
-              textAnchor="middle"
-              dominantBaseline="central"
-              fontSize={14}
-              fill="#999"
-            >
-              Nenhum dado disponível para o período selecionado
-            </text>
-          )}
+            ))}
+          </Pie>
+          <Tooltip
+            formatter={(value, name) => [
+              `${value} redação${value !== 1 ? 'ões' : ''}`, 
+              `Faixa ${name}`
+            ]}
+            contentStyle={{
+              backgroundColor: "#fff",
+              border: "1px solid #ccc",
+              borderRadius: "8px",
+              boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
+            }}
+          />
+          <Legend 
+            verticalAlign="bottom" 
+            height={36}
+            formatter={(value) => `Faixa ${value}`}
+          />
         </PieChart>
       </ResponsiveContainer>
     </div>
