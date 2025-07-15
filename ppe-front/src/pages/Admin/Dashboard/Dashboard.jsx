@@ -73,7 +73,7 @@ const Dashboard = () => {
         const turmaData = await getTurmaById(turmaInicial);
         const redacoes = await getRedacoes();
 
-        // Processar dados de simulados
+        // Processar dados de simulados para análise mensal
         const simuladosDoMes = simuladosDaTurma.filter((simulado) => {
           const data = parseISO(simulado.data);
           return data >= inicioMes && data <= fimMes;
@@ -93,27 +93,8 @@ const Dashboard = () => {
             nota: n.notaGeral,
           }));
 
-        // Processar dados de redações corrigidas
-        const redacoesCorrigidasMes = correcoes.filter((c) => {
-          const turmaOK = c.redacao?.usuario?.turma?.id === turmaData.id;
-          const dataOK = c.redacao?.data &&
-            isWithinInterval(parseISO(c.redacao.data), {
-              start: inicioMes,
-              end: fimMes,
-            });
-          return turmaOK && dataOK;
-        }).map((c) => ({
-          usuarioId: c.redacao.usuario.id,
-          competencia01: c.competencia01,
-          competencia02: c.competencia02,
-          competencia03: c.competencia03,
-          competencia04: c.competencia04,
-          competencia05: c.competencia05,
-          nota: c.nota,
-        }));
-
-        // Combinar todos os dados
-        const todosOsDados = [...notasSimuladosFormatadas, ...redacoesCorrigidasMes];
+        // Análise mensal baseada apenas em simulados
+        const todosOsDados = [...notasSimuladosFormatadas];
 
         // Calcular estatísticas de produção de textos
         const redacoesDoMes = redacoes.filter((r) => {
@@ -139,7 +120,6 @@ const Dashboard = () => {
     loadInitialData();
   }, []);
 
-  // 🔄 Atualiza os gráficos conforme o toggle ou turma mudam
   useEffect(() => {
     if (!IdTurma) return;
 
@@ -147,7 +127,6 @@ const Dashboard = () => {
       const {
         getNotaSimulados,
         getSimuladoByIdTurma,
-        getCorrecoes,
         getTurmaById,
         getRedacoes,
       } = fetchData();
@@ -155,7 +134,7 @@ const Dashboard = () => {
       const inicioMes = startOfMonth(new Date());
       const fimMes = endOfMonth(new Date());
 
-      // Buscar dados de simulados
+      // Buscar dados de simulados para análise mensal
       const simuladosTurma = await getSimuladoByIdTurma(IdTurma);
       const notasAll = await getNotaSimulados();
 
@@ -178,33 +157,12 @@ const Dashboard = () => {
           nota: n.notaGeral,
         }));
 
-      // Buscar dados de redações corrigidas do mês
-      const correcoes = await getCorrecoes();
-      const turma = await getTurmaById(IdTurma);
-      const redacoes = await getRedacoes();
-
-      const redacoesCorrigidasMes = correcoes.filter((c) => {
-        const turmaOK = c.redacao?.usuario?.turma?.id === turma.id;
-        const dataOK = c.redacao?.data &&
-          isWithinInterval(parseISO(c.redacao.data), {
-            start: inicioMes,
-            end: fimMes,
-          });
-        return turmaOK && dataOK;
-      }).map((c) => ({
-        usuarioId: c.redacao.usuario.id,
-        competencia01: c.competencia01,
-        competencia02: c.competencia02,
-        competencia03: c.competencia03,
-        competencia04: c.competencia04,
-        competencia05: c.competencia05,
-        nota: c.nota,
-      }));
-
-      // Combinar dados de simulados e redações corrigidas
-      const todosOsDados = [...notasSimulados, ...redacoesCorrigidasMes];
+      // Análise mensal baseada apenas em simulados
+      const todosOsDados = [...notasSimulados];
 
       // Calcular estatísticas de produção de textos do mês
+      const turma = await getTurmaById(IdTurma);
+      const redacoes = await getRedacoes();
       const redacoesDoMes = redacoes.filter((r) => {
         const data = new Date(r.data);
         return data >= inicioMes && data <= fimMes;
@@ -240,6 +198,7 @@ const Dashboard = () => {
 
       setUsuariosTurma(turma.usuarios || []);
 
+      // Calcular estatísticas de produção de textos da semana
       const redacoesSemana = redacoes.filter((r) => {
         const data = new Date(r.data);
         return data >= inicioSemana && data <= fimSemana;
@@ -257,6 +216,7 @@ const Dashboard = () => {
         },
       ]);
 
+      // Análise semanal baseada apenas em correções
       const graficoCompetencia = correcoes
         .filter((c) => {
           const turmaOK = c.redacao?.usuario?.turma?.id === turma.id;
@@ -268,13 +228,12 @@ const Dashboard = () => {
           return turmaOK && dataOK;
         })
         .map((c) => ({
-          aluno: c.redacao.usuario.nome,
+          usuarioId: c.redacao.usuario.id,
           competencia01: c.competencia01,
           competencia02: c.competencia02,
           competencia03: c.competencia03,
           competencia04: c.competencia04,
           competencia05: c.competencia05,
-          turma: c.redacao.usuario.turma.nome,
           nota: c.nota,
         }));
 
