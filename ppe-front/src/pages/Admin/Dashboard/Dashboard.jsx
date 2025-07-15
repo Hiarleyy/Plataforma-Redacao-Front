@@ -78,6 +78,11 @@ const Dashboard = () => {
       const inicioMes = startOfMonth(new Date());
       const fimMes = endOfMonth(new Date());
 
+      console.log('Análise Mensal - Período:', {
+        inicio: inicioMes.toISOString(),
+        fim: fimMes.toISOString()
+      });
+
       const turma = await getTurmaById(IdTurma);
       const redacoes = await getRedacoes();
       const correcoes = await getCorrecoes();
@@ -88,7 +93,9 @@ const Dashboard = () => {
       // Filtrar redações da turma no mês atual
       const redacoesDoMes = redacoes.filter((r) => {
         const data = new Date(r.data);
-        return data >= inicioMes && data <= fimMes && r.usuario?.turma?.id === turma.id;
+        const dentroDoMes = data >= inicioMes && data <= fimMes;
+        const daTurma = r.usuario?.turma?.id === turma.id;
+        return dentroDoMes && daTurma;
       });
 
       // Filtrar correções da turma no mês atual
@@ -120,9 +127,17 @@ const Dashboard = () => {
 
       console.log('Dados pizza (Análise Mensal):', dadosPizza);
 
+      // Calcular produções baseado em redações enviadas no mês (não apenas corrigidas)
       const idsEnviadas = new Set(redacoesDoMes.map((r) => r.usuarioId));
-      const alunosTurma = turma.usuarios || [];
-      const produzidos = alunosTurma.filter((aluno) => idsEnviadas.has(aluno.id)).length;
+      const alunosTurmaArray = turma.usuarios || [];
+      const produzidos = alunosTurmaArray.filter((aluno) => idsEnviadas.has(aluno.id)).length;
+
+      console.log('Análise Mensal - Debug:');
+      console.log('- Total de redações do mês:', redacoesDoMes.length);
+      console.log('- Total de correções do mês:', correcoesDaTurmaNoMes.length);
+      console.log('- IDs que enviaram redações:', Array.from(idsEnviadas));
+      console.log('- Total de alunos na turma:', alunosTurmaArray.length);
+      console.log('- Alunos que produziram:', produzidos);
 
       setDataCompetencia(graficoCompetencia);
       setDataPizza(dadosPizza);
@@ -130,12 +145,9 @@ const Dashboard = () => {
         {
           name: "Produção Mensal",
           produzidos,
-          semProducao: alunosTurma.length - produzidos,
+          semProducao: alunosTurmaArray.length - produzidos,
         },
       ]);
-
-      console.log('Análise Mensal - Redações corrigidas:', correcoesDaTurmaNoMes.length);
-      console.log('Análise Mensal - Alunos que produziram:', produzidos);
     };
 
     const fetchUltimasProducoes = async () => {
