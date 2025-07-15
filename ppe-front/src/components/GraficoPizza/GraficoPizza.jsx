@@ -22,13 +22,12 @@ function agruparPorFaixa(data) {
   console.log('Dados recebidos no gráfico pizza:', data);
   
   const faixas = [
-    { name: "0-500", min: 0, max: 499 },
-    { name: "500-600", min: 500, max: 599 },
-    { name: "600-700", min: 600, max: 699 },
-    { name: "700-800", min: 700, max: 799 },
-    { name: "800-900", min: 800, max: 899 },
-    { name: "900-999", min: 900, max: 999 },
-    { name: "1000", min: 1000, max: 1000 },
+    { name: "0-600", min: 0, max: 600 },
+    { name: "600-700", min: 600, max: 700 },
+    { name: "700-800", min: 700, max: 800 },
+    { name: "800-950", min: 800, max: 950 },
+    { name: "950-980", min: 950, max: 980 },
+    { name: "980-1000", min: 980, max: 1000 }
   ];
 
   const contagem = {};
