@@ -200,7 +200,7 @@ const Dashboard = () => {
 
       setUsuariosTurma(turma.usuarios || []);
 
-      // Calcular estatísticas de produção de textos da semana
+      // Calcular estatísticas de produção de textos da semana (mantém a lógica semanal)
       const redacoesSemana = redacoes.filter((r) => {
         const data = new Date(r.data);
         return data >= inicioSemana && data <= fimSemana;
@@ -218,28 +218,27 @@ const Dashboard = () => {
         },
       ]);
 
-      // Análise semanal baseada apenas em correções
-      const correcoesFiltradas = correcoes.filter((c) => {
-        // Verificar se tem os dados necessários
-        if (!c.redacao?.usuario?.turma?.id || !c.redacao?.data) {
-          return false;
-        }
-        
-        const turmaOK = c.redacao.usuario.turma.id === turma.id;
-        const dataCorrecao = parseISO(c.redacao.data);
-        const dataOK = isWithinInterval(dataCorrecao, {
-          start: inicioSemana,
-          end: fimSemana,
-        });
-        
-        return turmaOK && dataOK;
+      // Análise baseada nas últimas produções da turma (independente de data)
+      const correcoesDaTurma = correcoes.filter((c) => {
+        // Verificar se tem os dados necessários e se é da turma selecionada
+        return c.redacao?.usuario?.turma?.id === turma.id;
       });
 
-      console.log('Correções filtradas:', correcoesFiltradas);
-      console.log('Período da semana:', { inicioSemana, fimSemana });
-      console.log('Turma selecionada:', turma.id);
+      console.log('Total de correções da turma:', correcoesDaTurma.length);
 
-      const graficoCompetencia = correcoesFiltradas.map((c) => ({
+      // Ordenar por data de criação/correção (mais recentes primeiro) e pegar as últimas 10
+      const ultimasCorrecoes = correcoesDaTurma
+        .sort((a, b) => {
+          // Ordenar pela data da redação (mais recente primeiro)
+          const dataA = new Date(a.redacao.data);
+          const dataB = new Date(b.redacao.data);
+          return dataB - dataA;
+        })
+        .slice(0, 10); // Pegar as 10 mais recentes
+
+      console.log('Últimas correções (10 mais recentes):', ultimasCorrecoes);
+
+      const graficoCompetencia = ultimasCorrecoes.map((c) => ({
         usuarioId: c.redacao.usuario.id,
         competencia01: c.competencia01 || 0,
         competencia02: c.competencia02 || 0,
@@ -249,49 +248,13 @@ const Dashboard = () => {
         nota: c.nota || 0,
       }));
 
-      console.log('Dados análise semanal:', graficoCompetencia);
-      
-      // Se não há dados da semana, buscar dados do mês como fallback
-      if (graficoCompetencia.length === 0) {
-        console.log('Sem dados da semana, buscando dados do mês como fallback');
-        const inicioMes = startOfMonth(new Date());
-        const fimMes = endOfMonth(new Date());
-        
-        const correcoesMes = correcoes.filter((c) => {
-          if (!c.redacao?.usuario?.turma?.id || !c.redacao?.data) {
-            return false;
-          }
-          
-          const turmaOK = c.redacao.usuario.turma.id === turma.id;
-          const dataCorrecao = parseISO(c.redacao.data);
-          const dataOK = isWithinInterval(dataCorrecao, {
-            start: inicioMes,
-            end: fimMes,
-          });
-          
-          return turmaOK && dataOK;
-        });
-
-        const dadosFallback = correcoesMes.map((c) => ({
-          usuarioId: c.redacao.usuario.id,
-          competencia01: c.competencia01 || 0,
-          competencia02: c.competencia02 || 0,
-          competencia03: c.competencia03 || 0,
-          competencia04: c.competencia04 || 0,
-          competencia05: c.competencia05 || 0,
-          nota: c.nota || 0,
-        }));
-        
-        console.log('Dados fallback do mês:', dadosFallback);
-        setDataCompetencia(dadosFallback);
-      } else {
-        setDataCompetencia(graficoCompetencia);
-      }
+      console.log('Dados análise semanal (últimas produções):', graficoCompetencia);
+      setDataCompetencia(graficoCompetencia);
     };
 
     if (taggle === "Análise Mensal") {
       fetchMensal();
-    } else if (taggle === "Análise Semanal") {
+    } else if (taggle === "Últimas Produções") {
       fetchSemanal();
     }
   }, [IdTurma, taggle]);
@@ -309,7 +272,7 @@ const Dashboard = () => {
 
         <div className={styles.selects}>
           <div className={styles.taggle}>
-            <Taggle data1="Análise Mensal" data2="Análise Semanal" setTaggle={setTaggle} />
+            <Taggle data1="Análise Mensal" data2="Últimas Produções" setTaggle={setTaggle} />
           </div>
           <div className={styles.select_turma}>
             <select value={IdTurma || ""} onChange={(e) => setIdTurma(e.target.value)}>
