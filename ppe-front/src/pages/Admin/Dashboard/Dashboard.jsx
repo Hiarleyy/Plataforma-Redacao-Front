@@ -349,14 +349,6 @@ const Dashboard = () => {
               <div className={styles.mensagem_sem_dados}>
                 <h3>📊 Nenhum dado encontrado</h3>
                 <p>Não há dados disponíveis para o período e turma selecionados.</p>
-                <div className={styles.sugestoes}>
-                  <p><strong>Sugestões:</strong></p>
-                  <ul>
-                    <li>Verifique se a turma possui redações corrigidas ou simulados realizados</li>
-                    <li>Tente selecionar uma análise diferente (Mensal, Últimas Produções ou Simulados)</li>
-                    <li>Selecione uma turma diferente</li>
-                  </ul>
-                </div>
               </div>
             </div>
           )}
