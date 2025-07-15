@@ -90,11 +90,28 @@ const Dashboard = () => {
       // Atualizar o número de alunos da turma selecionada
       setAlunosTurma(turma.usuarios?.length || 0);
       
+      // Debug: Verificar estrutura dos dados
+      console.log('Total de redações retornadas:', redacoes.length);
+      console.log('Turma selecionada ID:', turma.id);
+      console.log('Exemplo de redação:', redacoes[0]);
+      
       // Filtrar redações da turma no mês atual
       const redacoesDoMes = redacoes.filter((r) => {
         const data = new Date(r.data);
         const dentroDoMes = data >= inicioMes && data <= fimMes;
         const daTurma = r.usuario?.turma?.id === turma.id;
+        
+        // Log detalhado para debug
+        if (r.usuario?.turma?.id === turma.id) {
+          console.log('Redação da turma encontrada:', {
+            id: r.id,
+            data: r.data,
+            dataParsed: data.toISOString(),
+            dentroDoMes,
+            turmaId: r.usuario.turma.id
+          });
+        }
+        
         return dentroDoMes && daTurma;
       });
 
@@ -102,7 +119,20 @@ const Dashboard = () => {
       const correcoesDaTurmaNoMes = correcoes.filter((c) => {
         if (!c.redacao?.usuario?.turma?.id || c.redacao.usuario.turma.id !== turma.id) return false;
         const data = new Date(c.redacao.data);
-        return data >= inicioMes && data <= fimMes;
+        const dentroDoMes = data >= inicioMes && data <= fimMes;
+        
+        // Log para debug das correções
+        if (c.redacao.usuario.turma.id === turma.id) {
+          console.log('Correção da turma encontrada:', {
+            id: c.id,
+            redacaoData: c.redacao.data,
+            dataParsed: data.toISOString(),
+            dentroDoMes,
+            turmaId: c.redacao.usuario.turma.id
+          });
+        }
+        
+        return dentroDoMes;
       });
       
       setRedacoesCorrigidasTurma(correcoesDaTurmaNoMes.length);
@@ -128,12 +158,14 @@ const Dashboard = () => {
       console.log('Dados pizza (Análise Mensal):', dadosPizza);
 
       // Calcular produções baseado em redações enviadas no mês (não apenas corrigidas)
-      const idsEnviadas = new Set(redacoesDoMes.map((r) => r.usuarioId));
+      const idsEnviadas = new Set(redacoesParaAnalise.map((r) => r.usuarioId));
       const alunosTurmaArray = turma.usuarios || [];
       const produzidos = alunosTurmaArray.filter((aluno) => idsEnviadas.has(aluno.id)).length;
 
       console.log('Análise Mensal - Debug:');
       console.log('- Total de redações do mês:', redacoesDoMes.length);
+      console.log('- Total de redações alternativas:', redacoesDoMesAlternativa.length);
+      console.log('- Total de redações para análise:', redacoesParaAnalise.length);
       console.log('- Total de correções do mês:', correcoesDaTurmaNoMes.length);
       console.log('- IDs que enviaram redações:', Array.from(idsEnviadas));
       console.log('- Total de alunos na turma:', alunosTurmaArray.length);
