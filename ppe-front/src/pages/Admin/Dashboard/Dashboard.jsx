@@ -28,6 +28,7 @@ const Dashboard = () => {
   const [simulados, setSimulados] = useState([]);
   const [alunos, setAlunos] = useState([]);
   const [redacoesCorrigidas, setRedacoesCorrigidas] = useState([]);
+  const [redacoesCorrigidasTurma, setRedacoesCorrigidasTurma] = useState(0);
   const [taggle, setTaggle] = useState("Análise Mensal");
 
   useEffect(() => {
@@ -96,6 +97,12 @@ const Dashboard = () => {
         // Análise mensal baseada apenas em simulados
         const todosOsDados = [...notasSimuladosFormatadas];
 
+        // Calcular redações corrigidas da turma inicial
+        const redacoesCorrigidasDaTurma = correcoes.filter((c) => {
+          return c.redacao?.usuario?.turma?.id === turmaData.id;
+        });
+        setRedacoesCorrigidasTurma(redacoesCorrigidasDaTurma.length);
+
         // Calcular estatísticas de produção de textos
         const redacoesDoMes = redacoes.filter((r) => {
           const data = new Date(r.data);
@@ -129,6 +136,7 @@ const Dashboard = () => {
         getSimuladoByIdTurma,
         getTurmaById,
         getRedacoes,
+        getCorrecoes,
       } = fetchData();
 
       const inicioMes = startOfMonth(new Date());
@@ -165,6 +173,14 @@ const Dashboard = () => {
       // Calcular estatísticas de produção de textos do mês
       const turma = await getTurmaById(IdTurma);
       const redacoes = await getRedacoes();
+      const correcoes = await getCorrecoes();
+      
+      // Calcular redações corrigidas da turma selecionada
+      const redacoesCorrigidasDaTurma = correcoes.filter((c) => {
+        return c.redacao?.usuario?.turma?.id === turma.id;
+      });
+      setRedacoesCorrigidasTurma(redacoesCorrigidasDaTurma.length);
+      
       const redacoesDoMes = redacoes.filter((r) => {
         const data = new Date(r.data);
         return data >= inicioMes && data <= fimMes;
@@ -220,6 +236,9 @@ const Dashboard = () => {
 
       console.log('Últimas correções (10 mais recentes):', ultimasCorrecoes);
 
+      // Atualizar contador de redações corrigidas da turma
+      setRedacoesCorrigidasTurma(correcoesDaTurma.length);
+
       // Calcular estatísticas de produção de textos baseadas nas últimas produções
       const idsUltimasProducoes = new Set(ultimasCorrecoes.map((c) => c.redacao.usuario.id));
       const alunosTurma = turma.usuarios || [];
@@ -262,7 +281,7 @@ const Dashboard = () => {
           <CardDash title="Total de alunos" content={alunos.length} color="#1A1A1A" />
           <CardDash title="Total de turmas" content={turmas.length} color="#1A1A1A" />
           <CardDash title="Total de simulados" content={simulados.length} color="#1A1A1A" />
-          <CardDash title="Redações corrigidas" content={redacoesCorrigidas.length} color="#1A1A1A" />
+          <CardDash title="Redações corrigidas" content={redacoesCorrigidasTurma} color="#1A1A1A" />
         </div>
 
         <div className={styles.selects}>
