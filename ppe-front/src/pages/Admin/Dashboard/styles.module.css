@@ -48,10 +48,8 @@ body {
 }
 
 .container_desenpenho .CardDashs_container {
-  display: flex;
+  display: inline;
   gap: 8px;
-  flex-wrap: wrap;
-  justify-content: space-between;
 }
 
 .container_desenpenho .selects {
