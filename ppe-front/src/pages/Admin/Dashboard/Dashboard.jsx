@@ -97,16 +97,18 @@ const Dashboard = () => {
         // Análise mensal baseada apenas em simulados
         const todosOsDados = [...notasSimuladosFormatadas];
 
-        // Calcular redações corrigidas da turma inicial
+        // Calcular redações corrigidas da turma inicial no mês
         const redacoesCorrigidasDaTurma = correcoes.filter((c) => {
-          return c.redacao?.usuario?.turma?.id === turmaData.id;
+          if (!c.redacao?.usuario?.turma?.id || c.redacao.usuario.turma.id !== turmaData.id) return false;
+          const data = new Date(c.redacao.data);
+          return data >= inicioMes && data <= fimMes;
         });
         setRedacoesCorrigidasTurma(redacoesCorrigidasDaTurma.length);
 
         // Calcular estatísticas de produção de textos
         const redacoesDoMes = redacoes.filter((r) => {
           const data = new Date(r.data);
-          return data >= inicioMes && data <= fimMes;
+          return data >= inicioMes && data <= fimMes && r.usuario?.turma?.id === turmaData.id;
         });
 
         const idsEnviadas = new Set(redacoesDoMes.map((r) => r.usuarioId));
@@ -175,16 +177,21 @@ const Dashboard = () => {
       const redacoes = await getRedacoes();
       const correcoes = await getCorrecoes();
       
-      // Calcular redações corrigidas da turma selecionada
-      const redacoesCorrigidasDaTurma = correcoes.filter((c) => {
-        return c.redacao?.usuario?.turma?.id === turma.id;
-      });
-      setRedacoesCorrigidasTurma(redacoesCorrigidasDaTurma.length);
-      
+      // Filtrar redações da turma no mês
       const redacoesDoMes = redacoes.filter((r) => {
         const data = new Date(r.data);
+        return data >= inicioMes && data <= fimMes && r.usuario?.turma?.id === turma.id;
+      });
+
+      // Filtrar correções da turma no mês
+      const correcoesDaTurmaNoMes = correcoes.filter((c) => {
+        if (!c.redacao?.usuario?.turma?.id || c.redacao.usuario.turma.id !== turma.id) return false;
+        const data = new Date(c.redacao.data);
         return data >= inicioMes && data <= fimMes;
       });
+      
+      // Calcular redações corrigidas da turma no mês (não todas as correções)
+      setRedacoesCorrigidasTurma(correcoesDaTurmaNoMes.length);
 
       const idsEnviadas = new Set(redacoesDoMes.map((r) => r.usuarioId));
       const alunosTurma = turma.usuarios || [];
@@ -236,8 +243,8 @@ const Dashboard = () => {
 
       console.log('Últimas correções (10 mais recentes):', ultimasCorrecoes);
 
-      // Atualizar contador de redações corrigidas da turma
-      setRedacoesCorrigidasTurma(correcoesDaTurma.length);
+      // Atualizar contador de redações corrigidas da turma (apenas as últimas 10)
+      setRedacoesCorrigidasTurma(ultimasCorrecoes.length);
 
       // Calcular estatísticas de produção de textos baseadas nas últimas produções
       const idsUltimasProducoes = new Set(ultimasCorrecoes.map((c) => c.redacao.usuario.id));
