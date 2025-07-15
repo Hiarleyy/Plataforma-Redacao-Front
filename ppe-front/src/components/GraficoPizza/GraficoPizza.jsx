@@ -8,13 +8,13 @@ import {
 } from "recharts";
 
 const COLORS = [
-  "#ef233c", // 0-500 - Vermelho
+  "#ef233c", // 0-500 - Vermelho (crítico)
   "#ff6b35", // 500-600 - Laranja
   "#f77f00", // 600-700 - Amarelo-alaranjado
-  "#fcbf49", // 700-800 - Amarelo
-  "#8ecae6", // 800-900 - Azul claro
-  "#219ebc", // 900-999 - Azul médio
-  "#023047", // 1000 - Azul escuro
+  "#DA9E00", // 700-800 - Dourado (cor do tema)
+  "#fcbf49", // 800-900 - Amarelo claro
+  "#8ecae6", // 900-999 - Azul claro
+  "#023047", // 1000 - Azul escuro (excelência)
 ];
 
 // Função para agrupar os dados por faixa de nota
@@ -85,14 +85,34 @@ const GraficoPizza = ({ data, titulo }) => {
         flexDirection: "column",
         justifyContent: "center", 
         alignItems: "center",
-        color: "#666",
-        backgroundColor: "#383838ff",
-        borderRadius: "8px",
-        border: "1px solid #e0e0e0"
+        color: "#ffffff",
+        backgroundColor: "#242424",
+        borderRadius: "10px",
+        border: "1px solid #da9e00",
+        padding: "20px"
       }}>
-        <h3 style={{ marginBottom: "20px", color: "#333" }}>{titulo}</h3>
-        <p style={{ fontSize: "16px" }}>Nenhum dado disponível para exibir</p>
-        <p style={{ fontSize: "14px", color: "#999" }}>
+        <h3 style={{ 
+          marginBottom: "20px", 
+          color: "#ffffff",
+          textAlign: "center",
+          fontSize: "1.5rem",
+          fontWeight: "600"
+        }}>
+          {titulo}
+        </h3>
+        <p style={{ 
+          fontSize: "16px", 
+          color: "#a0a0a0",
+          textAlign: "center",
+          marginBottom: "10px"
+        }}>
+          Nenhum dado disponível para exibir
+        </p>
+        <p style={{ 
+          fontSize: "14px", 
+          color: "#a0a0a0",
+          textAlign: "center"
+        }}>
           Selecione uma turma com dados ou verifique o período
         </p>
       </div>
@@ -100,28 +120,48 @@ const GraficoPizza = ({ data, titulo }) => {
   }
 
   return (
-    <div style={{ width: "100%", height: 450 }}>
-      <h3 style={{ textAlign: "center", marginBottom: "10px", color: "#333" }}>
+    <div style={{ 
+      width: "100%", 
+      height: 450,
+      backgroundColor: "#242424",
+      borderRadius: "10px",
+      border: "1px solid #da9e00",
+      padding: "20px"
+    }}>
+      <h3 style={{ 
+        textAlign: "center", 
+        marginBottom: "10px", 
+        color: "#ffffff",
+        fontSize: "1.5rem",
+        fontWeight: "600"
+      }}>
         {titulo}
       </h3>
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={380}>
         <PieChart>
           <Pie
             data={dadosAgrupados}
             cx="50%"
             cy="50%"
             labelLine={false}
-            outerRadius={120}
+            outerRadius={110}
             fill="#8884d8"
             dataKey="value"
             label={({ name, value, percent }) => 
               `${name}: ${value} (${(percent * 100).toFixed(1)}%)`
             }
+            labelStyle={{
+              fill: "#ffffff",
+              fontSize: "12px",
+              fontWeight: "500"
+            }}
           >
             {dadosAgrupados.map((entry, index) => (
               <Cell 
                 key={`cell-${index}`} 
-                fill={COLORS[index % COLORS.length]} 
+                fill={COLORS[index % COLORS.length]}
+                stroke="#242424"
+                strokeWidth={2}
               />
             ))}
           </Pie>
@@ -131,16 +171,29 @@ const GraficoPizza = ({ data, titulo }) => {
               `Faixa ${name}`
             ]}
             contentStyle={{
-              backgroundColor: "#fff",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
+              backgroundColor: "#242424",
+              border: "1px solid #da9e00",
+              borderRadius: "10px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+              color: "#ffffff"
+            }}
+            labelStyle={{ 
+              color: "#da9e00",
+              fontWeight: "600"
+            }}
+            itemStyle={{
+              color: "#ffffff"
             }}
           />
           <Legend 
             verticalAlign="bottom" 
             height={36}
             formatter={(value) => `Faixa ${value}`}
+            wrapperStyle={{
+              color: "#ffffff",
+              fontSize: "14px"
+            }}
+            iconType="circle"
           />
         </PieChart>
       </ResponsiveContainer>
