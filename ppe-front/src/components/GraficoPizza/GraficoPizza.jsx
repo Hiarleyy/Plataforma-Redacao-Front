@@ -19,8 +19,6 @@ const COLORS = [
 
 // Função para agrupar os dados por faixa de nota
 function agruparPorFaixa(data) {
-  console.log('Dados recebidos no gráfico pizza:', data);
-  
   const faixas = [
     { name: "0-600", min: 0, max: 600 },
     { name: "600-700", min: 600, max: 700 },
@@ -39,20 +37,17 @@ function agruparPorFaixa(data) {
 
   // Se não há dados válidos, retorna array vazio
   if (!data || !Array.isArray(data) || data.length === 0) {
-    console.log('Nenhum dado válido encontrado');
     return [];
   }
 
   // Contar notas por faixa
   data.forEach((item) => {
     const nota = parseFloat(item.nota) || 0;
-    console.log('Processando nota:', nota);
     
     if (nota > 0) { // Só conta notas maiores que 0
       const faixa = faixas.find((f) => nota >= f.min && nota <= f.max);
       if (faixa) {
         contagem[faixa.name]++;
-        console.log(`Nota ${nota} adicionada à faixa ${faixa.name}`);
       }
     }
   });
@@ -62,18 +57,12 @@ function agruparPorFaixa(data) {
     .map(([name, value]) => ({ name, value }))
     .filter((item) => item.value > 0);
     
-  console.log('Dados agrupados para o gráfico:', resultado);
   return resultado;
 }
 
 const GraficoPizza = ({ data, titulo }) => {
-  console.log('GraficoPizza renderizado com dados:', data);
-  
   const dadosAgrupados = agruparPorFaixa(data);
   const temDados = dadosAgrupados && dadosAgrupados.length > 0;
-
-  console.log('Tem dados para exibir:', temDados);
-  console.log('Dados agrupados:', dadosAgrupados);
 
   if (!temDados) {
     return (
