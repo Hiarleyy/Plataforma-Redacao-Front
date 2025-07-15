@@ -78,65 +78,18 @@ const Dashboard = () => {
       const inicioMes = startOfMonth(new Date());
       const fimMes = endOfMonth(new Date());
 
-      console.log('Análise Mensal - Período:', {
-        inicio: inicioMes.toISOString(),
-        fim: fimMes.toISOString()
-      });
-
       const turma = await getTurmaById(IdTurma);
       const redacoes = await getRedacoes();
       const correcoes = await getCorrecoes();
       
       // Atualizar o número de alunos da turma selecionada
       setAlunosTurma(turma.usuarios?.length || 0);
-      
-      // Debug: Verificar estrutura dos dados
-      console.log('Total de redações retornadas:', redacoes.length);
-      console.log('Turma selecionada ID:', turma.id);
-      console.log('Exemplo de redação:', redacoes[0]);
-      
-      // Debug: Verificar quantas redações são da turma (sem filtro de data)
-      const redacoesDaTurma = redacoes.filter(r => r.usuario?.turma?.id === turma.id);
-      console.log('Total de redações da turma (sem filtro de data):', redacoesDaTurma.length);
-      
-      // Filtrar redações da turma no mês atual
-      const redacoesDoMes = redacoes.filter((r) => {
-        const data = new Date(r.data);
-        const dentroDoMes = data >= inicioMes && data <= fimMes;
-        const daTurma = r.usuario?.turma?.id === turma.id;
-        
-        // Log detalhado para debug
-        if (r.usuario?.turma?.id === turma.id) {
-          console.log('Redação da turma encontrada:', {
-            id: r.id,
-            data: r.data,
-            dataParsed: data.toISOString(),
-            dentroDoMes,
-            turmaId: r.usuario.turma.id
-          });
-        }
-        
-        return dentroDoMes && daTurma;
-      });
 
       // Filtrar correções da turma no mês atual
       const correcoesDaTurmaNoMes = correcoes.filter((c) => {
         if (!c.redacao?.usuario?.turma?.id || c.redacao.usuario.turma.id !== turma.id) return false;
         const data = new Date(c.redacao.data);
-        const dentroDoMes = data >= inicioMes && data <= fimMes;
-        
-        // Log para debug das correções
-        if (c.redacao.usuario.turma.id === turma.id) {
-          console.log('Correção da turma encontrada:', {
-            id: c.id,
-            redacaoData: c.redacao.data,
-            dataParsed: data.toISOString(),
-            dentroDoMes,
-            turmaId: c.redacao.usuario.turma.id
-          });
-        }
-        
-        return dentroDoMes;
+        return data >= inicioMes && data <= fimMes;
       });
       
       setRedacoesCorrigidasTurma(correcoesDaTurmaNoMes.length);
@@ -159,13 +112,7 @@ const Dashboard = () => {
           nota: parseFloat(c.nota) || 0,
         }));
 
-      console.log('Dados pizza (Análise Mensal):', dadosPizza);
-
-      // SOLUÇÃO DEFINITIVA: Usar sempre as correções como fonte de dados
-      // já que elas contêm a informação completa da redação + usuário + turma
-      console.log('Usando correções como fonte principal de dados');
-      
-      // Extrair redações únicas das correções (evitar duplicatas)
+      // Usar correções como fonte de dados para identificar as produções do mês
       const redacoesUnicasCorrections = correcoesDaTurmaNoMes.map(c => c.redacao);
       const redacoesUnicasMap = new Map();
       redacoesUnicasCorrections.forEach(r => {
@@ -173,21 +120,10 @@ const Dashboard = () => {
       });
       const redacoesUnicas = Array.from(redacoesUnicasMap.values());
 
-      // Usar sempre os dados das correções (mais confiáveis)
-      const redacoesParaAnalise = redacoesUnicas;
-
-      // Calcular produções baseado em redações enviadas no mês (via correções)
-      const idsEnviadas = new Set(redacoesParaAnalise.map((r) => r.usuarioId));
+      // Calcular produções baseado em redações enviadas no mês
+      const idsEnviadas = new Set(redacoesUnicas.map((r) => r.usuarioId));
       const alunosTurmaArray = turma.usuarios || [];
       const produzidos = alunosTurmaArray.filter((aluno) => idsEnviadas.has(aluno.id)).length;
-
-      console.log('Análise Mensal - Debug Final:');
-      console.log('- Total de redações do mês (filtro direto):', redacoesDoMes.length);
-      console.log('- Total de redações via correções:', redacoesParaAnalise.length);
-      console.log('- Total de correções do mês:', correcoesDaTurmaNoMes.length);
-      console.log('- IDs que enviaram redações:', Array.from(idsEnviadas));
-      console.log('- Total de alunos na turma:', alunosTurmaArray.length);
-      console.log('- Alunos que produziram:', produzidos);
 
       setDataCompetencia(graficoCompetencia);
       setDataPizza(dadosPizza);
@@ -248,8 +184,6 @@ const Dashboard = () => {
           nota: parseFloat(c.nota) || 0,
         }));
 
-      console.log('Dados pizza (Últimas Produções):', dadosPizza);
-
       const idsUltimasProducoes = new Set(ultimasCorrecoes.map((c) => c.redacao.usuario.id));
       const alunosTurma = turma.usuarios || [];
       const produzidos = idsUltimasProducoes.size;
@@ -263,9 +197,6 @@ const Dashboard = () => {
           semProducao: alunosTurma.length - produzidos,
         },
       ]);
-
-      console.log('Últimas Produções - Correções analisadas:', ultimasCorrecoes.length);
-      console.log('Últimas Produções - Alunos únicos:', produzidos);
     };
 
     const fetchAnaliseSimulados = async () => {
@@ -312,8 +243,6 @@ const Dashboard = () => {
           nota: parseFloat(n.nota) || 0,
         }));
 
-      console.log('Dados pizza (Análise Simulados):', dadosPizza);
-
       // Contar simulados realizados (notas registradas)
       setRedacoesCorrigidasTurma(notasSimulados.length);
 
@@ -331,9 +260,6 @@ const Dashboard = () => {
           semProducao: alunosTurma.length - produzidos,
         },
       ]);
-
-      console.log('Análise Simulados - Simulados realizados:', notasSimulados.length);
-      console.log('Análise Simulados - Alunos que fizeram simulados:', produzidos);
     };
 
     // Executar a análise baseada no toggle selecionado
@@ -359,10 +285,6 @@ const Dashboard = () => {
         return "Análise de Textos Produzidos";
     }
   };
-
-  // Debug: Log dos dados antes de renderizar
-  console.log('Estado atual dataPizza:', dataPizza);
-  console.log('Taggle atual:', taggle);
 
   return (
     <div className={styles.container}>
