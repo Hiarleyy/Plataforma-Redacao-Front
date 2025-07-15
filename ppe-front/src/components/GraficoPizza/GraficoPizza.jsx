@@ -86,7 +86,7 @@ const GraficoPizza = ({ data, titulo }) => {
         justifyContent: "center", 
         alignItems: "center",
         color: "#666",
-        backgroundColor: "#f8f9fa",
+        backgroundColor: "#383838ff",
         borderRadius: "8px",
         border: "1px solid #e0e0e0"
       }}>
