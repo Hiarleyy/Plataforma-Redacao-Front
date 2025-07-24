@@ -2,7 +2,7 @@ import styles from "../NovaRedacao/styles.module.css";
 import Title from "../../../components/Title/Title";
 import Button from "../../../components/Button/Button";
 import Input from "../../../components/Input/Input";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { PDFDocument } from "pdf-lib";
 import imageCompression from "browser-image-compression";
 import { useDropzone } from "react-dropzone";
@@ -29,6 +29,26 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
   // Estados para controlar o envio
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cooldown, setCooldown] = useState(false);
+  
+  // Ref para evitar múltiplos cliques
+  const isSubmittingRef = useRef(false);
+  const cooldownRef = useRef(false);
+  const lastClickTimeRef = useRef(0);
+
+  // Função com debounce para evitar múltiplos cliques
+  const handleSubmitWithDebounce = useCallback(async () => {
+    const now = Date.now();
+    const timeSinceLastClick = now - lastClickTimeRef.current;
+    
+    // Debounce de 1 segundo entre cliques
+    if (timeSinceLastClick < 1000) {
+      console.log("Clique muito rápido - ignorado");
+      return;
+    }
+    
+    lastClickTimeRef.current = now;
+    await handleSubmit();
+  }, [tema, fileBlob, fileName]);
   
   const navigate = useNavigate()
   
@@ -124,8 +144,15 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     },
     maxFiles: 1,
   });  const handleSubmit = async () => {
-    // Verificar se já está enviando ou em cooldown
+    // Verificação imediata com ref para evitar múltiplos cliques
+    if (isSubmittingRef.current || cooldownRef.current) {
+      console.log("Requisição bloqueada - já está processando");
+      return;
+    }
+
+    // Verificar se já está enviando ou em cooldown (verificação de estado também)
     if (isSubmitting || cooldown) {
+      console.log("Requisição bloqueada - estado ativo");
       return;
     }
 
@@ -167,15 +194,20 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     formData.append("file", fileBlob, fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`);
     formData.append("usuarioId", alunoId);
     
-    // Iniciar o estado de envio
+    // Bloquear imediatamente com ref (sincronamente)
+    isSubmittingRef.current = true;
+    
+    // Iniciar o estado de envio (assincronamente)
     setIsSubmitting(true);
     setFormMessage(null); // Limpar mensagens anteriores
+    console.log("Iniciando envio da redação...");
     
     try { 
       const response = await axios.post(uploadURL, formData, {
          headers: getHeaders(),
       });   
       
+      console.log("Redação enviada com sucesso!");
       setFormMessage({
         type: "success",
         text: `Redação enviada com sucesso!`,
@@ -186,14 +218,17 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
       setFilesName("Nenhum arquivo enviado");
       setFileBlob(null);
       
-      // Iniciar cooldown de 3 segundos
+      // Iniciar cooldown de 5 segundos (aumentado para ser mais seguro)
+      cooldownRef.current = true;
       setCooldown(true);
       setTimeout(() => {
+        cooldownRef.current = false;
         setCooldown(false);
-      }, 3000);
+        console.log("Cooldown finalizado");
+      }, 5000);
       
     } catch (error) {
-      console.error(error);   
+      console.error("Erro ao enviar redação:", error);   
       let errorMessage = "Erro ao enviar redação.";
 
       setFormMessage({
@@ -201,8 +236,10 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
         text: errorMessage,
       });
     } finally {
-      // Finalizar o estado de envio
+      // Liberar o bloqueio
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
+      console.log("Processo de envio finalizado");
     }
   };
   
@@ -457,7 +494,7 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
                 <div className={styles.submit_button}>
                   <button 
                     className={`${styles.desktop_button} ${(isSubmitting || cooldown) ? styles.disabled : ''}`}
-                    onClick={handleSubmit}
+                    onClick={handleSubmitWithDebounce}
                     disabled={!fileBlob || !tema.trim() || isSubmitting || cooldown}
                   >
                     {isSubmitting ? (
@@ -547,7 +584,7 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
               <div className={styles.mobile_submit_button}>
                 <button 
                   className={`${styles.mobile_button} ${(isSubmitting || cooldown) ? styles.disabled : ''}`}
-                  onClick={handleSubmit}
+                  onClick={handleSubmitWithDebounce}
                   disabled={!fileBlob || !tema.trim() || isSubmitting || cooldown}
                 >
                   {isSubmitting ? (

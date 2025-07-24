@@ -491,14 +491,15 @@
 }
 
 .mobile_button.disabled {
-  background-color: #666;
-  cursor: not-allowed;
+  background-color: #666 !important;
+  cursor: not-allowed !important;
   opacity: 0.7;
+  pointer-events: none;
 }
 
 .mobile_button.disabled:hover {
-  background-color: #666;
-  transform: none;
+  background-color: #666 !important;
+  transform: none !important;
 }
 
 /* Estilos para status de carregamento */
@@ -592,14 +593,15 @@
 }
 
 .desktop_button.disabled {
-  background-color: #666;
-  cursor: not-allowed;
+  background-color: #666 !important;
+  cursor: not-allowed !important;
   opacity: 0.7;
+  pointer-events: none;
 }
 
 .desktop_button.disabled:hover {
-  background-color: #666;
-  transform: none;
+  background-color: #666 !important;
+  transform: none !important;
 }
 
 .desktop_button_icon {
