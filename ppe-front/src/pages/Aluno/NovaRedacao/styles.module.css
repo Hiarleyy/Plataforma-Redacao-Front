@@ -494,12 +494,20 @@
   background-color: #666 !important;
   cursor: not-allowed !important;
   opacity: 0.7;
-  pointer-events: none;
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
 }
 
-.mobile_button.disabled:hover {
+.mobile_button.disabled:hover,
+.mobile_button.disabled:active,
+.mobile_button.disabled:focus {
   background-color: #666 !important;
   transform: none !important;
+  outline: none !important;
 }
 
 /* Estilos para status de carregamento */
@@ -596,12 +604,20 @@
   background-color: #666 !important;
   cursor: not-allowed !important;
   opacity: 0.7;
-  pointer-events: none;
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
 }
 
-.desktop_button.disabled:hover {
+.desktop_button.disabled:hover,
+.desktop_button.disabled:active,
+.desktop_button.disabled:focus {
   background-color: #666 !important;
   transform: none !important;
+  outline: none !important;
 }
 
 .desktop_button_icon {

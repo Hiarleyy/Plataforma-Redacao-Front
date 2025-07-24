@@ -34,21 +34,190 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
   const isSubmittingRef = useRef(false);
   const cooldownRef = useRef(false);
   const lastClickTimeRef = useRef(0);
+  const submissionInProgressRef = useRef(null); // Promise para controlar submissão única
+  const cooldownTimeoutRef = useRef(null); // Ref para controlar timeout
 
-  // Função com debounce para evitar múltiplos cliques
-  const handleSubmitWithDebounce = useCallback(async () => {
+  // Limpeza quando componente desmonta
+  useEffect(() => {
+    return () => {
+      if (cooldownTimeoutRef.current) {
+        clearTimeout(cooldownTimeoutRef.current);
+      }
+      isSubmittingRef.current = false;
+      cooldownRef.current = false;
+      submissionInProgressRef.current = null;
+    };
+  }, []);
+
+  // Função para cancelar evento se necessário
+  const preventMultipleClicks = useCallback((event) => {
+    if (isSubmittingRef.current || cooldownRef.current || submissionInProgressRef.current) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      console.log("Evento cancelado - submissão em progresso");
+      return true;
+    }
+    return false;
+  }, []);
+
+  // Função principal de envio com controle único
+  const handleSubmit = useCallback(async () => {
+    // Verificação tripla de segurança
+    if (isSubmittingRef.current || cooldownRef.current || submissionInProgressRef.current) {
+      console.log("Requisição bloqueada - já está processando");
+      return;
+    }
+
+    // Verificar se já está enviando ou em cooldown (verificação de estado também)
+    if (isSubmitting || cooldown) {
+      console.log("Requisição bloqueada - estado ativo");
+      return;
+    }
+
+    if (!fileBlob || !tema.trim()) {
+      setFormMessage({
+        type: "error",
+        text: "Preencha o tema e envie um arquivo válido."
+      });
+      return;
+    }
+    
+    // Verificar tamanho do arquivo (limite de 10MB)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB em bytes
+    if (fileBlob.size > MAX_FILE_SIZE) {
+      setFormMessage({
+        type: "error",
+        text: "O arquivo é muito grande. O tamanho máximo permitido é 10MB."
+      });
+      return;
+    }
+
+    const alunoId = getAlunoId();
+    console.log("AlunoId:", alunoId);
+    console.log("BaseURL:", baseURL);
+    
+    if (!alunoId) {
+      setFormMessage({
+        type: "error",
+        text: "Erro: ID do aluno não encontrado. Faça login novamente."
+      });
+      return;
+    }
+
+    // Criar promise de controle para submissão única
+    const submissionPromise = new Promise(async (resolve, reject) => {
+      try {
+        // Bloquear imediatamente todas as referencias
+        isSubmittingRef.current = true;
+        setIsSubmitting(true);
+        setFormMessage(null);
+        console.log("Iniciando envio da redação - BLOQUEADO");
+
+        const uploadURL = `${baseURL}/redacoes/${alunoId}/upload`;
+        console.log("URL de upload:", uploadURL);
+
+        const formData = new FormData();
+        formData.append("titulo", tema);
+        formData.append("file", fileBlob, fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`);
+        formData.append("usuarioId", alunoId);
+        
+        const response = await axios.post(uploadURL, formData, {
+           headers: getHeaders(),
+        });   
+        
+        console.log("Redação enviada com sucesso!");
+        setFormMessage({
+          type: "success",
+          text: `Redação enviada com sucesso!`,
+        });
+        
+        // Limpar formulário
+        setTema("");
+        setFilesName("Nenhum arquivo enviado");
+        setFileBlob(null);
+        
+        // Iniciar cooldown de 5 segundos
+        cooldownRef.current = true;
+        setCooldown(true);
+        
+        // Limpar timeout anterior se existir
+        if (cooldownTimeoutRef.current) {
+          clearTimeout(cooldownTimeoutRef.current);
+        }
+        
+        cooldownTimeoutRef.current = setTimeout(() => {
+          cooldownRef.current = false;
+          setCooldown(false);
+          cooldownTimeoutRef.current = null;
+          console.log("Cooldown finalizado");
+        }, 5000);
+        
+        resolve(response);
+      } catch (error) {
+        console.error("Erro ao enviar redação:", error);   
+        let errorMessage = "Erro ao enviar redação.";
+
+        setFormMessage({
+          type: "error",
+          text: errorMessage,
+        });
+        reject(error);
+      } finally {
+        // Liberar todos os bloqueios
+        isSubmittingRef.current = false;
+        setIsSubmitting(false);
+        submissionInProgressRef.current = null;
+        console.log("Processo de envio finalizado - DESBLOQUEADO");
+      }
+    });
+
+    // Armazenar a promise de controle
+    submissionInProgressRef.current = submissionPromise;
+    
+    return submissionPromise;
+  }, [tema, fileBlob, fileName, isSubmitting, cooldown, getAlunoId, getHeaders]);
+
+  // Função para verificar se pode submeter
+  const canSubmit = useCallback(() => {
+    return !isSubmittingRef.current && 
+           !cooldownRef.current && 
+           !submissionInProgressRef.current &&
+           !isSubmitting && 
+           !cooldown &&
+           fileBlob && 
+           tema.trim();
+  }, [isSubmitting, cooldown, fileBlob, tema]);
+
+  // Função com debounce e controle rigoroso
+  const handleSubmitWithDebounce = useCallback(async (event) => {
+    // Cancelar evento se necessário
+    if (preventMultipleClicks(event)) {
+      return;
+    }
+
+    // Verificação final de integridade
+    if (!canSubmit()) {
+      console.log("Botão bloqueado - condições não atendidas");
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
     const now = Date.now();
     const timeSinceLastClick = now - lastClickTimeRef.current;
     
-    // Debounce de 1 segundo entre cliques
-    if (timeSinceLastClick < 1000) {
+    // Debounce de 2 segundos entre cliques (aumentado)
+    if (timeSinceLastClick < 2000) {
       console.log("Clique muito rápido - ignorado");
+      event.preventDefault();
+      event.stopPropagation();
       return;
     }
     
     lastClickTimeRef.current = now;
     await handleSubmit();
-  }, [tema, fileBlob, fileName]);
+  }, [handleSubmit, preventMultipleClicks, canSubmit]);
   
   const navigate = useNavigate()
   
@@ -143,106 +312,8 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
       "application/pdf": [".pdf"],
     },
     maxFiles: 1,
-  });  const handleSubmit = async () => {
-    // Verificação imediata com ref para evitar múltiplos cliques
-    if (isSubmittingRef.current || cooldownRef.current) {
-      console.log("Requisição bloqueada - já está processando");
-      return;
-    }
+  });
 
-    // Verificar se já está enviando ou em cooldown (verificação de estado também)
-    if (isSubmitting || cooldown) {
-      console.log("Requisição bloqueada - estado ativo");
-      return;
-    }
-
-    if (!fileBlob || !tema.trim()) {
-      setFormMessage({
-        type: "error",
-        text: "Preencha o tema e envie um arquivo válido."
-      });
-      return;
-    }
-    
-    // Verificar tamanho do arquivo (limite de 10MB)
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB em bytes
-    if (fileBlob.size > MAX_FILE_SIZE) {
-      setFormMessage({
-        type: "error",
-        text: "O arquivo é muito grande. O tamanho máximo permitido é 10MB."
-      });
-      return;
-    }
-
-    const alunoId = getAlunoId();
-    console.log("AlunoId:", alunoId); // Debug log
-    console.log("BaseURL:", baseURL); // Debug log para verificar a URL base
-    
-    if (!alunoId) {
-      setFormMessage({
-        type: "error",
-        text: "Erro: ID do aluno não encontrado. Faça login novamente."
-      });
-      return;
-    }
-
-    const uploadURL = `${baseURL}/redacoes/${alunoId}/upload`;
-    console.log("URL de upload:", uploadURL); // Debug log para verificar a URL completa
-
-    const formData = new FormData();
-    formData.append("titulo", tema);
-    formData.append("file", fileBlob, fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`);
-    formData.append("usuarioId", alunoId);
-    
-    // Bloquear imediatamente com ref (sincronamente)
-    isSubmittingRef.current = true;
-    
-    // Iniciar o estado de envio (assincronamente)
-    setIsSubmitting(true);
-    setFormMessage(null); // Limpar mensagens anteriores
-    console.log("Iniciando envio da redação...");
-    
-    try { 
-      const response = await axios.post(uploadURL, formData, {
-         headers: getHeaders(),
-      });   
-      
-      console.log("Redação enviada com sucesso!");
-      setFormMessage({
-        type: "success",
-        text: `Redação enviada com sucesso!`,
-      });
-      
-      // Limpar formulário
-      setTema("");
-      setFilesName("Nenhum arquivo enviado");
-      setFileBlob(null);
-      
-      // Iniciar cooldown de 5 segundos (aumentado para ser mais seguro)
-      cooldownRef.current = true;
-      setCooldown(true);
-      setTimeout(() => {
-        cooldownRef.current = false;
-        setCooldown(false);
-        console.log("Cooldown finalizado");
-      }, 5000);
-      
-    } catch (error) {
-      console.error("Erro ao enviar redação:", error);   
-      let errorMessage = "Erro ao enviar redação.";
-
-      setFormMessage({
-        type: "error",
-        text: errorMessage,
-      });
-    } finally {
-      // Liberar o bloqueio
-      isSubmittingRef.current = false;
-      setIsSubmitting(false);
-      console.log("Processo de envio finalizado");
-    }
-  };
-  
   const formatarData = (data) => {
     if (!data) return "-";
     return new Date(data).toLocaleDateString("pt-BR",{
@@ -493,9 +564,9 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
                 
                 <div className={styles.submit_button}>
                   <button 
-                    className={`${styles.desktop_button} ${(isSubmitting || cooldown) ? styles.disabled : ''}`}
+                    className={`${styles.desktop_button} ${!canSubmit() ? styles.disabled : ''}`}
                     onClick={handleSubmitWithDebounce}
-                    disabled={!fileBlob || !tema.trim() || isSubmitting || cooldown}
+                    disabled={!canSubmit()}
                   >
                     {isSubmitting ? (
                       <>
@@ -583,9 +654,9 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
               
               <div className={styles.mobile_submit_button}>
                 <button 
-                  className={`${styles.mobile_button} ${(isSubmitting || cooldown) ? styles.disabled : ''}`}
+                  className={`${styles.mobile_button} ${!canSubmit() ? styles.disabled : ''}`}
                   onClick={handleSubmitWithDebounce}
-                  disabled={!fileBlob || !tema.trim() || isSubmitting || cooldown}
+                  disabled={!canSubmit()}
                 >
                   {isSubmitting ? (
                     <>
