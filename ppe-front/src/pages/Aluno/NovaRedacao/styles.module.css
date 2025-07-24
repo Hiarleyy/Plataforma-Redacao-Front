@@ -490,6 +490,17 @@
   cursor: not-allowed;
 }
 
+.mobile_button.disabled {
+  background-color: #666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.mobile_button.disabled:hover {
+  background-color: #666;
+  transform: none;
+}
+
 /* Estilos para status de carregamento */
 .mobile_loading {
   position: absolute;
@@ -578,6 +589,17 @@
 .desktop_button:disabled {
   background-color: #a0a0a0;
   cursor: not-allowed;
+}
+
+.desktop_button.disabled {
+  background-color: #666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.desktop_button.disabled:hover {
+  background-color: #666;
+  transform: none;
 }
 
 .desktop_button_icon {
@@ -711,4 +733,18 @@
 
 .view_details:hover {
   background-color: #b58600;
+}
+
+/* Estilos para ícones de loading e clock */
+.mobile_button_icon, .desktop_button_icon {
+  margin-left: 8px;
+}
+
+.fa-spinner.fa-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

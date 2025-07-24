@@ -26,6 +26,10 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
   const [fileBlob, setFileBlob] = useState(null); 
   const [redacao, setRedacao] = useState([])
   
+  // Estados para controlar o envio
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cooldown, setCooldown] = useState(false);
+  
   const navigate = useNavigate()
   
   const itemsPerPage = 5
@@ -120,6 +124,11 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     },
     maxFiles: 1,
   });  const handleSubmit = async () => {
+    // Verificar se já está enviando ou em cooldown
+    if (isSubmitting || cooldown) {
+      return;
+    }
+
     if (!fileBlob || !tema.trim()) {
       setFormMessage({
         type: "error",
@@ -158,25 +167,42 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     formData.append("file", fileBlob, fileName.endsWith(".pdf") ? fileName : `${fileName}.pdf`);
     formData.append("usuarioId", alunoId);
     
+    // Iniciar o estado de envio
+    setIsSubmitting(true);
+    setFormMessage(null); // Limpar mensagens anteriores
+    
     try { 
       const response = await axios.post(uploadURL, formData, {
          headers: getHeaders(),
       });   
+      
       setFormMessage({
         type: "success",
         text: `Redação enviada com sucesso!`,
       });
+      
+      // Limpar formulário
       setTema("");
       setFilesName("Nenhum arquivo enviado");
       setFileBlob(null);
+      
+      // Iniciar cooldown de 3 segundos
+      setCooldown(true);
+      setTimeout(() => {
+        setCooldown(false);
+      }, 3000);
+      
     } catch (error) {
       console.error(error);   
-    let errorMessage = "Erro ao enviar redação.";
+      let errorMessage = "Erro ao enviar redação.";
 
-    setFormMessage({
-      type: "error",
-      text: errorMessage,
-    });
+      setFormMessage({
+        type: "error",
+        text: errorMessage,
+      });
+    } finally {
+      // Finalizar o estado de envio
+      setIsSubmitting(false);
     }
   };
   
@@ -430,12 +456,26 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
                 
                 <div className={styles.submit_button}>
                   <button 
-                    className={styles.desktop_button}
+                    className={`${styles.desktop_button} ${(isSubmitting || cooldown) ? styles.disabled : ''}`}
                     onClick={handleSubmit}
-                    disabled={!fileBlob || !tema.trim()}
+                    disabled={!fileBlob || !tema.trim() || isSubmitting || cooldown}
                   >
-                    Enviar redação
-                    <i className={`fa-solid fa-paper-plane ${styles.desktop_button_icon}`}></i>
+                    {isSubmitting ? (
+                      <>
+                        Enviando...
+                        <i className={`fa-solid fa-spinner fa-spin ${styles.desktop_button_icon}`}></i>
+                      </>
+                    ) : cooldown ? (
+                      <>
+                        Aguarde...
+                        <i className={`fa-solid fa-clock ${styles.desktop_button_icon}`}></i>
+                      </>
+                    ) : (
+                      <>
+                        Enviar redação
+                        <i className={`fa-solid fa-paper-plane ${styles.desktop_button_icon}`}></i>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -506,12 +546,26 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
               
               <div className={styles.mobile_submit_button}>
                 <button 
-                  className={styles.mobile_button}
+                  className={`${styles.mobile_button} ${(isSubmitting || cooldown) ? styles.disabled : ''}`}
                   onClick={handleSubmit}
-                  disabled={!fileBlob || !tema.trim()}
+                  disabled={!fileBlob || !tema.trim() || isSubmitting || cooldown}
                 >
-                  Enviar redação
-                  <i className={`fa-solid fa-paper-plane ${styles.mobile_button_icon}`}></i>
+                  {isSubmitting ? (
+                    <>
+                      Enviando...
+                      <i className={`fa-solid fa-spinner fa-spin ${styles.mobile_button_icon}`}></i>
+                    </>
+                  ) : cooldown ? (
+                    <>
+                      Aguarde...
+                      <i className={`fa-solid fa-clock ${styles.mobile_button_icon}`}></i>
+                    </>
+                  ) : (
+                    <>
+                      Enviar redação
+                      <i className={`fa-solid fa-paper-plane ${styles.mobile_button_icon}`}></i>
+                    </>
+                  )}
                 </button>
               </div>
             </div>
