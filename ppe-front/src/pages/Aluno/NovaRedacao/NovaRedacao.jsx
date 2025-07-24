@@ -49,6 +49,28 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
     };
   }, []);
 
+  const { brasilFormatData } = useUseful();
+  const { getHeaders } = useUseful();
+
+  const getAlunoId = useCallback(() => {
+      try {
+        const aluno = localStorage.getItem('user_access_data')
+        if (!aluno) {
+          console.error('Dados do usuário não encontrados no localStorage');
+          return null;
+        }
+        const userData = JSON.parse(aluno)
+        if (!userData || !userData.id) {
+          console.error('ID do usuário não encontrado nos dados:', userData);
+          return null;
+        }
+        return userData.id;
+      } catch (error) {
+        console.error('Erro ao obter ID do aluno:', error);
+        return null;
+      }
+  }, []);
+
   // Função para cancelar evento se necessário
   const preventMultipleClicks = useCallback((event) => {
     if (isSubmittingRef.current || cooldownRef.current || submissionInProgressRef.current) {
@@ -238,28 +260,6 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
   // Estados para o modal de delete
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [redacaoToDelete, setRedacaoToDelete] = useState(null);
-  
-  const { brasilFormatData } = useUseful();
-  const { getHeaders } = useUseful()
-
-  const getAlunoId = () => {
-      try {
-        const aluno = localStorage.getItem('user_access_data')
-        if (!aluno) {
-          console.error('Dados do usuário não encontrados no localStorage');
-          return null;
-        }
-        const userData = JSON.parse(aluno)
-        if (!userData || !userData.id) {
-          console.error('ID do usuário não encontrado nos dados:', userData);
-          return null;
-        }
-        return userData.id;
-      } catch (error) {
-        console.error('Erro ao obter ID do aluno:', error);
-        return null;
-      }
-  }
 
   const onDrop = async (acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -564,9 +564,9 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
                 
                 <div className={styles.submit_button}>
                   <button 
-                    className={`${styles.desktop_button} ${!canSubmit() ? styles.disabled : ''}`}
+                    className={`${styles.desktop_button} ${(isSubmitting || cooldown) ? styles.disabled : ''}`}
                     onClick={handleSubmitWithDebounce}
-                    disabled={!canSubmit()}
+                    disabled={!fileBlob || !tema.trim() || isSubmitting || cooldown}
                   >
                     {isSubmitting ? (
                       <>
@@ -654,9 +654,9 @@ const Novaredacao = () => {  const [fileName, setFilesName] = useState("Nenhum a
               
               <div className={styles.mobile_submit_button}>
                 <button 
-                  className={`${styles.mobile_button} ${!canSubmit() ? styles.disabled : ''}`}
+                  className={`${styles.mobile_button} ${(isSubmitting || cooldown) ? styles.disabled : ''}`}
                   onClick={handleSubmitWithDebounce}
-                  disabled={!canSubmit()}
+                  disabled={!fileBlob || !tema.trim() || isSubmitting || cooldown}
                 >
                   {isSubmitting ? (
                     <>
