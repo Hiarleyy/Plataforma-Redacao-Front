@@ -29,6 +29,7 @@ const DetalhesAluno = () => {
   const [turmas, setTurmas] = useState([])
   const [isLoadingData, setIsLoadingData] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingReset, setIsLoadingReset] = useState(false)
   const [modalIsClicked, setModalIsClicked] = useState(false)
   const [modalRedacaoIsClicked, setModalRedacaoIsClicked] = useState(false)
   const [modalData, setModalData] = useState({})
@@ -65,6 +66,19 @@ const DetalhesAluno = () => {
       setIsLoading(false)
     }
   };
+
+  const resetPassword = async (id) => {
+    try {
+      await axios.patch(`http://localhost:3000/usuarios/${id}/resetar-senha`)
+    } catch (error) {
+      setFormMessage({
+        type: "error",
+        text: error.response.data.error
+      });
+    } finally {
+      setIsLoadingReset(false)
+    }
+  }
 
   const deleteAluno = async () => {
     await axios.delete(`http://localhost:3000/usuarios/${aluno_id}`, { headers: getHeaders() })
@@ -270,6 +284,17 @@ const DetalhesAluno = () => {
               ATUALIZAR
             </Button>
           </form>
+
+          <Button 
+            text_size="20px" 
+            text_color="#E0E0E0" 
+            padding_sz="10px" 
+            bg_color="#B2433F"
+            isLoading={isLoadingReset}
+            onClick={resetPassword}
+          >
+            RESETAR SENHA
+          </Button>
         </div>
       </div>
     </div>
