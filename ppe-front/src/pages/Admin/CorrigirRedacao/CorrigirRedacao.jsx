@@ -249,7 +249,7 @@ const CorrigirRedacao = () => {
                     break;
                 }
               }}
-              options={[0, 40, 80, 120, 160, 200].map((v) => ({
+              options={[0,20,40,60,80,100,120,140,160,180,200].map((v) => ({
                 value: v,
                 label: `Competência 0${index + 1}: ${v}`,
               }))}
