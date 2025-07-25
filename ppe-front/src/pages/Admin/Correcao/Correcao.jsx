@@ -7,6 +7,7 @@ import Pagination from "../../../components/Pagination/Pagination"
 import Message from "../../../components/Message/Message"
 import { useState, useEffect } from "react"
 import CorrecaoModal from "../../../components/CorrecaoModal/CorrecaoModal"
+import { useNavigate } from "react-router-dom";
 
 const Correcao = () => {
   const [redacoesPendentes, setRedacoesPendentes] = useState([])
@@ -14,6 +15,8 @@ const Correcao = () => {
   const [isLoading, setIsLoading] = useState(true) 
   const [modalIsClicked, setModalIsClicked] = useState(false)
   const [modalData, setModalData] = useState({})
+  const navigate = useNavigate();
+
 
   const itemsPerPage = 5
   const [currentPagePen, setCurrentPagePen] = useState(1)
@@ -45,6 +48,22 @@ const Correcao = () => {
 
     getData()
   }, [])
+  const formatarDataHora = (data) => {
+  if (!data) return "-";
+  return new Date(data).toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false, 
+    timeZone: "America/Sao_Paulo" 
+  });
+  };
+
+  const handleResultados = (id) => {
+  navigate(`/admin/gerenciar-notas/${id}`);
+  };
 
   return (
     <div className={styles.container}>
@@ -73,7 +92,8 @@ const Correcao = () => {
                   <InfoCard 
                     key={redacao.id}
                     title={redacao.titulo} 
-                    subtitle={redacao?.usuario?.nome} 
+                    subtitle={redacao?.usuario?.nome}
+                    data={formatarDataHora(redacao?.data)} 
                     button={false}
                     link={redacao.id}
                   />
@@ -108,12 +128,16 @@ const Correcao = () => {
                   <InfoCard 
                     key={redacao.id}
                     title={redacao.titulo} 
-                    subtitle={redacao?.usuario?.nome} 
+                    subtitle={redacao?.usuario?.nome}
+                    data={formatarDataHora(redacao?.data)} 
                     infoCardOnClick={() => {
                       setModalData(redacao)
                       setModalIsClicked(true)
                     }}
+                    button_editar={true}
                     button={false}
+                    onEdit={() => handleResultados(redacao.id)} 
+                    
                   />
                 ))}
               </div>
@@ -134,4 +158,3 @@ const Correcao = () => {
 }
 
 export default Correcao
-
