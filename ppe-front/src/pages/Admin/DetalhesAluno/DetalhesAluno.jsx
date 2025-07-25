@@ -71,7 +71,11 @@ const DetalhesAluno = () => {
 
   const resetPassword = async () => {
     try {
-      await axios.patch(`http://localhost:3000/usuarios/${aluno_id}/resetar-senha`)
+      await axios.patch(`${baseURL}/usuarios/${aluno_id}/resetar-senha`, {}, { headers: getHeaders() })
+      setFormMessage({
+        type: "success",
+        text: "Senha resetada com sucesso!"
+      });
     } catch (error) {
       setFormMessage({
         type: "error",
