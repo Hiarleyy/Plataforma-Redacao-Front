@@ -40,7 +40,7 @@ const baseURL = import.meta.env.VITE_API_BASE_URL
               onError={handleImageError}
             />
             {ranking[1] && <h3 title={ranking[1].nome}>{ranking[1].nome}</h3>}
-            {ranking[1] && <p title={`Média: ${ranking[1].media}`}>{ranking[1].media}</p>}
+            {ranking[1] && <p title={`Média: ${ranking[1].ultima_nota}`}>{ranking[1].ultima_nota}</p>}
           </div>          <div className={styles.position_container_first}>
             <i className={`fa-solid fa-crown ${styles.crown_gold}`}></i>
             <h2>1º</h2>
@@ -51,7 +51,7 @@ const baseURL = import.meta.env.VITE_API_BASE_URL
               onError={handleImageError}
             />
             {ranking[0] && <h3 title={ranking[0].nome}>{ranking[0].nome}</h3>}
-            {ranking[0] && <p title={`Média: ${ranking[0].media}`}>{ranking[0].media}</p>}
+            {ranking[0] && <p title={`Média: ${ranking[0].ultima_nota}`}>{ranking[0].ultima_nota}</p>}
           </div>          <div className={styles.position_container}>
             <i className={`fa-solid fa-crown ${styles.crown_bronze}`}></i>
             <h2>3º</h2>
@@ -62,7 +62,7 @@ const baseURL = import.meta.env.VITE_API_BASE_URL
               onError={handleImageError}
             />
             {ranking[2] && <h3 title={ranking[2].nome}>{ranking[2].nome}</h3>}
-            {ranking[2] && <p title={`Média: ${ranking[2].media}`}>{ranking[2].media}</p>}
+            {ranking[2] && <p title={`Média: ${ranking[2].ultima_nota}`}>{ranking[2].ultima_nota}</p>}
           </div>
         </div>
 

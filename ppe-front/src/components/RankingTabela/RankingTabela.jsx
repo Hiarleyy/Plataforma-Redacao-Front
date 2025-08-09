@@ -19,7 +19,7 @@ const RankingTabela = ({ ranking }) => {
               <td className={styles.celula}>{`${index + 4}º`}</td>
               <td className={styles.celula} title={item.nome}>{item.nome}</td>
               <td className={styles.celula} title={item.turma}>{item.turma}</td>
-              <td className={styles.celula}>{item.media}</td>    
+              <td className={styles.celula}>{item.ultima_nota}</td>    
             </tr>
           ))}
         </tbody>
