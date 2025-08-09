@@ -102,6 +102,7 @@ const GerenciarNotas = () => {
       competencia03: comp03,
       competencia04: comp04,
       competencia05: comp05,
+      nota: comp01 + comp02 + comp03 + comp04 + comp05,
     
     };
 
