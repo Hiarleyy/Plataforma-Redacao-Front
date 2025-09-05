@@ -94,7 +94,7 @@ const GerenciarCursos = () => {
   return (
     <div className={styles.container}>
       <DeleteModal
-        message="Você tem certeza que deseja excluir esse(a) aluno(a)?"
+        message="Você tem certeza que deseja excluir esse(a) Curso(a)?"
         modalIsClicked={modalIsClicked}
         deleteOnClick={() => {
           deleteModulo(currentCursoId)
